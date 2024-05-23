@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <unordered_map>
 
 class HTTPResponse
 {
@@ -9,15 +10,7 @@ class HTTPResponse
 		std::string	version;
 		int			statusCode;
 		std::string	statusMessage;
-		std::string	date;
-		std::string	server;
-		std::string	lastModified;
-		std::string	eTag;
-		std::string	acceptRange;
-		std::string	contentlength;
-		bool		connection;
-		std::string	contentType;
-
+		std::unordered_map<std::string, std::string> headers;
 		std::string	body;
 
 	public:
