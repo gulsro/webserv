@@ -11,6 +11,7 @@ HTTPResponse::HTTPResponse(const HTTPResponse &other)
 {
 	#ifdef DEBUG
 		std::cout << GREY << "HTTPResponse : Copy constructor called" << DEFAULT << std::endl; 
+		std::cout << GREY << "I am a CONFLICT" << DEFAULT << std::endl; 
 	#endif
 }
 
