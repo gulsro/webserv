@@ -1,12 +1,10 @@
+
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-# include <sys/socket.h> // socker operations
-//# include <arpa/inet.h>
-# include <cstring> // memset()
-# include <netdb.h> // getaddrinfo()
-# include <unistd.h> // close()
-# include <string> // to_string()
+#include "Webserv.hpp"
+
+class Location;
 
 // The server will use the Host header from incoming HTTP requests
 // to determine which virtual host configuration to apply.
@@ -16,16 +14,25 @@
 //     -Nginx translates all “incomplete” listen directives by substituting missing values with their default values
 //     so that each block can be evaluated by its IP address and port.
 
-Nginx translates all “incomplete” listen directives by substituting missing values with their default values so that each block can be evaluated by its IP address and port.
-
-class Server:
+class Server
 {
-    private:
-        std::string serverName;
-        int port;
+private:
+    int port;
+    std::string serverName;
+    std::string root;
+    std::string index;
 
-    public:
-        Server();
+    unsigned long maxBodySize;
+    std::vector<Location> locationList;
 
-        
-}
+
+public:
+    Server();
+    ~Server();
+    Server(Server& a);
+    Server& operator=(const Server a);
+
+
+};
+
+#endif

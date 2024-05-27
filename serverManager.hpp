@@ -1,7 +1,16 @@
 #ifndef SERVERMANAGER_HPP
 # define SERVERMANAGER_HPP
 
-// Manages multiple Server instances, each representing a virtual host.
+// struct pollfd {
+//   int     fd;       /* descriptor to check */
+//   short   events;   /* events of interest on fd */
+//   short   revents;  /* events that occurred on fd */
+// };
+
+// POLLIN -- Data other than high-priority data can be read
+// POLLOUT -- Normal data can be written
+
+// serverManager manages multiple Server instances, each representing a virtual host.
 
 class serverManager
 {
