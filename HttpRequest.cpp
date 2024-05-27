@@ -54,7 +54,13 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 	if (this->headers.count("Content-Length"))
 	{
 		int	contentLength = std::stoi(headers.at("Content-Length").value);
-		this->body = rawRequest.substr(rawRequest.find("\r\n\r\n") + 4, contentLength);
+		size_t	bodyStart = rawRequest.find("\r\n\r\n") + 4;
+		if (bodyStart + contentLength > rawRequest.size())
+		{
+			std::cerr << "Incomplete HTTP request body." << std::endl;
+			return false;
+		}
+		this->body = rawRequest.substr(bodyStart, contentLength);
 	}
 	return true;
 }

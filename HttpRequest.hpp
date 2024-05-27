@@ -40,6 +40,7 @@ class	HttpRequest
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		const	std::string	&getBody() const { return body; }
 
+	bool	HttpRequest::readRequest(int fd);
 	bool	parseHttpRequest(const std::string &rawRequest);
 	bool	parseRequestLine(const std::string &line);
 	bool	parseHeader(const std::string &line);

@@ -47,7 +47,7 @@ std::string	HttpResponse::getStatusMessage()
 		case 400:
 			return ("Bad Request");
 		case 401:
-			return ("Unauthorized")
+			return ("Unauthorized");
 		case 403:
 			return ("Forbidden");
 		case 404:
@@ -59,9 +59,9 @@ std::string	HttpResponse::getStatusMessage()
 		case 409:
 			return ("Conflict");
 		case 410:
-			return ("");
+			return ("Gone"); // Requsted uri has been intentionally removed or unlikely to return.
 		case 411:
-			return ("");
+			return ("Length Required"); // missing "Content-Length" header
 		case 413:
 			return ("Content Too Large");
 		case 414:
@@ -69,11 +69,11 @@ std::string	HttpResponse::getStatusMessage()
 		case 500:
 			return ("Internal Server Error");
 		case 503:
-			return ("");
+			return ("Sevice Unavailable");
 		case 504:
 			return ("Gateway Timeout");
 		case 505:
-			return ("");
+			return ("HTTP Version Not Supported");
 		default :
 			return ("Not Implemented");
 	}
