@@ -2,8 +2,7 @@
 #ifndef LOCATION_HPP
 # define LOCATION_HPP
 
-#include <string>
-#include <iostream>
+#include "Webserv.hpp"
 
 
 class Location
@@ -15,11 +14,11 @@ private:
     std::string index;
     std::string redirect;
     std::string alias;
-    std::string error_page;
+    std::string errorPage;
 
     std::vector<bool> methods; //GET, POST DELETE
 
-    std::string cgi_pass;
+    std::string cgiPass;
 
 
 

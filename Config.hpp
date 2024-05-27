@@ -2,18 +2,16 @@
 #ifndef CONFIG_HPP
 # define CONFIG_HPP
 
-#include <string>
-#include <iostream>
-#include <vector>
-#include "Server.hpp"
+#include "Webserv.hpp"
+
 
 class Server;
 
 class Config
 {
 private:
-    int nb_server;
-    std::vector<Server> server_list;
+    int nbServer;
+    std::vector<Server> serverList;
 
 public:
     Config();
