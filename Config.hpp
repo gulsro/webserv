@@ -4,6 +4,7 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 #include "Server.hpp"
 
 class Server;
