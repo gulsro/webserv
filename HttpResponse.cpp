@@ -77,4 +77,51 @@ std::string	HttpResponse::getStatusMessage()
 		default :
 			return ("Not Implemented");
 	}
-} 
+}
+
+void	sendRespose(int fd)
+{
+	std::string content = createResponse();
+	int val = send(fd, content.c_str(), content.size(), 0);
+	if (val == -1)
+	{
+		// Sending error occured
+		//clean up
+	}
+	deleteRequest();
+}
+
+void	HttpResponse::checkMethod()
+{
+	std::string	method = Requset->getMethod();
+
+	if (/*comparing location block method and requested method*/)
+	{
+		if (method == "GET")
+			methodGet();
+		else if (method == "POST")
+			methodPost();
+		else
+			methodDelete();
+	}
+}
+
+std::string HttpRequest::createResponse()
+{
+
+}
+
+void	HttpResponse::methodGet()
+{
+
+}
+
+void	HttpResponse::methodPost()
+{
+
+}
+
+void	HttpResponse::methodDelete()
+{
+
+}
