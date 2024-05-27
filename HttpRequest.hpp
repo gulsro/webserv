@@ -35,12 +35,12 @@ class	HttpRequest
 
 		//Getters
 		const	std::string &getMethod() const { return method; }
-		const	std::string &getUri() const { return uri; }
+		const	std::string &getURI() const { return uri; }
 		const	std::string	&getVersion() const { return version; }
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		const	std::string	&getBody() const { return body; }
 
-	bool	HttpRequest::readRequest(int fd);
+	bool	readRequest(int fd);
 	bool	parseHttpRequest(const std::string &rawRequest);
 	bool	parseRequestLine(const std::string &line);
 	bool	parseHeader(const std::string &line);

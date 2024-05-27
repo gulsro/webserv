@@ -39,7 +39,9 @@ bool	HttpRequest::readRequest(int fd)
 		std::string rawRequest = stream.str();
 		if (rawRequest.find("\r\n\r\n") != std::string::npos)
 			break;
-	}
+
+		}
+	std::string response = "HTTP/1.1 200 OK \nContent-Length: 12 \nContent-Type: text/plain; charset=utf-8 \nHello World!";
 
 	std::string rawRequest = stream.str();
 	stream.str("");

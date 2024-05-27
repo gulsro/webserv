@@ -4,7 +4,7 @@
 #include <string>
 #include <map>
 
-enum	status_code
+enum	e_statusCode
 {
 	STATUS_SUCCESS = 200,
 	STATUS_CREATED = 201,
@@ -22,29 +22,21 @@ enum	status_code
 	STATUS_NOT_IMPLEMENTED = 501
 };
 
-enum	method
+enum	e_method
 {
 	GET,
 	POST,
 	DELETE
 };
 
-enum	uri_type
-{
-	DIR,
-	FILE,
-	FILE_TO_CREATE,
-	CGI
-};
-
 // Body transmission types
-enum	transfer_type
+enum	e_transferType
 {
 	GENERAL, // Content-Length
 	CHUNKED // Transfer-Encoding: chunked
 };
 
-enum	connection_type
+enum	e_connectionType
 {
 	CLOSE,
 	KEEP_ALIVE

@@ -4,16 +4,29 @@
 #include "utils.hpp"
 
 
+enum	resourceType
+{
+	FILE,
+	DIR
+};
+
 class HttpRequest;
 
 class HttpResponse
 {
 	protected:
-		std::string	version;
-		int			statusCode;
-		std::string	statusMessage;
+		std::string		version;
+		int				statusCode;
+		std::string		statusMessage;
 		std::unordered_map<std::string, HttpHeader> headers;
-		std::string	body;
+		std::string		body;
+
+		HttpRequest			*Request;
+		std::string			resource;
+		enum resourceType	resourceType;
+		std::string			content;
+		std::string			contentType;
+		std::string			location;
 
 	public:
 		HttpResponse();
@@ -28,5 +41,6 @@ class HttpResponse
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		const	std::string	&getBody() const { return body; }
 
-		void	parseHttpResponse(const std::string &raw);
+		std::string	getStatusMessage();
+		void		checkMethod();
 };

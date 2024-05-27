@@ -66,6 +66,8 @@ std::string	HttpResponse::getStatusMessage()
 			return ("Content Too Large");
 		case 414:
 			return ("URI TOO LONG");
+		case 418:
+			return ("I'm a teapot");
 		case 500:
 			return ("Internal Server Error");
 		case 503:
@@ -91,37 +93,8 @@ void	sendRespose(int fd)
 	deleteRequest();
 }
 
-void	HttpResponse::checkMethod()
-{
-	std::string	method = Requset->getMethod();
-
-	if (/*comparing location block method and requested method*/)
-	{
-		if (method == "GET")
-			methodGet();
-		else if (method == "POST")
-			methodPost();
-		else
-			methodDelete();
-	}
-}
 
 std::string HttpRequest::createResponse()
-{
-
-}
-
-void	HttpResponse::methodGet()
-{
-
-}
-
-void	HttpResponse::methodPost()
-{
-
-}
-
-void	HttpResponse::methodDelete()
 {
 
 }
