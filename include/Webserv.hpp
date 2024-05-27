@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <map>
+
 #include "Config.hpp"
 #include "Server.hpp"
 #include "Location.hpp"

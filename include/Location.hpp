@@ -16,8 +16,7 @@ private:
     std::string alias;
     std::string errorPage;
 
-    std::vector<bool> methods; //GET, POST DELETE
-
+    std::map<std::string, int> methods;
     std::string cgiPass;
 
 
