@@ -26,8 +26,6 @@ class	HttpRequest
 		std::string version;
 		std::unordered_map<std::string, HttpHeader> headers;
 		std::string	body;
-		
-		std::string	index;
 
 	public:
 		HttpRequest();
@@ -41,11 +39,10 @@ class	HttpRequest
 		const	std::string	&getVersion() const { return version; }
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		const	std::string	&getBody() const { return body; }
-		
-		const	std::string	&getIndex const { return index }
 
-	bool	readRequest(int fd);
-	bool	parseHttpRequest(const std::string &rawRequest);
-	bool	parseRequestLine(const std::string &line);
-	bool	parseHeader(const std::string &line);
+		bool	readRequest(int fd);
+		bool	parseHttpRequest(const std::string &rawRequest);
+		bool	parseRequestLine(const std::string &line);
+		bool	parseHeader(const std::string &line);
+		const	std::string	getHeaderValue(const std::string &name) const;
 };

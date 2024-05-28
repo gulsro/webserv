@@ -1,6 +1,6 @@
 #include "HttpResponse.hpp"
 
-HttpResponse::HttpResponse():finished(false), statusCode(0)
+HttpResponse::HttpResponse():completed(false), statusCode(0)
 {
 	#ifdef DEBUG
 		std::cout << GREY << "HttpResponse : Default constructor called" << DEFAULT << std::endl; 
@@ -81,20 +81,20 @@ std::string	HttpResponse::getStatusMessage()
 	}
 }
 
-void	sendRespose(int fd)
-{
-	std::string content = createResponse();
-	int val = send(fd, content.c_str(), content.size(), 0);
-	if (val == -1)
-	{
-		// Sending error occured
-		//clean up
-	}
-	deleteRequest();
-}
+// void	sendRespose(int fd)
+// {
+// 	std::string content = createResponse();
+// 	int val = send(fd, content.c_str(), content.size(), 0);
+// 	if (val == -1)
+// 	{
+// 		// Sending error occured
+// 		//clean up
+// 	}
+// 	deleteRequest();
+// }
 
 
-std::string HttpRequest::createResponse()
-{
+// std::string HttpRequest::createResponse()
+// {
 
-}
+// }

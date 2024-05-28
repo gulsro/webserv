@@ -1,7 +1,10 @@
 #include "utils.hpp"
 #include "HttpRequest.hpp"
+#include "HttpResponse.hpp"
 
-void	HttpResponse::returnResponse(enum e_statusCode code)
+#include <fstream> // ifstream
+
+void	HttpResponse::createResponse(enum e_statusCode code)
 {
 	this->statusCode = code;
 
@@ -10,9 +13,9 @@ void	HttpResponse::returnResponse(enum e_statusCode code)
 		|| this->statusCode == STATUS_CREATED)
 	{
 		std::ostringstream	ostream;
-		ostream << "HTTP/1.1 " << this->statusCode << " " << this.getStatusMessage() << "\r\n";
+		ostream << "HTTP/1.1 " << this->statusCode << " " << this->getStatusMessage() << "\r\n";
 		if (this->statusCode == STATUS_MOVED)
-			ostream << "Locaion: " << this->resource + "/" < "\r\n";
+			ostream << "Locaion: " << this->resource + "/" << "\r\n";
 		ostream << "Content-Length: 0\r\n";
  		ostream << "\r\n";
 		this->content = ostream.str(); // a string a copy of ostream
@@ -22,25 +25,59 @@ void	HttpResponse::returnResponse(enum e_statusCode code)
 	this->completed = true;
 }
 
-// Iterates allowed methods container and execute method. 
-void	HttpResponse::checkMethod()
+void	HttpResponse::createResponse_File(std::string filename)
 {
-	std::string	method = Requset->getMethod();
+	std::ifstream	file(filename.c_str());
 
-	if (/*comparing location block method and requested method*/)
+	if (file.is_open())
 	{
-		if (method == "GET")
-			methodGet();
-		else if (method == "POST")
-			methodPost();
+		file.seekg(0, std::ios::end); // Move to the end of the file.
+		if (file.tellg() > 0) // file is not empty.
+		{
+			file.seekg(0, std::ios::beg);
+			std::ostringstream	ostream;
+			std::ostringstream	fileContent;
+			fileContent << file.rdbuf();
+
+			ostream << "HTTP/1.1 200 OK\r\n";
+			ostream << "Content-Length: " << fileContent.str().length() << "\r\n";
+			ostream << "Content-Type: " << getMIMEtype() << "\r\n";
+			ostream << "\r\n";
+			// print body part
+			ostream << fileContent.str();
+			file.close();
+			this->content = ostream.str();
+			createResponse(STATUS_SUCCESS);
+		}
 		else
-			methodDelete();
+			createResponse(STATUS_NO_CONTENT);
 	}
 	else
-	{
-		this->statusCode == 405; // Method Not Allowed
-		Response->getStatusMessage(); 
-	}
+		createResponse(STATUS_INTERNAL_ERR);
+}
+
+const std::string	HttpRequest::getHeaderValue(const std::string &key) const
+{
+	auto	it = headers.find(key);
+	
+	if (it != headers.end())
+		return it->second.value;
+	else
+		return "";
+}
+
+std::string	HttpResponse::getMIMEtype() const
+{
+	std::string contentType = Request->getHeaderValue("Content-Type");
+
+	if (contentType.empty())
+		return "";
+
+	size_t	semicolonPos = contentType.find(';');
+	if (semicolonPos != std::string::npos)
+		return contentType.substr(0, semicolonPos);
+	else
+		return contentType;
 }
 
 void	HttpResponse::checkURI()
@@ -51,9 +88,9 @@ void	HttpResponse::checkURI()
 	if (uri[uri.size() - 1] != '/')
 	{
 		if (method == "DELETE")
-			returnResponse(STATUS_CONFLICT);
+			createResponse(STATUS_CONFLICT);
 		else
-			returnResponse(STATUS_MOVED);
+			createResponse(STATUS_MOVED);
 	}
 }
 
@@ -65,14 +102,17 @@ void	HttpResponse::methodGet()
 	if (this->resourceType == FILE)
 	{
 		checkMethod();
-		returnFile(resource);
+		createResponse_File(getResource());
 	}
 	else // Resource is a directory
 	{
 		checkURI();
 		if (completed == false)
 		{
-			returnFile();
+			// if (checkIndexFileExistence(Request->getIndex()) == true)
+				createResponse_File(getResource());
+			// else
+			// 	checkAutoindex();
 		}
 	}
 
@@ -88,9 +128,9 @@ void	HttpResponse::deleteFile()
 
 	result = remove(this->resource.c_str());
 	if (result == 0)
-		returnResponse(STATUS_NO_CONTENT);
+		createResponse(STATUS_NO_CONTENT);
 	else
-		returnResponse(STATUS_INTERNAL_ERR);
+		createResponse(STATUS_INTERNAL_ERR);
 }
 
 void	HttpResponse::deleteDir()
@@ -99,10 +139,10 @@ void	HttpResponse::deleteDir()
 	int			result = std::system(command.c_str());
 	if (result == 0)
 	{ // Directory deleted successfully.
-		returnResponse(STATUS_NO_CONTENT);
+		createResponse(STATUS_NO_CONTENT);
 	}
 	else
-		returnResponse(STATUS_INTERNAL_ERR);
+		createResponse(STATUS_INTERNAL_ERR);
 }
 
 void	HttpResponse::methodDelete()
@@ -116,5 +156,27 @@ void	HttpResponse::methodDelete()
 		checkURI();
 		if (completed == false)
 			deleteDir();
+	}
+}
+
+// Iterates allowed methods container and execute method. 
+void	HttpResponse::checkMethod()
+{
+	
+	std::string	method = Request->getMethod();
+
+	if (/*comparing location block method and requested method*/)
+	{
+		if (method == "GET")
+			methodGet();
+		else if (method == "POST")
+			methodPost();
+		else
+			methodDelete();
+	}
+	else
+	{
+		this->statusCode == STATUS_NOT_ALLOWED; // Method Not Allowed
+		getStatusMessage();
 	}
 }
