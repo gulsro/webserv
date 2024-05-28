@@ -7,19 +7,19 @@
 enum	e_statusCode
 {
 	STATUS_SUCCESS = 200,
-	STATUS_CREATED = 201,
-	STATUS_NO_CONTENT = 204,
-	STATUS_MOVED = 301,
-	STATUS_BAD_REQUEST = 400,
-	STATUS_FORBIDDEN = 403,
-	STATUS_NOT_FOUND = 404,
-	STATUS_NOT_ALLOWED = 405,
-	STATUS_CONFLICT = 409,
-	STATUS_LENGTH_REQUIRED = 411,
-	STATUS_TOO_LARGE = 413,
+	STATUS_CREATED = 201, // The request resulted in a new resource being created on the server. (Location should be contained in the response.)
+	STATUS_NO_CONTENT = 204, // successfully processed the request but there is n content to send back.
+	STATUS_MOVED = 301, // The requested resource has been permanently moved to a new location. (New URL should be contained in the Location header.)
+	STATUS_BAD_REQUEST = 400, // Invalid syntax request
+	STATUS_FORBIDDEN = 403, // No permission to access the requested resource.
+	STATUS_NOT_FOUND = 404, // The requested resource couldn't be found on the server.(Non-existent page)
+	STATUS_NOT_ALLOWED = 405, // Not allowed method
+	STATUS_CONFLICT = 409, // The request could not be completed due to a conflict with the current state of the resource.
+	STATUS_LENGTH_REQUIRED = 411, // Missing Content-Length header
+	STATUS_TOO_LARGE = 413, // The request entity is too large to handle.
 	STATUS_URI_TOO_LONG = 414,
-	STATUS_INTERNAL_ERR = 500,
-	STATUS_NOT_IMPLEMENTED = 501
+	STATUS_INTERNAL_ERR = 500, // Unexpected error occurred
+	STATUS_NOT_IMPLEMENTED = 501 // The server doesn't support the fucntionality required
 };
 
 enum	e_method

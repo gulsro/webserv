@@ -5,12 +5,21 @@ void	HttpResponse::returnResponse(enum e_statusCode code)
 {
 	this->statusCode = code;
 
-	if (this->statusCode == STATUS_MOVED)
+	if (this->statusCode == STATUS_MOVED
+		|| this->statusCode == STATUS_NO_CONTENT
+		|| this->statusCode == STATUS_CREATED)
 	{
-		std::ostringstream	stream;
-		stream << "HTTP/1.1 " << this->statusCode << " " << this.getStatusMessage() << "\r\n";
-		
+		std::ostringstream	ostream;
+		ostream << "HTTP/1.1 " << this->statusCode << " " << this.getStatusMessage() << "\r\n";
+		if (this->statusCode == STATUS_MOVED)
+			ostream << "Locaion: " << this->resource + "/" < "\r\n";
+		ostream << "Content-Length: 0\r\n";
+ 		ostream << "\r\n";
+		this->content = ostream.str(); // a string a copy of ostream
 	}
+	if (this->statusCode >= 400)
+		std::cerr << this->statusCode << " " << this->getStatusMessage() << std::endl;  
+	this->completed = true;
 }
 
 // Iterates allowed methods container and execute method. 
@@ -29,7 +38,8 @@ void	HttpResponse::checkMethod()
 	}
 	else
 	{
-		Response->getStatusMessage(405); // Method Not Allowed
+		this->statusCode == 405; // Method Not Allowed
+		Response->getStatusMessage(); 
 	}
 }
 
@@ -49,6 +59,8 @@ void	HttpResponse::checkURI()
 
 void	HttpResponse::methodGet()
 {
+	if (completed == true)
+		return ;
 	// Resource is a file
 	if (this->resourceType == FILE)
 	{
@@ -58,17 +70,51 @@ void	HttpResponse::methodGet()
 	else // Resource is a directory
 	{
 		checkURI();
-
+		if (completed == false)
+		{
+			returnFile();
+		}
 	}
 
 }
 
 void	HttpResponse::methodPost()
 {
+}
 
+void	HttpResponse::deleteFile()
+{
+	int	result;
+
+	result = remove(this->resource.c_str());
+	if (result == 0)
+		returnResponse(STATUS_NO_CONTENT);
+	else
+		returnResponse(STATUS_INTERNAL_ERR);
+}
+
+void	HttpResponse::deleteDir()
+{
+	std::string command = "rm -rf " + this->resource;
+	int			result = std::system(command.c_str());
+	if (result == 0)
+	{ // Directory deleted successfully.
+		returnResponse(STATUS_NO_CONTENT);
+	}
+	else
+		returnResponse(STATUS_INTERNAL_ERR);
 }
 
 void	HttpResponse::methodDelete()
 {
-
+	if (completed == true)
+		return ;
+	if (this->resourceType == FILE)	
+		deleteFile();
+	else
+	{
+		checkURI();
+		if (completed == false)
+			deleteDir();
+	}
 }

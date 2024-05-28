@@ -1,6 +1,6 @@
 #include "HttpResponse.hpp"
 
-HttpResponse::HttpResponse()
+HttpResponse::HttpResponse():finished(false), statusCode(0)
 {
 	#ifdef DEBUG
 		std::cout << GREY << "HttpResponse : Default constructor called" << DEFAULT << std::endl; 
