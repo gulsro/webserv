@@ -4,6 +4,8 @@
 
 #include "Webserv.hpp"
 
+// A function to assign values to server's members. (port, serverName etc.)
+
 
 class Server;
 
@@ -19,7 +21,7 @@ public:
     Config(Config& a);
     Config& operator=(const Config a);
 
-
+    initServer
 };
 
 #endif

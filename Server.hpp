@@ -14,10 +14,17 @@ class Location;
 //     -Nginx translates all “incomplete” listen directives by substituting missing values with their default values
 //     so that each block can be evaluated by its IP address and port.
 
+
+//SUBSERVER???
+//struct addrinfo
+
+// config parser gives values to port, serverName, etc.
+
 class Server
 {
 private:
     int port;
+    int serverFd;
     std::string serverName;
     std::string root;
     std::string index;
@@ -25,13 +32,13 @@ private:
     unsigned long maxBodySize;
     std::vector<Location> locationList;
 
+    struct addrinfo* sockAddr;
 
 public:
     Server();
     ~Server();
     Server(Server& a);
     Server& operator=(const Server a);
-
 
 };
 
