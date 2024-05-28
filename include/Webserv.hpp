@@ -5,6 +5,14 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <fstream>
+#include <istream>
+#include <filesystem>
+#include <algorithm>
+#include <iterator>
+#include <cctype>
+
+
 
 #include "Config.hpp"
 #include "Server.hpp"

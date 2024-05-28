@@ -10,6 +10,7 @@ class Server
 {
 private:
     int port;
+    int serverFd;
     std::string serverName;
     std::string root;
     std::string index;
