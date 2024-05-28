@@ -25,21 +25,43 @@ class Server
 private:
     int port;
     int serverFd;
-    std::string serverName;
+    std::string host; //address
+    std::vector<std::string> serverNames;
     std::string root;
     std::string index;
-
     unsigned long maxBodySize;
+    
     std::vector<Location> locationList;
-
-    struct addrinfo* sockAddr;
+    struct sockaddr_in* serverAddr;
 
 public:
     Server();
     ~Server();
-    Server(Server& a);
+    Server(int port,
+				std::string host,
+				std::vector<std::string> serverNames,
+				std::string root,
+                std::string index,
+				unsigned long maxBodySize,
+				std::vector<std::unique_ptr<Location>> locations,
+				serverManager& serverManager);
+    //Server(Server& a);
     Server& operator=(const Server a);
 
+    std::string getAddress() const;
+    int getPort() const;
+    std::vector<std::string> getServerNames() const;
+    int getServerFD() const;
+    std::vector<Location> getLocationList() const;
+    bool matchesHostAndPort(const std::string &host, int port) const;
+
+    void setPort(int port);
+    void setServerFd(int fd);
+    void setServerName(std::string serverName);
+    void setRoot(std::string root);
+    void setIndex(std::string index);
+    void setHost(std::string host);
+    void setMaxBodySize(unsigned long maxBodySize);
 };
 
 #endif
