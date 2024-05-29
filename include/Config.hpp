@@ -10,6 +10,7 @@ class Config
 {
 private:
     std::string configFile;
+    std::string content;
     int nbServer;
     std::vector<Server> serverList;
 
@@ -21,10 +22,8 @@ public:
 
     void    setConfigFile(std::string file);
     void    checkConfig();
-    bool    isWhitespace(std::fstream& file);
-    void    eraseWhitespace(std::fstream& file);
-
-
+    bool    isBlank(std::fstream& file);
+    void    readConfig(std::fstream& file);
 };
 
 #endif

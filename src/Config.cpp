@@ -18,22 +18,21 @@ void    Config::setConfigFile(std::string file)
     this->configFile = file;
 }
 
-bool Config::isWhitespace(std::fstream& file){
+bool Config::isBlank(std::fstream& file){
     if (file.peek() != EOF && !std::isspace(file.peek()))
         return (false);
     return (true);
 }
 
-void Config::eraseWhitespace(std::fstream& file){
+//read from file and remove leading whitespaces, put it in one string <content>
+void Config::readConfig(std::fstream& file){
     std::string line;
+    std::stringstream buf;
+
     while (std::getline(file >> std::ws, line))
-    {
-        // std::cout << line << std::endl;
-        if (line.empty())
-            std::cout << std::endl;
-        // std::cout << line << std::endl;
-        file << line << std::endl;
-    }
+        buf << line << std::endl;
+    this->content = buf.str();
+    // std::cout << MAG << content << RES << std::endl;
 }
 
 void Config::checkConfig(){
@@ -47,12 +46,12 @@ void Config::checkConfig(){
         file.close();
         throw std::runtime_error("empty file");
     }
-    else if (this->isWhitespace(file))
+    else if (this->isBlank(file))
     {
         file.close();
         throw std::runtime_error("file has only whitespaces");
     }
-    eraseWhitespace(file); // this is not working. fnd ways to replace prev lines
+    readConfig(file);
     file.close();
 }
 
