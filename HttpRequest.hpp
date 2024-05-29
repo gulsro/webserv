@@ -1,22 +1,7 @@
 #pragma once
 
- 
 #include <unordered_map>
-#include <sstream> // stringstream, str()
-#include <vector>
-
-std::vector<std::string> split(const std::string &str, char delimiter)
-{
-	std::vector<std::string>	tokens;
-	std::string					token;
-	std::istringstream			stream(str);
-
-	while (std::getline(stream, token, delimiter))
-	{
-		tokens.push_back(token);
-	}
-	return tokens;
-}
+#include "utils.hpp"
 
 class	HttpRequest
 {

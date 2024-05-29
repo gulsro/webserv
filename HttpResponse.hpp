@@ -5,10 +5,10 @@
 #include <cstdlib> // remove(), std::system()
 
 
-enum	e_resourceType
+enum	resourceType
 {
-	FILE,
-	DIR
+	RESOURCE_FILE,
+	RESOURCE_DIR
 };
 
 class HttpRequest;
@@ -25,13 +25,13 @@ class HttpResponse
 		HttpRequest			*Request;
 		std::string			index;
 		std::string			resource;
-		enum e_resourceType	resourceType;
+		enum resourceType	resourceType;
 		std::string			content;
 		std::string			contentType;
 		std::string			location;
 		std::string			MIMEtype;
 
-		bool				completed; // check if response is already sent 
+		bool				completed; // check if request 
 
 	public:
 		HttpResponse();
@@ -46,21 +46,19 @@ class HttpResponse
 		const	std::string	&getBody() const { return body; }
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 
-		HttpRequest			*getRequest() const { return Request; }
-		const	std::string	&getIndex() const { return index; };
-		const	std::string	&getResource() const { return resource + this->getIndex(); }
-		const	std::string	&getContent() const { return content; }
-		std::string			getMIMEtype() const;
+		HttpRequest					*getRequest() const { return Request; }
+		const	 std::string		getResource() const { return resource + index; }
+		const	std::string			&getContent() { return content; }
 
 		std::string	getStatusMessage();
-		void		checkURI();
 		void		checkMethod();
+		void		createResponse(enum e_statusCode code);
+		void		createResponse_File(std::string filename);
+		std::string	getMIMEtype() const;
+		void		checkURI();
 		void		methodGet();
 		void		methodPost();
 		void		methodDelete();
-
 		void		deleteFile();
 		void		deleteDir();
-		void		createResponse(enum e_statusCode code);
-		void		createResponse_File(std::string filename);
 };

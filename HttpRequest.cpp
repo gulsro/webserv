@@ -14,6 +14,7 @@ HttpRequest::HttpRequest(const HttpRequest &other)
 	#ifdef DEBUG
 		std::cout << GREY << "HttpRequest : Copy constructor called" << DEFAULT << std::endl; 
 	#endif
+	*this = other;
 }
 
 HttpRequest &HttpRequest::operator=(const HttpRequest &other)
@@ -21,6 +22,15 @@ HttpRequest &HttpRequest::operator=(const HttpRequest &other)
 	#ifdef DEBUG
 		std::cout << GREY << "HttpRequest : Copy assigment operator called" << DEFAULT << std::endl;
 	#endif
+	if (this != &other)
+	{
+		this->method = other.method;
+		this->uri = other.uri;
+		this->version = other.version;
+		this->headers = other.headers;
+		this->body = other.body;
+	}
+	return *this;
 }
 
 HttpRequest::~HttpRequest()
@@ -35,6 +45,9 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 	std::istringstream	stream(rawRequest);
 	std::vector<std::string>	lines = split(rawRequest, '\n');
 
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] parseHttpRequest" << DEFAULT << std::endl;
+	#endif
 	if (lines.empty())
 		std::cerr << "Invalid HTTP request format." << std::endl;
 	if (!parseRequestLine(lines[0]))
@@ -69,6 +82,10 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 {
 	std::istringstream stream(line);
 
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] parseRequestLine" << DEFAULT << std::endl;
+	#endif
+
 	stream >> this->method >> this->uri >> this->version;
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
@@ -81,6 +98,8 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 
 bool	HttpRequest::parseHeader(const std::string &line)
 {
+	 
+
 	std::vector<std::string> keyValue = split(line, ':');
 	if (keyValue.size() != 2)
 	{

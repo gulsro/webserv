@@ -18,7 +18,11 @@ bool	HttpRequest::readRequest(int fd)
 	char				buffer[BUFFER_SIZE];
 	std::stringstream 	stream;
 
-	// Read data in chunks
+    #ifdef FUNC
+    std::cout << YELLOW << "[FUNCTION] readRequest" << DEFAULT << std::endl;
+	#endif
+    
+    // Read data in chunks
 	while (true)
 	{
 		int	byteRead = recv(fd, buffer, BUFFER_SIZE, 0);
@@ -31,7 +35,7 @@ bool	HttpRequest::readRequest(int fd)
 		else if (byteRead == -1)
 		{
 			std::cerr << "Error reading from socket: " << strerror(errno) << std::endl;
-			return ;
+			return false;
 		}
 		// Append received data to the stream
 		stream.write(buffer, byteRead);

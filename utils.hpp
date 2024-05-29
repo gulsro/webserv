@@ -3,6 +3,17 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <vector>
+#include <sstream>
+
+# define GREEN "\033[0;92m"
+# define YELLOW "\e[38;5;208m"
+# define RED "\033[1;91m"
+# define GREY "\033[0;90m"
+# define PURPLE	"\033[38;2;200;160;255m"
+# define BLUE "\033[38;5;38m"
+# define PINK "\033[95m"
+# define DEFAULT "\033[0m"
 
 enum	e_statusCode
 {
@@ -56,12 +67,14 @@ struct HttpHeader
 	std::string	value;
 };
 
-std::map<std::string, std::string> makeMimeType ()
-{
-	std::map<std::string, std::string> type_map;
+// std::map<std::string, std::string> makeMimeType ()
+// {
+// 	std::map<std::string, std::string> type_map;
 
-	type_map["bin"] = "application/octet-stream";
-	type_map["bmp"] = "image/bmp";
-}
+// 	type_map["bin"] = "application/octet-stream";
+// 	type_map["bmp"] = "image/bmp";
+// }
+
+std::vector<std::string> split(const std::string &str, char delimiter);
 
 std::string trim(const std::string &str);

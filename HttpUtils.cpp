@@ -11,3 +11,16 @@ std::string trim(const std::string &str)
 
 	return result.substr(first, (last - first + 1));
 }
+
+std::vector<std::string> split(const std::string &str, char delimiter)
+{
+	std::vector<std::string>	tokens;
+	std::string					token;
+	std::istringstream			stream(str);
+
+	while (std::getline(stream, token, delimiter))
+	{
+		tokens.push_back(token);
+	}
+	return tokens;
+}

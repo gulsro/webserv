@@ -1,6 +1,6 @@
 #include "HttpResponse.hpp"
 
-HttpResponse::HttpResponse():completed(false), statusCode(0)
+HttpResponse::HttpResponse()
 {
 	#ifdef DEBUG
 		std::cout << GREY << "HttpResponse : Default constructor called" << DEFAULT << std::endl; 
@@ -12,6 +12,7 @@ HttpResponse::HttpResponse(const HttpResponse &other)
 	#ifdef DEBUG
 		std::cout << GREY << "HttpResponse : Copy constructor called" << DEFAULT << std::endl; 
 	#endif
+	*this = other;
 }
 
 HttpResponse &HttpResponse::operator=(const HttpResponse &other)
@@ -19,6 +20,25 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other)
 	#ifdef DEBUG
 		std::cout << GREY << "HttpResponse : Copy assigment operator called" << DEFAULT << std::endl;
 	#endif
+	if (this != &other)
+	{
+		this->version = other.version;
+		this->statusCode = other.statusCode;
+		this->statusMessage = other.statusMessage;
+		this->body = other.body;
+		this->headers = other.headers;
+
+		this->Request = other.Request;
+		this->index = other.index;
+		this->resource = other.resource;
+		this->resourceType = other.resourceType;
+		this->content = other.content;
+		this->contentType = other.contentType;
+		this->location = other.location;
+		this->MIMEtype = other.MIMEtype;
+	}
+	return *this;
+
 }
 
 HttpResponse::~HttpResponse()
@@ -30,6 +50,10 @@ HttpResponse::~HttpResponse()
 
 std::string	HttpResponse::getStatusMessage()
 {
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] getStatusMessage" << DEFAULT << std::endl;
+	#endif
+
 	switch (this->statusCode)
 	{
 		case 001:

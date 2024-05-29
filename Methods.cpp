@@ -99,7 +99,7 @@ void	HttpResponse::methodGet()
 	if (completed == true)
 		return ;
 	// Resource is a file
-	if (this->resourceType == FILE)
+	if (this->resourceType == RESOURCE_FILE)
 	{
 		checkMethod();
 		createResponse_File(getResource());
@@ -149,7 +149,7 @@ void	HttpResponse::methodDelete()
 {
 	if (completed == true)
 		return ;
-	if (this->resourceType == FILE)	
+	if (this->resourceType == RESOURCE_FILE)	
 		deleteFile();
 	else
 	{
@@ -165,18 +165,18 @@ void	HttpResponse::checkMethod()
 	
 	std::string	method = Request->getMethod();
 
-	if (/*comparing location block method and requested method*/)
-	{
+	// if (/*comparing location block method and requested method*/)
+	// {
 		if (method == "GET")
 			methodGet();
 		else if (method == "POST")
 			methodPost();
 		else
 			methodDelete();
-	}
-	else
-	{
-		this->statusCode == STATUS_NOT_ALLOWED; // Method Not Allowed
-		getStatusMessage();
-	}
+	// }
+	// else
+	// {
+	// 	this->statusCode == STATUS_NOT_ALLOWED; // Method Not Allowed
+	// 	getStatusMessage();
+	// }
 }
