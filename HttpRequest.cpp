@@ -63,17 +63,33 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		if (!parseHeader(lines[i]))
 			return false;
 	}
+	#ifdef FUNC
+		auto it = headers.begin();
+		std::cout << PURPLE << "________HEADERS________" << std::endl;
+		while (it != headers.end())
+		{
+			std::cout << PURPLE << "[ " << it->first << " ]" << std::endl;
+			std::cout << PURPLE << it->second.key << " : " << it->second.value << DEFAULT << std::endl;
+			++it; 
+		}
+	#endif
 	// parse body
 	if (this->headers.count("Content-Length"))
 	{
 		int	contentLength = std::stoi(headers.at("Content-Length").value);
-		size_t	bodyStart = rawRequest.find("\r\n\r\n") + 4;
+		// size_t	bodyStart = rawRequest.find("\r\n\r\n") + 4;
+		size_t	bodyStart = rawRequest.find("\n\n") + 2;
 		if (bodyStart + contentLength > rawRequest.size())
 		{
 			std::cerr << "Incomplete HTTP request body." << std::endl;
 			return false;
 		}
 		this->body = rawRequest.substr(bodyStart, contentLength);
+		#ifdef FUNC
+			std::cout << YELLOW << "[FUNCTION] parsing body" << DEFAULT << std::endl;
+			std::cout << PURPLE << "contentLength	: " << contentLength << DEFAULT << std::endl;
+			std::cout << PURPLE << "body	: " << this->body << DEFAULT << std::endl;
+		#endif	
 	}
 	return true;
 }
@@ -97,8 +113,8 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	#endif
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
-		//code 501
-		std::cerr << this->method << "Not implemented." << std::endl;
+		// createResponseHelper(STATUS_NOT_IMPLEMENTED);
+		 std::cerr << this->method << "Not implemented." << std::endl;
 		return false;
 	}
 	return true;
@@ -115,6 +131,5 @@ bool	HttpRequest::parseHeader(const std::string &line)
 	std::string	key = trim(keyValue[0]);
 	std::string value = trim(keyValue[1]);
 	headers[key] = HttpHeader{key, value};
-	
 	return true;
 }

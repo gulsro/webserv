@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include "utils.hpp"
 #include <cstdlib> // remove(), std::system()
+#include "HttpRequest.hpp"
 
 
 enum	resourceType
@@ -53,6 +54,7 @@ class HttpResponse
 		std::string	getStatusMessage();
 		void		checkMethod();
 		void		createResponse(enum e_statusCode code);
+		// friend void		HttpRequest::createResponseHelper(enum e_statusCode code) { Response->createResponse(code);} 
 		void		createResponse_File(std::string filename);
 		std::string	getMIMEtype() const;
 		void		checkURI();
