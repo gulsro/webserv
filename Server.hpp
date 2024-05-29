@@ -46,7 +46,6 @@ public:
 				std::vector<std::unique_ptr<Location>> locations,
 				serverManager& serverManager);
     //Server(Server& a);
-    Server& operator=(const Server a);
 
     std::string getAddress() const;
     int getPort() const;
@@ -63,6 +62,8 @@ public:
     void setHost(std::string host);
     void setMaxBodySize(unsigned long maxBodySize);
 
+
+    std::ostream operator<<(std::ostream& out, const Server& server);
 };
 
 #endif

@@ -19,13 +19,14 @@ public:
     Config();
     ~Config();
     Config(Config& a);
-    Config& operator=(const Config a);
-
+    
     //functions that we need (??)
     
     //initServer(); -declare single virtualserver
     //configServer(); -assign values(after parsing) in a loop
 
+
+    std::ostream operator<<(std::ostream& out, const Config& config);
 };
 
 #endif

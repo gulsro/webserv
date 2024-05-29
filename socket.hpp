@@ -13,5 +13,7 @@
 class Socket:
 {
     private:
-        
+    
+
+    std::ostream operator<<(std::ostream& out, const Socket& socket);
 }

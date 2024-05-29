@@ -12,21 +12,22 @@
 
 // serverManager manages multiple Server instances, each representing a virtual host.
 
-class serverManager
+class ServerManager
 {
     private:
         std::vector<Server> servers;
         std::vector<pollfd> pollfds;
     public:
-        serverManager();
-        ~serverManager();
+        ServerManager();
+        ~ServerManager();
 
-        std::unique_ptr<serverManager> configServerManager(); // init vServers in a loop
-        
+        std::unique_ptr<ServerManager> configServerManager(); // init vServers in a loop
+
+        void addServer(const Server&);        
         const std::vector<Server*>&	getServers() const;
 	    Server*	getServer(std::string host) const; 
         
-
+        std::ostream operator<<(std::ostream& out, const ServerManager& serverManager);
 };
     
 #endif
