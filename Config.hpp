@@ -13,7 +13,7 @@ class Config
 {
 private:
     int nbServer;
-    std::vector<Server> serverList;
+    std::vector<Server> servers;
 
 public:
     Config();
@@ -21,7 +21,11 @@ public:
     Config(Config& a);
     Config& operator=(const Config a);
 
-    initServer
+    //functions that we need (??)
+    
+    //initServer(); -declare single virtualserver
+    //configServer(); -assign values(after parsing) in a loop
+
 };
 
 #endif

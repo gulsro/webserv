@@ -17,4 +17,16 @@ class serverManager
     private:
         std::vector<Server> servers;
         std::vector<pollfd> pollfds;
-}
+    public:
+        serverManager();
+        ~serverManager();
+
+        std::unique_ptr<serverManager> configServerManager(); // init vServers in a loop
+        
+        const std::vector<Server*>&	getServers() const;
+	    Server*	getServer(std::string host) const; 
+        
+
+};
+    
+#endif

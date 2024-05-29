@@ -62,6 +62,7 @@ public:
     void setIndex(std::string index);
     void setHost(std::string host);
     void setMaxBodySize(unsigned long maxBodySize);
+
 };
 
 #endif
