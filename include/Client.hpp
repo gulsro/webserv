@@ -1,4 +1,4 @@
-#ifndef CLIENT
+#ifndef CLIENT_HPP
 # define CLIENT_HPP
 
 #include "Webserv.hpp"
@@ -13,8 +13,9 @@ private:
 public:
     Client(const Server&);
     ~Client();
-    std::ostream& operator<<(std::ostream& out, const Client& client);
 
 };
+
+std::ostream& operator<<(std::ostream& out, const Client& client);
 
 #endif

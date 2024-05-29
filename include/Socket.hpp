@@ -10,10 +10,14 @@
 
 // One socket class to define instance sockets for client and sever
 
-class Socket:
+class Socket
 {
-    private:
-    
+    public:
+        Socket();
+        ~Socket();    
 
-    std::ostream operator<<(std::ostream& out, const Socket& socket);
-}
+};
+
+std::ostream operator<<(std::ostream& out, const Socket& socket);
+
+#endif

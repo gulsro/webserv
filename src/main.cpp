@@ -2,6 +2,8 @@
 
 int main(int argc, char **argv)
 {
+    (void)argc;
+    (void)argv;
     // Declare a unique_ptr without initializing
     std::unique_ptr<ServerManager> serverManager;
 

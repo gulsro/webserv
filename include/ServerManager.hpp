@@ -27,7 +27,8 @@ class ServerManager
         const std::vector<Server*>&	getServers() const;
 	    Server*	getServer(std::string host) const; 
         
-        std::ostream operator<<(std::ostream& out, const ServerManager& serverManager);
 };
     
+std::ostream operator<<(std::ostream& out, const ServerManager& serverManager);
+
 #endif

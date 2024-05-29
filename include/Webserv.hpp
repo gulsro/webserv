@@ -6,9 +6,9 @@
 #include <vector>
 #include <memory> // unique_ptr c++11, make_unique c++14
 #include "Config.hpp"
-#include "socket.hpp"
+#include "Socket.hpp"
 #include "Server.hpp"
-#include "serverManager.hpp"
+#include "ServerManager.hpp"
 #include "Client.hpp"
 #include "Location.hpp"
 

@@ -26,7 +26,8 @@ public:
     //configServer(); -assign values(after parsing) in a loop
 
 
-    std::ostream operator<<(std::ostream& out, const Config& config);
 };
+
+std::ostream operator<<(std::ostream& out, const Config& config);
 
 #endif

@@ -5,6 +5,7 @@
 #include "Webserv.hpp"
 
 class Location;
+class ServerManager;
 
 // The server will use the Host header from incoming HTTP requests
 // to determine which virtual host configuration to apply.
@@ -44,7 +45,7 @@ public:
                 std::string index,
 				unsigned long maxBodySize,
 				std::vector<std::unique_ptr<Location>> locations,
-				serverManager& serverManager);
+				ServerManager& serverManager);
     //Server(Server& a);
 
     std::string getAddress() const;
@@ -63,7 +64,8 @@ public:
     void setMaxBodySize(unsigned long maxBodySize);
 
 
-    std::ostream operator<<(std::ostream& out, const Server& server);
 };
+
+std::ostream operator<<(std::ostream& out, const Server& server);
 
 #endif
