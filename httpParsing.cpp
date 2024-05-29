@@ -4,6 +4,7 @@
 #include <sys/types.h> // recv()
 #include <sys/socket.h> // recv()
 #include <cstring> // strerror()
+#include <unistd.h>
 
 #define BUFFER_SIZE 4096 // common page size
 
@@ -25,11 +26,12 @@ bool	HttpRequest::readRequest(int fd)
     // Read data in chunks
 	while (true)
 	{
-		int	byteRead = recv(fd, buffer, BUFFER_SIZE, 0);
-		if (byteRead == 0)
+		// int	byteRead = recv(fd, buffer, BUFFER_SIZE, 0);
+		int byteRead = read(fd, buffer, BUFFER_SIZE);
+        if (byteRead == 0)
 		{
 			//remove poll fd;
-			std::cerr << "Disconnection with " << fd;
+			std::cerr << "Disconnection with " << fd << std::endl;
 			break;
 		}
 		else if (byteRead == -1)
@@ -44,9 +46,7 @@ bool	HttpRequest::readRequest(int fd)
 		if (rawRequest.find("\r\n\r\n") != std::string::npos)
 			break;
 
-		}
-	std::string response = "HTTP/1.1 200 OK \nContent-Length: 12 \nContent-Type: text/plain; charset=utf-8 \nHello World!";
-
+	}
 	std::string rawRequest = stream.str();
 	stream.str("");
 

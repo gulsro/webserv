@@ -81,12 +81,20 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 bool	HttpRequest::parseRequestLine(const std::string &line)
 {
 	std::istringstream stream(line);
+	std::string rawVersion;
 
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] parseRequestLine" << DEFAULT << std::endl;
 	#endif
 
-	stream >> this->method >> this->uri >> this->version;
+	stream >> this->method >> this->uri >> rawVersion;
+	std::istringstream	iss(rawVersion);
+	std::getline(iss, this->version, '\r');
+	#ifdef FUNC
+		std::cout << PURPLE << "Method	:	" << this->method << DEFAULT<< std::endl;
+		std::cout << PURPLE << "URI	:	" << this->uri << DEFAULT<< std::endl;
+		std::cout << PURPLE << "Version	:	" << this->version << DEFAULT<< std::endl;
+	#endif
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
 		//code 501
@@ -98,8 +106,6 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 
 bool	HttpRequest::parseHeader(const std::string &line)
 {
-	 
-
 	std::vector<std::string> keyValue = split(line, ':');
 	if (keyValue.size() != 2)
 	{

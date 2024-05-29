@@ -1,0 +1,7 @@
+GET /index.html HTTP/1.1
+Host: www.example.com
+Connection: close
+Content-Length: 10
+Content-Type: html
+
+It's Eunbi
