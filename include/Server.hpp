@@ -31,22 +31,21 @@ private:
     std::string root;
     std::string index;
     unsigned long maxBodySize;
-    ServerManager& serverManager;
+    //ServerManager& serverManager;
     
   //  std::vector<Location> locationList;
     struct sockaddr_in* serverAddr;
 
 public:
-    Server(ServerManager& serverManager);
+    Server();
     ~Server();
     Server(int port,
 				std::string host,
 				std::vector<std::string> serverNames,
 				std::string root,
                 std::string index,
-				unsigned long maxBodySize,
+				unsigned long maxBodySize);
 			//	std::vector<std::unique_ptr<Location>> locations,
-				ServerManager& serverManager);
     //or alternative to member default constructor belove,
     //we could use below;
     //Server(Config& a);

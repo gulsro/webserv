@@ -1,8 +1,7 @@
 #include "Webserv.hpp"
 
-void tempConfigServer(std::vector<Server>& servers, ServerManager& serverManager)
+void tempConfigServer(ServerManager& serverManager)
 {
-    (void)servers;
     server_ myServer;
     myServer.port = 8080;
     myServer.serverFd = -1;
@@ -23,10 +22,10 @@ void tempConfigServer(std::vector<Server>& servers, ServerManager& serverManager
     // servers.push_back(Server(myServer.port,
     //             myServer.host, myServer.serverNames,
     //             myServer.root, myServer.index, myServer.maxBodySize, serverManager));
+    
     serverManager.addServer(std::make_unique<Server>(myServer.port,
                 myServer.host, myServer.serverNames,
-                myServer.root, myServer.index, myServer.maxBodySize, serverManager));
-
+                myServer.root, myServer.index, myServer.maxBodySize));
 
     server_ myServer1;
     myServer.port = 8081;
@@ -41,7 +40,13 @@ void tempConfigServer(std::vector<Server>& servers, ServerManager& serverManager
 //                 myServer1.host, myServer1.serverNames,
 //                 myServer1.root, myServer1.index, myServer1.maxBodySize, serverManager));
 
+// Server s2(myServer1.port,
+//                 myServer1.host, myServer1.serverNames,
+//                 myServer1.root, myServer1.index, myServer1.maxBodySize, serverManager);
+
+// serverManager.addServer(*s2);
+
 serverManager.addServer(std::make_unique<Server>(myServer1.port,
                 myServer1.host, myServer1.serverNames,
-                myServer1.root, myServer1.index, myServer1.maxBodySize, serverManager));
+                myServer1.root, myServer1.index, myServer1.maxBodySize));
 }

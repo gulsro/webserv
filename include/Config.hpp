@@ -45,6 +45,6 @@ struct server_ {
 
 //std::ostream& operator<<(std::ostream& out, const Config& config);
 
-void tempConfigServer(std::vector<Server>& servers, ServerManager& serverManager); //before getting parsed value i ll init server with this func
+void tempConfigServer(ServerManager& serverManager); //before getting parsed value i ll init server with this func
 
 #endif
