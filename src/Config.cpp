@@ -28,13 +28,13 @@ void tempConfigServer(ServerManager& serverManager)
                 myServer.root, myServer.index, myServer.maxBodySize));
 
     server_ myServer1;
-    myServer.port = 8081;
-    myServer.serverFd = -2;
-    myServer.host = "127.0.0.1";
-    myServer.serverNames = {"example1.com", "www.example1.com"};
-    myServer.root = "/var/www/html1";
-    myServer.index = "index.html";
-    myServer.maxBodySize = 1048576;
+    myServer1.port = 8081;
+    myServer1.serverFd = -2;
+    myServer1.host = "127.0.0.1";
+    myServer1.serverNames = {"example1.com", "www.example1.com"};
+    myServer1.root = "/var/www/html1";
+    myServer1.index = "index.html";
+    myServer1.maxBodySize = 1048576;
 
 //     servers.push_back(Server(myServer1.port,
 //                 myServer1.host, myServer1.serverNames,

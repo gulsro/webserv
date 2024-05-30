@@ -48,11 +48,15 @@ std::string Server::getRoot() const
 
 std::ostream& operator<<(std::ostream& out, const Server& server)
 {
-    out << server.getPort();
-    out << server.getServerFd();
-    out << server.getHost();
+    out << "port: " << server.getPort();
+    out << std::endl;
+    out << "serverFd: " << server.getServerFd();
+    out << std::endl;
+    out << "host: " << server.getHost();
+    out << std::endl;
     //out << server.serverNames;
-    out << server.getRoot();
+    out << "root: " << server.getRoot();
+    out << std::endl;
 
     return out;
 }
