@@ -11,7 +11,7 @@ FLAGS = -Wall -Werror -Wextra -std=c++17
 FILES =	main.cpp \
 		Server.cpp \
 		ServerManager.cpp \
-		#Config.cpp \
+		Config.cpp \
 		#Location.cpp \
 		#Socket.cpp
 

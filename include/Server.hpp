@@ -4,7 +4,7 @@
 
 #include "Webserv.hpp"
 
-class Location;
+//class Location;
 class ServerManager;
 
 // The server will use the Host header from incoming HTTP requests
@@ -31,12 +31,13 @@ private:
     std::string root;
     std::string index;
     unsigned long maxBodySize;
+    ServerManager& serverManager;
     
-    std::vector<Location> locationList;
+  //  std::vector<Location> locationList;
     struct sockaddr_in* serverAddr;
 
 public:
-    Server();
+    Server(ServerManager& serverManager);
     ~Server();
     Server(int port,
 				std::string host,
@@ -44,15 +45,19 @@ public:
 				std::string root,
                 std::string index,
 				unsigned long maxBodySize,
-				std::vector<std::unique_ptr<Location>> locations,
+			//	std::vector<std::unique_ptr<Location>> locations,
 				ServerManager& serverManager);
-    //Server(Server& a);
+    //or alternative to member default constructor belove,
+    //we could use below;
+    //Server(Config& a);
 
-    std::string getAddress() const;
     int getPort() const;
+    std::string getHost() const;
+    std::string getRoot() const;
+    std::string getIndex() const;
     std::vector<std::string> getServerNames() const;
-    int getServerFD() const;
-    std::vector<Location> getLocationList() const;
+    int getServerFd() const;
+    //std::vector<Location> getLocationList() const;
     bool matchesHostAndPort(const std::string &host, int port) const;
 
     void setPort(int port);
@@ -66,6 +71,6 @@ public:
 
 };
 
-std::ostream operator<<(std::ostream& out, const Server& server);
+std::ostream& operator<<(std::ostream& out, const Server& server);
 
 #endif

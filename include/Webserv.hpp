@@ -10,7 +10,7 @@
 #include "Server.hpp"
 #include "ServerManager.hpp"
 #include "Client.hpp"
-#include "Location.hpp"
+//#include "Location.hpp"
 
 
 #endif

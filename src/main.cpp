@@ -14,9 +14,9 @@ int main(int argc, char **argv)
     serverManager = std::make_unique<ServerManager>();
 
     // Use the unique_ptr
-    std::cout << "Value: " << *serverManager << std::endl;
+    std::cout << "ServerManager at main.cpp: " << *serverManager << std::endl;
 
-
+    serverManager->startServerManager(*serverManager); 
 
 
     // serverManager automatically cleans up the memory when it goes out of scope

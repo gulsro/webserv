@@ -1,13 +1,33 @@
 #include "Webserv.hpp"
 
-serverManager::serverManager()
+ServerManager::ServerManager()
 {
-    std::cout << "serverManager constructor is called" << std::endl;
+    std::cout << "ServerManager constructor is called" << std::endl;
 }
 
-serverManager::~serverManager()
+ServerManager::~ServerManager()
 {
-    std::cout << "serverManager destructor is called" << std::endl;
+    std::cout << "ServerManager destructor is called" << std::endl;
 }
 
-//serverManager::configServerManager()
+void ServerManager::addServer(std::unique_ptr<Server> server)
+{
+    this->servers.push_back(*server);
+}
+
+void ServerManager::startServerManager(ServerManager& serverManager)
+{
+    std::unique_ptr<std::vector<Server>>servers = std::make_unique<std::vector<Server>>();
+    tempConfigServer(*servers, serverManager);
+
+    for (auto &server: *servers)
+    {
+        std::cout << "server: " << server << std::endl;
+    }
+}
+
+std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
+{
+    (void)serverManager;
+    return out;
+}

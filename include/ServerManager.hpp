@@ -16,19 +16,18 @@ class ServerManager
 {
     private:
         std::vector<Server> servers;
-        std::vector<pollfd> pollfds;
+        //std::vector<pollfd> pollfds;
     public:
         ServerManager();
         ~ServerManager();
 
-        std::unique_ptr<ServerManager> configServerManager(); // init vServers in a loop
-
-        void addServer(const Server&);        
         const std::vector<Server*>&	getServers() const;
-	    Server*	getServer(std::string host) const; 
+	    std::unique_ptr<Server>	getServer(std::string host) const; 
         
+        void addServer(std::unique_ptr<Server> server);        
+        void startServerManager(ServerManager&); // init vServers in a loop
 };
     
-std::ostream operator<<(std::ostream& out, const ServerManager& serverManager);
+std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager);
 
 #endif
