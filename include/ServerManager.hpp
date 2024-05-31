@@ -19,7 +19,7 @@ class ServerManager
 {
     private:
         std::vector<std::unique_ptr<Server>> servers;
-        //std::vector<pollfd> pollfds;
+        //std::vector<struct pollfd> pollfds;
     public:
         ServerManager();
         ~ServerManager();
@@ -29,6 +29,7 @@ class ServerManager
         
         void addServer(std::unique_ptr<Server> server);        
         void startServerManager(ServerManager&); // init vServers in a loop
+        void startPoll();
 };
     
 std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager);

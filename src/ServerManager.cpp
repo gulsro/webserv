@@ -43,6 +43,11 @@ void ServerManager::startServerManager(ServerManager& serverManager)
     }
 }
 
+void ServerManager::startPoll()
+{
+    
+}
+
 std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
 {
     (void)serverManager;

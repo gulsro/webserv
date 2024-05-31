@@ -56,6 +56,7 @@ public:
     std::string getIndex() const;
     std::vector<std::string> getServerNames() const;
     int getServerFd() const;
+    struct sockaddr_in* getSocketAddr() const;
     //std::vector<Location> getLocationList() const;
     bool matchesHostAndPort(const std::string &host, int port) const;
 

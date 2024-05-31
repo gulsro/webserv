@@ -43,6 +43,10 @@ std::string Server::getRoot() const
     return this->root;
 }
 
+struct sockaddr_in* Server::getSocketAddr() const
+{
+    return const_cast<sockaddr_in*>(&serverAddr);
+}
 
 //std::vector<std::string> getServerNames() const;
 
@@ -64,7 +68,7 @@ std::ostream& operator<<(std::ostream& out, const Server& server)
 void Server::createSocket()
 {
     this->serverFd = socket(AF_INET, SOCK_STREAM, 0);
-    if (this->serverFd < 0)
+    if (this->serverFd == -1)
         throw std::runtime_error("Error: socket()");
 }
 
@@ -77,7 +81,8 @@ void Server::setSocketAddr()
 }
 
 void Server::setSocketOption()
-{   
+{
+
     int optval = 1;
     if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &optval,
                         sizeof(optval)) == -1)
@@ -90,5 +95,9 @@ void Server::bindSocket()
         throw std::runtime_error("Error: bind()");
 }
 
-// void Server::listenSocket();
+void Server::listenSocket()
+{
+    if (listen(serverFd, 10) == -1)
+        throw std::runtime_error("Error: listen()");
+}
 // int Server::acceptConnection();
