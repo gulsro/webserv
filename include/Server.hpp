@@ -34,7 +34,7 @@ private:
     //ServerManager& serverManager;
     
   //  std::vector<Location> locationList;
-    struct sockaddr_in* serverAddr;
+    struct sockaddr_in serverAddr;
 
 public:
     Server();
