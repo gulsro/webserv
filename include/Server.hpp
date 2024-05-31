@@ -67,6 +67,12 @@ public:
     void setHost(std::string host);
     void setMaxBodySize(unsigned long maxBodySize);
 
+    void createSocket();
+    void setSocketAddr();
+    void setSocketOption();
+    void bindSocket();
+    void listenSocket();
+    int acceptConnection();
 
 };
 

@@ -60,3 +60,32 @@ std::ostream& operator<<(std::ostream& out, const Server& server)
 
     return out;
 }
+
+void createSocket()
+{
+    if (this->serverFd = socket(AF_INET, SOCK_STREAM, 0) < 0)
+        throw std::runtime_error("Error: socket()");
+}
+
+void Server::setSocketAddr()
+{
+    std::memset(&serverAddr, 0, sizeof(serverAddr));
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(port);
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
+}
+
+void setSocketOption()
+{    optval = 1;
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &optval,
+                        sizeof(optval)) == -1)
+        throw std::runtime_error("Error: setsockopt()");
+}
+
+void bindSocket()
+{
+
+}
+
+void listenSocket();
+int acceptConnection();
