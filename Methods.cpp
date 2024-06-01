@@ -57,7 +57,6 @@ void	HttpResponse::createResponse_File(std::string filename)
 			ostream << fileContent.str();
 			file.close();
 			this->content = ostream.str();
-			createResponse(STATUS_SUCCESS);
 		}
 		else
 			createResponse(STATUS_NO_CONTENT);
