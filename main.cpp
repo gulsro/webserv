@@ -6,14 +6,18 @@
 
 int main (int argc, char **argv)
 {
-    HttpRequest Request;
+	HttpResponse	Response;
+	HttpRequest		Request;
     int fd;
 
     if (argc != 2)
         return 1;
     fd = open (argv[1], O_RDONLY);
     if (Request.readRequest(fd) == true)
-        std::cout << "Done" << std::endl;
+	{
+		Response.setRequest(&Request);
+		Response.checkMethod();
+	}
     close(fd);
     return 0;
 }

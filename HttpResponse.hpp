@@ -17,13 +17,13 @@ class HttpRequest;
 class HttpResponse
 {
 	protected:
+		HttpRequest			*Request;
 		std::string		version;
 		int				statusCode;
 		std::string		statusMessage;
 		std::string		body;
 		std::unordered_map<std::string, HttpHeader> headers;
 
-		HttpRequest			*Request;
 		std::string			index;
 		std::string			resource;
 		enum resourceType	resourceType;
@@ -46,10 +46,12 @@ class HttpResponse
 		const	std::string	&getStatusMessage() const { return statusMessage; }
 		const	std::string	&getBody() const { return body; }
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
+		HttpRequest			*getRequest() const { return Request; }
+		const	std::string	getResource() const { return resource + index; }
+		const	std::string	&getContent() { return content; }
 
-		HttpRequest					*getRequest() const { return Request; }
-		const	 std::string		getResource() const { return resource + index; }
-		const	std::string			&getContent() { return content; }
+		//Setter
+		void	setRequest(HttpRequest	*request) { Request = request; }
 
 		std::string	getStatusMessage();
 		void		checkMethod();

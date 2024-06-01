@@ -31,6 +31,7 @@ $(NAME)			: $(OBJ) $(OBJF)
 
 $(OBJ_DIR)%.o	: %.cpp $(HEADERS) | $(OBJF)
 					@mkdir -p $(@D)
+					@echo	"$(CYAN_B) Compiling... $(DEFAULT)"
 					@$(CC) $(CPPFLAGS) -c $< -o $@
 
 $(OBJF)			:

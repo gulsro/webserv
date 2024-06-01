@@ -9,7 +9,6 @@ class	HttpResponse;
 class	HttpRequest
 {
 	protected:
-		HttpResponse	*Response;
 		std::string	method;
 		std::string	uri;
 		std::string version;

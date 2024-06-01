@@ -6,6 +6,9 @@
 
 void	HttpResponse::createResponse(enum e_statusCode code)
 {
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] createResponse" << DEFAULT << std::endl;
+	#endif
 	this->statusCode = code;
 
 	if (this->statusCode == STATUS_MOVED
@@ -27,6 +30,9 @@ void	HttpResponse::createResponse(enum e_statusCode code)
 
 void	HttpResponse::createResponse_File(std::string filename)
 {
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] createResponse_File" << DEFAULT << std::endl;
+	#endif
 	std::ifstream	file(filename.c_str());
 
 	if (file.is_open())
@@ -58,6 +64,9 @@ void	HttpResponse::createResponse_File(std::string filename)
 
 const std::string	HttpRequest::getHeaderValue(const std::string &key) const
 {
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] getHeaderValue" << DEFAULT << std::endl;
+	#endif
 	auto	it = headers.find(key);
 	
 	if (it != headers.end())
@@ -68,6 +77,10 @@ const std::string	HttpRequest::getHeaderValue(const std::string &key) const
 
 std::string	HttpResponse::getMIMEtype() const
 {
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] getMIMEtype" << DEFAULT << std::endl;
+	#endif
+
 	std::string contentType = Request->getHeaderValue("Content-Type");
 
 	if (contentType.empty())
@@ -82,6 +95,9 @@ std::string	HttpResponse::getMIMEtype() const
 
 void	HttpResponse::checkURI()
 {
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] checkURI" << DEFAULT << std::endl;
+	#endif
 	std::string	uri = Request->getURI();
 	std::string	method = Request->getMethod();
 	
@@ -96,12 +112,16 @@ void	HttpResponse::checkURI()
 
 void	HttpResponse::methodGet()
 {
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] methodGet" << DEFAULT << std::endl;
+	#endif
+
 	if (completed == true)
 		return ;
 	// Resource is a file
 	if (this->resourceType == RESOURCE_FILE)
 	{
-		checkMethod();
+		// checkMethod();
 		createResponse_File(getResource());
 	}
 	else // Resource is a directory
@@ -124,6 +144,10 @@ void	HttpResponse::methodPost()
 
 void	HttpResponse::deleteFile()
 {
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] deleteFile" << DEFAULT << std::endl;
+	#endif
+
 	int	result;
 
 	result = remove(this->resource.c_str());
@@ -135,6 +159,10 @@ void	HttpResponse::deleteFile()
 
 void	HttpResponse::deleteDir()
 {
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] deleteDir" << DEFAULT << std::endl;
+	#endif
+
 	std::string command = "rm -rf " + this->resource;
 	int			result = std::system(command.c_str());
 	if (result == 0)
@@ -147,6 +175,9 @@ void	HttpResponse::deleteDir()
 
 void	HttpResponse::methodDelete()
 {
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] methodDelete" << DEFAULT << std::endl;
+	#endif
 	if (completed == true)
 		return ;
 	if (this->resourceType == RESOURCE_FILE)	
@@ -162,7 +193,9 @@ void	HttpResponse::methodDelete()
 // Iterates allowed methods container and execute method. 
 void	HttpResponse::checkMethod()
 {
-	
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] checkMethod" << DEFAULT << std::endl;
+	#endif
 	std::string	method = Request->getMethod();
 
 	// if (/*comparing location block method and requested method*/)
