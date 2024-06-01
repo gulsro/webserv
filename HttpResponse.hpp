@@ -6,9 +6,9 @@
 #include "HttpRequest.hpp"
 
 
-enum	resourceType
+enum	e_resourceType
 {
-	RESOURCE_FILE,
+	RESOURCE_FILE = 0,
 	RESOURCE_DIR
 };
 
@@ -26,7 +26,7 @@ class HttpResponse
 
 		std::string			index;
 		std::string			resource;
-		enum resourceType	resourceType;
+		enum e_resourceType	resourceType;
 		std::string			content;
 		std::string			contentType;
 		std::string			location;
@@ -52,6 +52,7 @@ class HttpResponse
 
 		//Setter
 		void	setRequest(HttpRequest	*request) { Request = request; }
+		void	setResourceType(enum e_resourceType type) { resourceType = type; }
 
 		std::string	getStatusMessage();
 		void		checkMethod();
@@ -60,6 +61,7 @@ class HttpResponse
 		void		createResponse_File(std::string filename);
 		std::string	getMIMEtype() const;
 		void		checkURI();
+		void		checkResourceType();
 		void		methodGet();
 		void		methodPost();
 		void		methodDelete();

@@ -17,6 +17,7 @@ int main (int argc, char **argv)
 	{
 		Response.setRequest(&Request);
 		Response.checkMethod();
+		std::cout << Response.getContent() << std::endl;
 	}
     close(fd);
     return 0;

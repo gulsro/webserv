@@ -31,7 +31,7 @@ bool	HttpRequest::readRequest(int fd)
         if (byteRead == 0)
 		{
 			//remove poll fd;
-			std::cerr << "Disconnection with " << fd << std::endl;
+			// std::cerr << "Disconnection with " << fd << std::endl;
 			break;
 		}
 		else if (byteRead == -1)

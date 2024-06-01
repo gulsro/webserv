@@ -3,6 +3,7 @@
 #include "HttpResponse.hpp"
 
 #include <fstream> // ifstream
+#include <sys/stat.h> // stat()
 
 void	HttpResponse::createResponse(enum e_statusCode code)
 {
@@ -93,6 +94,31 @@ std::string	HttpResponse::getMIMEtype() const
 		return contentType;
 }
 
+void	HttpResponse::checkResourceType()
+{
+	#ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] checkResourceType" << DEFAULT << std::endl;
+	#endif
+	
+	std::string	path;
+	struct stat buf;
+	
+	if (this->completed == true)
+		return	;
+	// this->resource = Request->getRoot() + Request->getURI();
+	this->resource = "." + Request->getURI();
+	path = this->resource;
+	if (stat(path.c_str(), &buf) == 0)
+	{
+		if (S_ISDIR(buf.st_mode))
+			this->setResourceType(RESOURCE_DIR);
+		else if (S_ISREG(buf.st_mode))
+			this->setResourceType(RESOURCE_FILE);
+	}
+	else // stat() error
+		createResponse(STATUS_NOT_FOUND);
+}
+
 void	HttpResponse::checkURI()
 {
     #ifdef FUNC
@@ -116,6 +142,7 @@ void	HttpResponse::methodGet()
 	    std::cout << YELLOW << "[FUNCTION] methodGet" << DEFAULT << std::endl;
 	#endif
 
+	this->checkResourceType();
 	if (completed == true)
 		return ;
 	// Resource is a file
