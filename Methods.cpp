@@ -12,14 +12,17 @@ void	HttpResponse::createResponse(enum e_statusCode code)
 	#endif
 	this->statusCode = code;
 
-	if (this->statusCode == STATUS_MOVED
+	if (this->statusCode == STATUS_SUCCESS
+		|| this->statusCode == STATUS_MOVED
 		|| this->statusCode == STATUS_NO_CONTENT
 		|| this->statusCode == STATUS_CREATED)
 	{
 		std::ostringstream	ostream;
 		ostream << "HTTP/1.1 " << this->statusCode << " " << this->getStatusMessage() << "\r\n";
 		if (this->statusCode == STATUS_MOVED)
-			ostream << "Locaion: " << this->resource + "/" << "\r\n";
+		{
+			ostream << "Location: " << this->resource + "/" << "\r\n";
+		}
 		ostream << "Content-Length: 0\r\n";
  		ostream << "\r\n";
 		this->content = ostream.str(); // a string a copy of ostream
@@ -142,7 +145,6 @@ void	HttpResponse::methodGet()
 	    std::cout << YELLOW << "[FUNCTION] methodGet" << DEFAULT << std::endl;
 	#endif
 
-	this->checkResourceType();
 	if (completed == true)
 		return ;
 	// Resource is a file
@@ -179,7 +181,7 @@ void	HttpResponse::deleteFile()
 
 	result = remove(this->resource.c_str());
 	if (result == 0)
-		createResponse(STATUS_NO_CONTENT);
+		createResponse(STATUS_SUCCESS);
 	else
 		createResponse(STATUS_INTERNAL_ERR);
 }
@@ -194,7 +196,7 @@ void	HttpResponse::deleteDir()
 	int			result = std::system(command.c_str());
 	if (result == 0)
 	{ // Directory deleted successfully.
-		createResponse(STATUS_NO_CONTENT);
+		createResponse(STATUS_SUCCESS);
 	}
 	else
 		createResponse(STATUS_INTERNAL_ERR);
@@ -224,6 +226,7 @@ void	HttpResponse::checkMethod()
 	    std::cout << YELLOW << "[FUNCTION] checkMethod" << DEFAULT << std::endl;
 	#endif
 	std::string	method = Request->getMethod();
+	this->checkResourceType();
 
 	// if (/*comparing location block method and requested method*/)
 	// {
