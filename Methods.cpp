@@ -2,68 +2,10 @@
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
 
-#include <fstream> // ifstream
+
 #include <sys/stat.h> // stat()
+#include <filesystem> // filesystem
 
-void	HttpResponse::createResponse(enum e_statusCode code)
-{
-    #ifdef FUNC
-	    std::cout << YELLOW << "[FUNCTION] createResponse" << DEFAULT << std::endl;
-	#endif
-	this->statusCode = code;
-
-	if (this->statusCode == STATUS_SUCCESS
-		|| this->statusCode == STATUS_MOVED
-		|| this->statusCode == STATUS_NO_CONTENT
-		|| this->statusCode == STATUS_CREATED)
-	{
-		std::ostringstream	ostream;
-		ostream << "HTTP/1.1 " << this->statusCode << " " << this->getStatusMessage() << "\r\n";
-		if (this->statusCode == STATUS_MOVED)
-		{
-			ostream << "Location: " << this->resource + "/" << "\r\n";
-		}
-		ostream << "Content-Length: 0\r\n";
- 		ostream << "\r\n";
-		this->content = ostream.str(); // a string a copy of ostream
-	}
-	if (this->statusCode >= 400)
-		std::cerr << this->statusCode << " " << this->getStatusMessage() << std::endl;  
-	this->completed = true;
-}
-
-void	HttpResponse::createResponse_File(std::string filename)
-{
-    #ifdef FUNC
-	    std::cout << YELLOW << "[FUNCTION] createResponse_File" << DEFAULT << std::endl;
-	#endif
-	std::ifstream	file(filename.c_str());
-
-	if (file.is_open())
-	{
-		file.seekg(0, std::ios::end); // Move to the end of the file.
-		if (file.tellg() > 0) // file is not empty.
-		{
-			file.seekg(0, std::ios::beg);
-			std::ostringstream	ostream;
-			std::ostringstream	fileContent;
-			fileContent << file.rdbuf();
-
-			ostream << "HTTP/1.1 200 OK\r\n";
-			ostream << "Content-Length: " << fileContent.str().length() << "\r\n";
-			ostream << "Content-Type: " << getMIMEtype() << "\r\n";
-			ostream << "\r\n";
-			// print body part
-			ostream << fileContent.str();
-			file.close();
-			this->content = ostream.str();
-		}
-		else
-			createResponse(STATUS_NO_CONTENT);
-	}
-	else
-		createResponse(STATUS_INTERNAL_ERR);
-}
 
 const std::string	HttpRequest::getHeaderValue(const std::string &key) const
 {
@@ -163,11 +105,20 @@ void	HttpResponse::methodGet()
 			// 	checkAutoindex();
 		}
 	}
-
 }
 
 void	HttpResponse::methodPost()
 {
+	if (this->completed == true)
+		return ;
+	
+	std::string	location = Request->getLocation();
+    bool		dirExists = std::filesystem::exists(location);
+
+	if (dirExists == false)
+        createResponse(STATUS_NOT_FOUND);
+	else
+		postFile();
 }
 
 void	HttpResponse::deleteFile()
@@ -232,7 +183,11 @@ void	HttpResponse::checkMethod()
 		if (method == "GET")
 			methodGet();
 		else if (method == "POST")
+		{
+			if (Request->contentLength == 0)
+				methodGet();
 			methodPost();
+		}
 		else
 			methodDelete();
 	// }

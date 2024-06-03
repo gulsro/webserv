@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include "utils.hpp"
 #include <cstdlib> // remove(), std::system()
+#include <fstream> // ifstream
 #include "HttpRequest.hpp"
 
 
@@ -17,7 +18,7 @@ class HttpRequest;
 class HttpResponse
 {
 	protected:
-		HttpRequest			*Request;
+		HttpRequest		*Request;
 		std::string		version;
 		int				statusCode;
 		std::string		statusMessage;
@@ -67,4 +68,5 @@ class HttpResponse
 		void		methodDelete();
 		void		deleteFile();
 		void		deleteDir();
+        void        postFile();
 };
