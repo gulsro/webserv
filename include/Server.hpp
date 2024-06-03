@@ -9,7 +9,6 @@ class ServerManager;
 
 // The server will use the Host header from incoming HTTP requests
 // to determine which virtual host configuration to apply.
-
 // When trying to determine which server block to send a request to, Nginx will first try to decide based on 
 // the specificity of the listen directive using the following rules:
 //     -Nginx translates all “incomplete” listen directives by substituting missing values with their default values
@@ -61,7 +60,7 @@ public:
     bool matchesHostAndPort(const std::string &host, int port) const;
 
     void setPort(int port);
-    void setServerFd(int fd);
+    //void setServerFd(int fd);
     void setServerName(std::string serverName);
     void setRoot(std::string root);
     void setIndex(std::string index);

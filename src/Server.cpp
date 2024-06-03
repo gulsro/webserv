@@ -23,6 +23,12 @@ Server::~Server()
     std::cout << "Server destructor is called" << std::endl;
 }
 
+//Not necessary because createSock() assigns value for serverFd
+// void Server::setServerFd(int fd)
+// {
+//     this->serverFd = fd;
+// }
+
 int Server::getPort() const
 {
     return this->port;
@@ -76,7 +82,7 @@ void Server::setSocketAddr()
 {
     std::memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(port);
+    serverAddr.sin_port = htons(this->port);
     serverAddr.sin_addr.s_addr = INADDR_ANY;
 }
 
@@ -84,20 +90,21 @@ void Server::setSocketOption()
 {
 
     int optval = 1;
-    if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &optval,
+    if (setsockopt(this->serverFd, SOL_SOCKET, SO_REUSEADDR, &optval,
                         sizeof(optval)) == -1)
         throw std::runtime_error("Error: setsockopt()");
 }
 
 void Server::bindSocket()
 {
-    if (bind(serverFd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
+    if (bind(this->serverFd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
         throw std::runtime_error("Error: bind()");
 }
 
 void Server::listenSocket()
 {
-    if (listen(serverFd, 10) == -1)
+    if (listen(this->serverFd, 10) == -1)
         throw std::runtime_error("Error: listen()");
 }
+
 // int Server::acceptConnection();

@@ -30,7 +30,7 @@ void tempConfigServer(ServerManager& serverManager)
     server_ myServer1;
     myServer1.port = 8081;
     myServer1.serverFd = -2;
-    myServer1.host = "127.0.0.1";
+    myServer1.host = "127.0.0.2";
     myServer1.serverNames = {"example1.com", "www.example1.com"};
     myServer1.root = "/var/www/html1";
     myServer1.index = "index.html";

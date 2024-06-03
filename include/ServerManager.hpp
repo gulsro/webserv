@@ -19,7 +19,11 @@ class ServerManager
 {
     private:
         std::vector<std::unique_ptr<Server>> servers;
-        //std::vector<struct pollfd> pollfds;
+
+        // an array of fd's
+        // first elem of the pollpds is serverfd, the rest will be client's
+        std::vector<struct pollfd> pollfds;
+    
     public:
         ServerManager();
         ~ServerManager();
@@ -29,6 +33,8 @@ class ServerManager
         
         void addServer(std::unique_ptr<Server> server);        
         void startServerManager(ServerManager&); // init vServers in a loop
+        void startSockets();
+        void assignPollFdForServer(int fd, int events);
         void startPoll();
 };
     
