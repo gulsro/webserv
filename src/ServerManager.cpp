@@ -46,10 +46,11 @@ void ServerManager::startServerManager(ServerManager& serverManager)
     auto &servers = serverManager.getServers();
     
     tempConfigServer(serverManager);
-
+    startSockets();
     for (const auto &server: servers)
     {
         std::cout << "server: " << *server << std::endl;
+        std::cout << "server: " << server->getServerFd() << std::endl;
     }
 }
 
