@@ -9,11 +9,11 @@ class Server;
 class Config
 {
 private:
-    std::string configFile;
-    std::string content;
+    std::string configFile; // config file name
+    std::string content; // content of config file in one string
     int nbServer;
-    std::vector<Server> serverList;
-    std::vector<std::string> serverCont;
+    std::vector<Server> serverList; // list for Server class
+    std::vector<std::string> serverCont; //splited contents inside each server {}
 
 
 public:
@@ -27,8 +27,12 @@ public:
     void    checkConfig(std::ifstream& file);
     bool    isBlank(std::ifstream& file);
     void    readConfig(std::ifstream& file);
-    void    cntServer();
     void    splitServer();
+
+    void    parseServer();
 };
+
+std::size_t findScopeBegin(std::string& content, size_t found);
+std::size_t findScopeEnd(std::string& content, size_t begin);
 
 #endif

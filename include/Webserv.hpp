@@ -12,6 +12,8 @@
 #include <iterator>
 #include <cctype>
 #include <memory>
+#include <functional>
+#include <poll.h>
 
 #include "Config.hpp"
 #include "Server.hpp"
