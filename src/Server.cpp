@@ -92,19 +92,28 @@ void Server::setSocketOption()
     int optval = 1;
     if (setsockopt(this->serverFd, SOL_SOCKET, SO_REUSEADDR, &optval,
                         sizeof(optval)) == -1)
+    {
+        close(this->serverFd);
         throw std::runtime_error("Error: setsockopt()");
+    }
 }
 
 void Server::bindSocket()
 {
     if (bind(this->serverFd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
+    {
+        close(this->serverFd);
         throw std::runtime_error("Error: bind()");
+    }
 }
 
 void Server::listenSocket()
 {
     if (listen(this->serverFd, 10) == -1)
+    {
+        close(this->serverFd);
         throw std::runtime_error("Error: listen()");
+    }
 }
 
 // int Server::acceptConnection();

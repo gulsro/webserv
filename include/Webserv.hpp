@@ -4,8 +4,9 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <map>
 #include <poll.h> // poll() and struct
-#include <memory> // unique_ptr c++11, make_unique c++14
+#include <memory> // std::unique_ptr c++11, std::make_unique c++14
 #include "Config.hpp"
 #include "Socket.hpp"
 #include "Server.hpp"

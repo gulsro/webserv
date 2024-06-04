@@ -32,6 +32,7 @@ private:
     unsigned long maxBodySize;
     //ServerManager& serverManager;
     
+   // struct pollfd pollfd;
   //  std::vector<Location> locationList;
     struct sockaddr_in serverAddr;
 

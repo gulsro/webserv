@@ -19,7 +19,8 @@ class ServerManager
 {
     private:
         std::vector<std::unique_ptr<Server>> servers;
-
+        //std::map<int, std::unique_ptr<Server>> mapServerFd;
+        std::map<int, Server&> mapServerFd;
         // an array of fd's
         // first elem of the pollpds is serverfd, the rest will be client's
         std::vector<struct pollfd> pollfds;
