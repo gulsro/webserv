@@ -11,7 +11,7 @@ int main(int ac, char **av)
             Config config;
             if (ac == 2)
                 config.setConfigFile(av[1]);
-            config.checkConfig();
+            config.parseConfig();
             
         }
         catch (const std::exception& e){

@@ -13,6 +13,8 @@ private:
     std::string content;
     int nbServer;
     std::vector<Server> serverList;
+    std::vector<std::string> serverCont;
+
 
 public:
     Config();
@@ -21,9 +23,12 @@ public:
     Config& operator=(const Config a);
 
     void    setConfigFile(std::string file);
-    void    checkConfig();
-    bool    isBlank(std::fstream& file);
-    void    readConfig(std::fstream& file);
+    void    parseConfig();
+    void    checkConfig(std::ifstream& file);
+    bool    isBlank(std::ifstream& file);
+    void    readConfig(std::ifstream& file);
+    void    cntServer();
+    void    splitServer();
 };
 
 #endif
