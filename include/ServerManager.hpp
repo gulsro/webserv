@@ -37,6 +37,8 @@ class ServerManager
         void startSockets();
         void assignPollFdForServer(int fd, int events);
         void startPoll();
+
+        void printServers() const;
 };
     
 std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager);

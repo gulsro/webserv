@@ -10,10 +10,19 @@ ServerManager::~ServerManager()
     std::cout << "ServerManager destructor is called" << std::endl;
 }
 
+void ServerManager::printServers() const
+{
+    std::cout << "*****************************" << std::endl;
+    for (const auto &server: servers)
+        std::cout << *server << std::endl;
+    std::cout << "*****************************" << std::endl;
+}
+
 const std::vector<std::unique_ptr<Server>>& ServerManager::getServers() const
 {
     return this->servers;
 }
+
 
 // std::unique_ptr<Server>	ServerManager::getServer(std::string host) const
 // {
@@ -50,7 +59,7 @@ void ServerManager::startServerManager(ServerManager& serverManager)
     for (const auto &server: servers)
     {
         std::cout << "SERVER---- " << *server << std::endl;
-        std::cout << "serverFd: " << server->getServerFd() << std::endl;
+        //std::cout << "serverFd: " << server->getServerFd() << std::endl;
     }
 }
 
@@ -71,11 +80,10 @@ void ServerManager::startSockets()
         //get() returns a pointer to the managed object (server);   
         mapServerFd.emplace(server->getServerFd(), server.get());
 
-        for (const auto &elem: mapServerFd)
-        {
-            std::cout << "First FD elem of map:" << elem.first << std::endl;
-        }
     }
+    std::cout << "SIZE OF MAP IS: " << mapServerFd.size() << std::endl;
+    std::cout << "SIZE OF POLLFD VECTOR IS: " << pollfds.size() << std::endl;
+    printServers();
 }
 
 // struct pollfd {
