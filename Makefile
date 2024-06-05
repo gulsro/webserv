@@ -2,11 +2,11 @@ NAME		=	Http
 CC			=	c++
 
 ifdef DEBUG
-CPPFLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g
+CPPFLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g -std=c++17
 else ifdef STRUCTOR
-CPPFLAGS	=	-Wall -Wextra -Werror -g -D DEBUG
+CPPFLAGS	=	-Wall -Wextra -Werror -g -D DEBUG -std=c++17
 else ifdef FUNC
-CPPFLAGS	=	-Wall -Wextra -Werror -g -D FUNC
+CPPFLAGS	=	-Wall -Wextra -Werror -g -D FUNC -std=c++17
 else
 CPPFLAGS	=	-Wall -Wextra -Werror
 endif

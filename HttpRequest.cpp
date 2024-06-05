@@ -134,14 +134,6 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 // 	}
 // }
 
-// void    HttpRequest::handlePostContents()
-// {
-// 	findFilename();
-// 	if (hasBoundary() == true)
-// 	{
-// 		// parse contents depending on boundary
-// 	}
-// }
 
 bool	isInvalidChar(const	char c)
 {

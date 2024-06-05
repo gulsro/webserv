@@ -13,11 +13,16 @@ int main (int argc, char **argv)
     if (argc != 2)
         return 1;
     fd = open (argv[1], O_RDONLY);
-    if (Request.readRequest(fd) == true)
+	try{
+		if (Request.readRequest(fd) == true)
+		{
+			Response.setRequest(&Request);
+			Response.checkMethod();
+			std::cout << Response.getContent() << std::endl;
+		}
+	} catch (const std::exception& e)
 	{
-		Response.setRequest(&Request);
-		Response.checkMethod();
-		std::cout << Response.getContent() << std::endl;
+		std::cerr << e.what() << std::endl;
 	}
     close(fd);
     return 0;

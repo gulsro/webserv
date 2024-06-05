@@ -5,6 +5,7 @@
 #include <cstdlib> // remove(), std::system()
 #include <fstream> // ifstream
 #include "HttpRequest.hpp"
+#include <exception>
 
 
 enum	e_resourceType
@@ -41,6 +42,16 @@ class HttpResponse
 		HttpResponse &operator=(const HttpResponse &other);
 		virtual ~HttpResponse();
 
+		class ErrorCodeException : public std::exception
+		{
+			private:
+				enum e_statusCode	errorCode;
+			public:
+				ErrorCodeException(enum e_statusCode code) : errorCode(code) {}
+				virtual const char *what() const throw();
+		};
+		
+
 		//Getter
 		const	std::string	&getVersion() const { return version; }
 		const	int			&getStatusCode()	const { return statusCode; }
@@ -55,7 +66,6 @@ class HttpResponse
 		void	setRequest(HttpRequest	*request) { Request = request; }
 		void	setResourceType(enum e_resourceType type) { resourceType = type; }
 
-		std::string	getStatusMessage();
 		void		checkMethod();
 		void		createResponse(enum e_statusCode code);
 		// friend void		HttpRequest::createResponseHelper(enum e_statusCode code) { Response->createResponse(code);} 
