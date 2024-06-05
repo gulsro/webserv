@@ -100,6 +100,20 @@ void ServerManager::assignPollFdForServer(int fd, int events)
     pollfds.push_back(serverPollFd);
 }
 
+// void ServerManager::acceptClient(int serverFd, Server& server)
+// {
+//     struct sockaddr_in cliAddr;
+
+//     std::memset(&cliAddr, 0, sizeof(cliAddr));
+//     cliAddr.sin_family = AF_INET;
+//     cliAddr.sin_port = htons(server->getPort());
+//     cliAddr.sin_addr.s_addr = INADDR_ANY;
+//     int clientFd = accept(serverFd, (struct sockaddr *)&cliAddr, sizeof(cliAddr));
+//     if (clientFd == -1)
+//         throw std::runtime_error("Error: accept()");
+//     //assignPollFdForServer(clientFd, )
+// }
+
 void ServerManager::startPoll()
 {
     //Copying original pollfds for safety.
@@ -134,7 +148,8 @@ void ServerManager::startPoll()
                     //selectedServer = mapServerFd[fd];
                     //acceptClient(int serverFd, Server& server);
                     std::cout << "LALALO" << std::endl;
-                    std::cout << mapServerFd[fd]->getServerFd() << std::endl;
+                    //std::cout << mapServerFd[fd]->getServerFd() << std::endl;
+                    std::cout << *(mapServerFd[fd]) << std::endl;
                     // check to which server belongs fd. creating a map
                     //  map <int fd, std::vector servers>
                     // when found, add new client, get request.

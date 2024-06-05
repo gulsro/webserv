@@ -73,7 +73,6 @@ public:
     void setSocketOption();
     void bindSocket();
     void listenSocket();
-    int acceptConnection();
 
 };
 

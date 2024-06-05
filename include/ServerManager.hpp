@@ -38,6 +38,7 @@ class ServerManager
         void assignPollFdForServer(int fd, int events);
         void startPoll();
 
+        void acceptClient(int serverFd, Server& server);
         void printServers() const;
 };
     
