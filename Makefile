@@ -11,12 +11,12 @@ else
 CPPFLAGS	=	-Wall -Wextra -Werror
 endif
 
-SRC_FILE	=	HttpRequest.cpp HttpResponse.cpp HttpUtils.cpp httpParsing.cpp Methods.cpp main.cpp
+SRC_FILE	=	HttpRequest.cpp HttpResponse.cpp HttpUtils.cpp httpParsing.cpp Methods.cpp main.cpp errorResponse.cpp
 
 OBJ_DIR		=	obj/
 OBJ			=	$(addprefix $(OBJ_DIR), $(SRC_FILE:.cpp=.o))
 
-HEADERS		=	HttpRequest.hpp HttpResponse.hpp utils.hpp Location.hpp 
+HEADERS		=	HttpRequest.hpp HttpResponse.hpp utils.hpp
 
 CYAN_B		=	\033[1;96m
 CYAN		=	\033[0;96m

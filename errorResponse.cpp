@@ -1,7 +1,7 @@
 #include "utils.hpp"
 #include "HttpResponse.hpp"
 
-std::string	createErrorResponse(enum e_statusCode code)
+const char*	createErrorResponse(int code)
 {
     #ifdef FUNC
 	    std::cout << YELLOW << "[FUNCTION] createErrorResponse" << DEFAULT << std::endl;
@@ -12,10 +12,12 @@ std::string	createErrorResponse(enum e_statusCode code)
 		ostream << "Content-Length: 0\r\n";
  		ostream << "\r\n";
 
-		return ostream.str();
+        std::string str = ostream.str();
+
+		return str.c_str();
 }
 
 const char*	HttpResponse::ErrorCodeException::what() const throw()
 {
-	return createErrorResponse(statusCode); 
+	return createErrorResponse(errorCode); 
 }
