@@ -17,7 +17,7 @@ int main(int argc, char **argv)
     std::cout << "ServerManager at main.cpp: " << *serverManager << std::endl;
 
     serverManager->startServerManager(*serverManager); 
-
+    serverManager->startPoll();
 
     // serverManager automatically cleans up the memory when it goes out of scope
 

@@ -68,9 +68,8 @@ void ServerManager::startSockets()
         server->listenSocket();
         assignPollFdForServer(server->getServerFd(), POLLIN);
        
-       
-       
-        mapServerFd.emplace(server->getServerFd(), *server);
+        //get() returns a pointer to the managed object (server);   
+        mapServerFd.emplace(server->getServerFd(), server.get());
 
         for (const auto &elem: mapServerFd)
         {
@@ -96,6 +95,7 @@ void ServerManager::assignPollFdForServer(int fd, int events)
 void ServerManager::startPoll()
 {
     //Copying original pollfds for safety.
+    //std::unique_ptr<Server> selectedServer;
     std::vector<struct pollfd> pollfds = this->pollfds;
 
     //The poll() function expects its first argument to be
@@ -120,11 +120,13 @@ void ServerManager::startPoll()
                 //The bitwise AND operation allows you to check if a specific event
                 //bit (POLLIN) is present in the revents field.
                 //In networking, bits are crucial for representing data packets efficiently and reliably.
-                if (fd && (revents & POLLIN))
+                if (revents & POLLIN)
                 {
                     // accept new connection
+                    //selectedServer = mapServerFd[fd];
                     //acceptClient(int serverFd, Server& server);
                     std::cout << "LALALO" << std::endl;
+                    std::cout << mapServerFd[fd]->getServerFd() << std::endl;
                     // check to which server belongs fd. creating a map
                     //  map <int fd, std::vector servers>
                     // when found, add new client, get request.
