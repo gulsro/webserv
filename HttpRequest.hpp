@@ -8,13 +8,6 @@
 class	HttpResponse;
 class	Location;
 
-typedef	struct	s_post
-{
-	std::string	boundaryBegin;
-	std::string	boundaryEnd;
-	std::string	filename;
-} t_post;
-
 class	HttpRequest
 {
 	protected:
@@ -28,10 +21,7 @@ class	HttpRequest
 		int			requestedPort;
         // Location	*Location;
 		std::string	location;
-		s_post		postStruct;
 	
-		std::vector<std::pair<std::string, std::string>>	postContent;
-
 	public:
 		HttpRequest();
 		HttpRequest(const HttpRequest &response);

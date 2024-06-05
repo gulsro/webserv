@@ -76,6 +76,7 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 			std::cout << PURPLE << it->second.key << " : " << it->second.value << DEFAULT << std::endl;
 			++it; 
 		}
+		std::cout << GREEN << "requestedPort : " << this->requestedPort << std::endl;
 	#endif
 	// parse body
 	if (this->headers.count("Content-Length"))
