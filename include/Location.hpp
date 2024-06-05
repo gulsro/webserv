@@ -23,7 +23,7 @@ private:
 public:
     Location();
     ~Location();
-    Location(Location& a);
+    Location(const Location& a);
     Location& operator=(const Location a);
 
 

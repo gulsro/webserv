@@ -7,18 +7,22 @@ Config::Config(){
 
 Config::~Config(){}
 
-void    Config::setConfigFile(std::string file)
-{
+void    Config::setConfigFile(std::string file){
     this->configFile = file;
 }
 
-//read from file and remove leading whitespaces, put it in one string <content>
+//read from file and remove leading whitespaces and comments, put it in one string <content>
 void Config::readConfig(std::ifstream& file){
     std::string line;
     std::stringstream buf;
 
-    while (std::getline(file >> std::ws, line))
+    while (std::getline(file >> std::ws, line)){
+        size_t comment = line.find('#');
+        if (comment != std::string::npos){
+            line = line.substr(0, comment - 1);
+        }
         buf << line << std::endl;
+    }
     this->content = buf.str();
     file.close();
     // std::cout << MAG << content << RES << std::endl;
@@ -93,25 +97,32 @@ void Config::splitServer(){
     std::cout << "# of server is: " << nbServer << std:: endl;
 }
 
+class Server;
+//unique pointer is leaking...
 void Config::parseServer(){
-    Server s;
     std::size_t key;
-    std::map<std::string, std::function<void(std::string&, int)>> mp;
-    mp["listen"] = [&s](std::string cont, int key){s.setPort(cont, key);};
-    mp["server_name"] = [&s](std::string cont, int key){s.setServerNames(cont, key);};
-    mp["root"] = [&s](std::string cont, int key){s.setRoot(cont, key);};
-    mp["index"] = [&s](std::string cont, int key){s.setIndex(cont, key);};
-    mp["maxBodysize"] = [&s](std::string cont, int key){s.setMaxBodySize(cont, key);};
+    std::string line;
+    std::map<std::string, std::function<void(std::string&, int, Server)>> mp;
+    mp["listen"] = [](std::string cont, int key, Server s){s.setPort(cont, key);};
+    mp["root"] = [](std::string cont, int key, Server s){s.setRoot(cont, key);};
+    mp["index"] = [](std::string cont, int key, Server s){s.setIndex(cont, key);};
+    mp["client_size"] = [](std::string cont, int key, Server s){s.setMaxBodySize(cont, key);};
 
-    std::string parameter[5] = {"listen", "server_name", "root", "index", "maxBodysize"};
+    std::string parameter[4] = {"listen", "root", "index", "client_size"};
     for (std::string cont : serverCont){
-        for (int i = 0; i < 5; i++){
-            std::cout << "key is " << parameter[i] << std::endl;
-            key = cont.find(parameter[i]);
-            if(key != std::string::npos)
-                mp[parameter[i]](cont, key + parameter[i].size());
+        std::unique_ptr<Server> serverPtr = std::make_unique<Server>();
+        std::stringstream iss(cont);
+        while (std::getline(iss, line, '\n')){
+            for (int i = 0; i < 4; i++){
+                key = line.find(parameter[i]);
+                if(key != std::string::npos){
+                    // std::cout << std::endl << line <<  YEL << " - parameter is " << parameter[i] << RES << std::endl;
+                    mp[parameter[i]](line, key + parameter[i].size(), *(std::move(serverPtr)));
+                }
+            }
         }
-        // this->serverList.push_back(s);
+        std::cout << RED << (*serverPtr).getHost() <<RES <<std::endl;
+        this->serverList.push_back(*(std::move(serverPtr)));
     }
 }
 
