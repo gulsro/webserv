@@ -117,8 +117,8 @@ void	HttpResponse::methodPost()
 
 	if (dirExists == false)
         createResponse(STATUS_NOT_FOUND);
-	else
-		postFile();
+	// else
+	// 	postFile();
 }
 
 void	HttpResponse::deleteFile()

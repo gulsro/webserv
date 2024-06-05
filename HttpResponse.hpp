@@ -68,5 +68,5 @@ class HttpResponse
 		void		methodDelete();
 		void		deleteFile();
 		void		deleteDir();
-        void        postFile();
+        // void        postFile();
 };

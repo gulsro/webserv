@@ -8,8 +8,8 @@ HttpRequest::HttpRequest()
 		std::cout << GREY << "HttpRequest : Default constructor called" << DEFAULT << std::endl; 
 	#endif
 
-    this->location = Location->getRoot() + Location->getPath();
-    this->contentLength = 0;
+    // this->location = Location->getRoot() + Location->getPath();
+    // this->contentLength = 0;
 }
 
 HttpRequest::HttpRequest(const HttpRequest &other)
@@ -66,6 +66,7 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		if (!parseHeader(lines[i]))
 			return false;
 	}
+	setRequestedport();
 	#ifdef FUNC
 		auto it = headers.begin();
 		std::cout << PURPLE << "________HEADERS________" << std::endl;
@@ -88,8 +89,8 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 			return false;
 		}
 		this->body = rawRequest.substr(bodyStart, this->contentLength);
-        if (this->headers.find("Content-Type") != t his->headers.end() && this->headers.at("Content-Type").value == "multipart/form-data")
-            handlePostContents();
+        // if (this->headers.find("Content-Type") != this->headers.end() && this->headers.at("Content-Type").value == "multipart/form-data")
+        //     handlePostContents();
 		#ifdef FUNC
 			std::cout << YELLOW << "[FUNCTION] parsing body" << DEFAULT << std::endl;
 			std::cout << PURPLE << "contentLength	: " << contentLength << DEFAULT << std::endl;
@@ -99,47 +100,74 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 	return true;
 }
 
-bool	HttpRequest::hasBoundary()
+// bool	HttpRequest::hasBoundary()
+// {
+// 	std::string	line;
+// 	std::istringstream	iss(this->body);
+
+// 	while (std::getline(iss, line, '\n'))
+// 	{
+// 		size_t	pos = line.find("boundary=");
+// 		if (pos != std::string::npos)
+// 		{
+// 			std::string boundary = line.substr(pos + 9);
+// 			postStruct.boundaryBegin = "--" + boundary;
+// 			postStruct.boundaryEnd = "--" + boundary + "--";
+
+// 			return true;
+// 		}
+// 	}
+// 	return false;
+// }
+
+// void	HttpRequest::findFilename()
+// {
+// 	std::string line;
+// 	std::istringstream iss(this->body);
+
+// 	while (std::getline(iss, line, '\n'))
+// 	{
+// 		size_t pos = line.find("filename=");
+// 		if (pos != std::string::npos)
+// 			postStruct.filename = line.substr(pos + 9);
+// 	}
+// }
+
+// void    HttpRequest::handlePostContents()
+// {
+// 	findFilename();
+// 	if (hasBoundary() == true)
+// 	{
+// 		// parse contents depending on boundary
+// 	}
+// }
+
+bool	isInvalidChar(const	char c)
 {
-	std::string	line;
-	std::istringstream	iss(this->body);
+	std::string	specialChar = "._~:/?#[]@!$&'()*+,;=%";
 
-	while (std::getline(iss, line, '\n'))
+	for (size_t i = 0; i < specialChar.size(); i++)
 	{
-		size_t	pos = line.find("boundary=");
-		if (pos != std::string::npos)
-		{
-			std::string boundary = line.substr(pos + 9);
-			postStruct.boundaryBegin = "--" + boundary;
-			postStruct.boundaryEnd = "--" + boundary + "--";
-
-			return true;
-		}
+		if (c != specialChar[i])
+			return (false);
 	}
-	return false;
+	return (true); 
 }
 
-void	HttpRequest::findFilename()
-{
-	std::string line;
-	std::istringstream iss(this->body);
-
-	while (std::getline(iss, line, '\n'))
-	{
-		size_t pos = line.find("filename=");
-		if (pos != std::string::npos)
-			postStruct.filename = line.substr(pos + 9);
-	}
-}
-
-void    HttpRequest::handlePostContents()
-{
-	findFilename();
-	if (hasBoundary() == true)
-	{
-		// parse contents depending on boundary
-	}
-}
+// void	HttpRequest::checkUriValid();
+// {
+// 	if (this->uri.size() > 2048)
+// 	{
+// 		createResponse(STATUS_URI_TOO_LONG);
+// 	}
+// 	for (size_t i = 0; i < this->uri.size(); i++)
+// 	{
+// 		if (!isdigit(this->uri) && !isalpha(this->uri[i]) && !isInvalidChar(this->uri[i]))
+// 		{
+// 			createResponse(STATUS_BAD_REQUEST);
+// 		}
+// 	}
+// }
 
 bool	HttpRequest::parseRequestLine(const std::string &line)
 {
@@ -172,11 +200,30 @@ bool	HttpRequest::parseHeader(const std::string &line)
 	std::vector<std::string> keyValue = split(line, ':');
 	if (keyValue.size() != 2)
 	{
-		std::cerr << "Invalid header format" << std::endl;
-		return false;
+		if (keyValue[0] == "Host")
+		{
+			std::string hostValue = keyValue[1] + ':' + keyValue[2];
+			keyValue[1] = hostValue;
+		}
+		else
+		{
+			std::cerr << "Invalid header format" << std::endl;
+			return false;
+		}
 	}
 	std::string	key = trim(keyValue[0]);
 	std::string value = trim(keyValue[1]);
 	headers[key] = HttpHeader{key, value};
 	return true;
+}
+
+void	HttpRequest::setRequestedport()
+{
+	if (this->headers.count("Host"))
+	{
+		std::string	value = headers.at("Host").value;
+		this->requestedPort = std::stoi(value.substr(value.size() - 4, value.size()));
+	}
+	else
+		this->requestedPort = 0;
 }
