@@ -1,7 +1,7 @@
 #include "utils.hpp"
 #include "HttpResponse.hpp"
 
-const char*	createErrorResponse(int code)
+std::string	createErrorResponse(int code)
 {
     #ifdef FUNC
 	    std::cout << YELLOW << "[FUNCTION] createErrorResponse" << DEFAULT << std::endl;
@@ -12,12 +12,10 @@ const char*	createErrorResponse(int code)
 		ostream << "Content-Length: 0\r\n";
  		ostream << "\r\n";
 
-        std::string str = ostream.str();
-
-		return str.c_str();
+		return ostream.str();
 }
 
-const char*	HttpResponse::ErrorCodeException::what() const throw()
-{
-	return createErrorResponse(errorCode); 
-}
+// const char*	HttpResponse::ErrorCodeException::what() const throw()
+// {
+// 	return createErrorResponse(errorCode); 
+// }

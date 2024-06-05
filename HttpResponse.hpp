@@ -45,10 +45,17 @@ class HttpResponse
 		class ErrorCodeException : public std::exception
 		{
 			private:
-				int	errorCode;
+                std::string errorResponse;
+				int	        errorCode;
 			public:
-				ErrorCodeException(enum e_statusCode code) : errorCode(code) {}
-				virtual const char *what() const throw();
+				ErrorCodeException(enum e_statusCode code) : errorCode(code) 
+                {
+                    errorResponse = createErrorResponse(code);
+                }
+				virtual const char *what() const throw() override
+                {
+                    return errorResponse.c_str();
+                }
 		};
 		
 
