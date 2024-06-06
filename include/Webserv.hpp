@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <sys/socket.h>
+#include <sys/types.h> //accept()
 #include <map>
 #include <poll.h> // poll() and struct
 #include <memory> // std::unique_ptr c++11, std::make_unique c++14
@@ -16,3 +18,4 @@
 
 
 #endif
+

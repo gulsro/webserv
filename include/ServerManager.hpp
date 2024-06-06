@@ -35,7 +35,7 @@ class ServerManager
         void addServer(std::unique_ptr<Server> server);        
         void startServerManager(ServerManager&); // init vServers in a loop
         void startSockets();
-        void assignPollFdForServer(int fd, int events);
+        void addFdToPollFds(int fd, int events);
         void startPoll();
 
         void acceptClient(int serverFd, Server& server);

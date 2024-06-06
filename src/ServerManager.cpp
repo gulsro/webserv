@@ -75,7 +75,7 @@ void ServerManager::startSockets()
         server->setSocketOption();
         server->bindSocket();
         server->listenSocket();
-        assignPollFdForServer(server->getServerFd(), POLLIN);
+        addFdToPollFds(server->getServerFd(), POLLIN);
        
         //get() returns a pointer to the managed object (server);   
         mapServerFd.emplace(server->getServerFd(), server.get());
@@ -91,7 +91,7 @@ void ServerManager::startSockets()
 //     short events; /* events of interest on fd */
 //     short revents; /* events that occurred on fd */
 // };
-void ServerManager::assignPollFdForServer(int fd, int events)
+void ServerManager::addFdToPollFds(int fd, int events)
 {
     struct pollfd serverPollFd;
 
@@ -100,19 +100,20 @@ void ServerManager::assignPollFdForServer(int fd, int events)
     pollfds.push_back(serverPollFd);
 }
 
-// void ServerManager::acceptClient(int serverFd, Server& server)
-// {
-//     struct sockaddr_in cliAddr;
+void ServerManager::acceptClient(int serverFd, Server& server)
+{
+    struct sockaddr_in cliAddr;
 
-//     std::memset(&cliAddr, 0, sizeof(cliAddr));
-//     cliAddr.sin_family = AF_INET;
-//     cliAddr.sin_port = htons(server->getPort());
-//     cliAddr.sin_addr.s_addr = INADDR_ANY;
-//     int clientFd = accept(serverFd, (struct sockaddr *)&cliAddr, sizeof(cliAddr));
-//     if (clientFd == -1)
-//         throw std::runtime_error("Error: accept()");
-//     //assignPollFdForServer(clientFd, )
-// }
+    (void)server;
+    std::memset(&cliAddr, 0, sizeof(cliAddr));
+    unsigned int cliLen = sizeof(cliAddr);
+    int clientFd = accept(serverFd, (struct sockaddr *)&cliAddr, &cliLen);
+    if (clientFd == -1)
+    {
+        throw std::runtime_error("Error: accept()");
+    }
+    addFdToPollFds(clientFd, POLLOUT);
+}
 
 void ServerManager::startPoll()
 {
@@ -144,9 +145,10 @@ void ServerManager::startPoll()
                 //In networking, bits are crucial for representing data packets efficiently and reliably.
                 if (revents & POLLIN)
                 {
+                    // THIS IS FOR FD -ABOVE-
                     // accept new connection
                     //selectedServer = mapServerFd[fd];
-                    //acceptClient(int serverFd, Server& server);
+                    acceptClient(fd, *mapServerFd[fd]);
                     std::cout << "LALALO" << std::endl;
                     //std::cout << mapServerFd[fd]->getServerFd() << std::endl;
                     std::cout << *(mapServerFd[fd]) << std::endl;
