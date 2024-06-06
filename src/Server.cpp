@@ -56,6 +56,11 @@ struct sockaddr_in* Server::getSocketAddr() const
 
 //std::vector<std::string> getServerNames() const;
 
+std::vector<int> Server::getConnectedClientFds() const
+{
+    return connectedClientFds;
+}
+
 std::ostream& operator<<(std::ostream& out, const Server& server)
 {
     out << "port: " << server.getPort();
@@ -116,4 +121,11 @@ void Server::listenSocket()
     }
 }
 
-// int Server::acceptConnection();
+void Server::printConnectedClientFds() const
+{
+    for (auto &clientFd: connectedClientFds)
+    {
+        std::cout << "Connected clientFd: " << clientFd << std::endl;
+        std::cout << "KAKAM" << std::endl;
+    }
+}

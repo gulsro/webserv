@@ -35,6 +35,7 @@ private:
    // struct pollfd pollfd;
   //  std::vector<Location> locationList;
     struct sockaddr_in serverAddr;
+    std::vector<int> connectedClientFds;
 
 public:
     Server();
@@ -50,6 +51,7 @@ public:
     //we could use below;
     //Server(Config& a);
 
+    //***********GETTERSSS************
     int getPort() const;
     std::string getHost() const;
     std::string getRoot() const;
@@ -58,8 +60,11 @@ public:
     int getServerFd() const;
     struct sockaddr_in* getSocketAddr() const;
     //std::vector<Location> getLocationList() const;
+    std::vector<int> getConnectedClientFds() const;
     bool matchesHostAndPort(const std::string &host, int port) const;
 
+
+    //*************SETTERS***********
     void setPort(int port);
     //void setServerFd(int fd);
     void setServerName(std::string serverName);
@@ -68,11 +73,15 @@ public:
     void setHost(std::string host);
     void setMaxBodySize(unsigned long maxBodySize);
 
+    //*********SOCKET OPERATIONS******
     void createSocket();
     void setSocketAddr();
     void setSocketOption();
     void bindSocket();
     void listenSocket();
+
+    //*******PRINT**********
+    void printConnectedClientFds() const;
 
 };
 

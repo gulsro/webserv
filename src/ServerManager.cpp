@@ -112,6 +112,8 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     {
         throw std::runtime_error("Error: accept()");
     }
+    server.getConnectedClientFds().push_back(clientFd);
+    //server.printConnectedClientFds();
     addFdToPollFds(clientFd, POLLOUT);
 }
 
@@ -152,6 +154,7 @@ void ServerManager::startPoll()
                     std::cout << "LALALO" << std::endl;
                     //std::cout << mapServerFd[fd]->getServerFd() << std::endl;
                     std::cout << *(mapServerFd[fd]) << std::endl;
+                    //mapServerFd[fd]->printConnectedClientFds();
                     // check to which server belongs fd. creating a map
                     //  map <int fd, std::vector servers>
                     // when found, add new client, get request.
