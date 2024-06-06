@@ -97,36 +97,17 @@ void Config::splitServer(){
     std::cout << "# of server is: " << nbServer << std:: endl;
 }
 
-class Server;
-//unique pointer is leaking...
+//make array like Harl
 void Config::parseServer(){
-    std::size_t key;
-    std::string line;
-    std::map<std::string, std::function<void(std::string&, int, Server)>> mp;
-    mp["listen"] = [](std::string cont, int key, Server s){s.setPort(cont, key);};
-    mp["root"] = [](std::string cont, int key, Server s){s.setRoot(cont, key);};
-    mp["index"] = [](std::string cont, int key, Server s){s.setIndex(cont, key);};
-    mp["client_size"] = [](std::string cont, int key, Server s){s.setMaxBodySize(cont, key);};
-
-    std::string parameter[4] = {"listen", "root", "index", "client_size"};
     for (std::string cont : serverCont){
-        std::unique_ptr<Server> serverPtr = std::make_unique<Server>();
         std::stringstream iss(cont);
-        while (std::getline(iss, line, '\n')){
-            for (int i = 0; i < 4; i++){
-                key = line.find(parameter[i]);
-                if(key != std::string::npos){
-                    // std::cout << std::endl << line <<  YEL << " - parameter is " << parameter[i] << RES << std::endl;
-                    mp[parameter[i]](line, key + parameter[i].size(), *(std::move(serverPtr)));
-                }
-            }
-        }
-        std::cout << RED << (*serverPtr).getHost() <<RES <<std::endl;
-        this->serverList.push_back(*(std::move(serverPtr)));
+        Server s;
+        s.setServerVar(iss);
+        std::cout << RED << s.getHost() <<RES <<std::endl;
+        this->serverList.push_back(s);
+        std::cout << "listed?" << std::endl;
     }
 }
-
-
 
 void Config::parseConfig(){
     std::ifstream file;

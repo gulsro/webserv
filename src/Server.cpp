@@ -87,14 +87,15 @@ std::vector<Location> Server::getLocationList() const
 
 //return needs to be an error
 
-void Server::setPort(std::string cont, int key){
+void Server::setPort(std::string& cont, int key){
     if (getPort())
         return ;
     while(std::isspace(cont[key]))
         key++;
     size_t colon = cont.find(':');
     if (colon != std::string::npos){
-        setHost(cont.substr(key, colon - key));
+        std::string host = cont.substr(key, colon - key);
+        setHost(host);
         this->port = std::stoi(cont.substr(colon + 1, cont.find('\n') - colon + 1));
     }
     else {
@@ -103,7 +104,7 @@ void Server::setPort(std::string cont, int key){
     std::cout << "port is " << this->port << std::endl;
 }
 
-void Server::setHost(std::string cont){
+void Server::setHost(std::string& cont){
     if (!getHost().empty())
         return ;
     this->host = cont;
@@ -113,7 +114,7 @@ void Server::setHost(std::string cont){
 
 // }
 
-void Server::setRoot(std::string cont, int key){
+void Server::setRoot(std::string& cont, int key){
     if (!getRoot().empty())
         return ;
     while(std::isspace(cont[key]))
@@ -122,7 +123,7 @@ void Server::setRoot(std::string cont, int key){
     std::cout << "root is " << this->root << std::endl;
 }
 
-void Server::setIndex(std::string cont, int key){
+void Server::setIndex(std::string& cont, int key){
     if (cont.find("autoindex") != std::string::npos)
         return ;
     if (!getIndex().empty())
@@ -134,7 +135,7 @@ void Server::setIndex(std::string cont, int key){
 }
 
 
-void Server::setMaxBodySize(std::string cont, int key){
+void Server::setMaxBodySize(std::string& cont, int key){
     if (getMaxBodySize())
         return ;
     while(std::isspace(cont[key]))
@@ -143,6 +144,21 @@ void Server::setMaxBodySize(std::string cont, int key){
     std::cout << "maxbodysize is " << this->maxBodySize << std::endl;
 }
 
+void Server::setServerVar(std::stringstream& iss)
+{
+    std::size_t key;
+    std::string line;
+    std::string parameter[4] = {"listen", "root", "index", "client_size"};
+     while (std::getline(iss, line, '\n')){
+        for (int i = 0; i < 4; i++){
+            key = line.find(parameter[i]);
+            if(key != std::string::npos){
+                std::cout << std::endl << line <<  YEL << " - parameter is " << parameter[i] << RES << std::endl;
+                (this->*func[i])(line, key + parameter[i].size());
+            }
+        }
+    }
+}
 //std::vector<std::string> getServerNames() const;
 
 std::ostream& operator<<(std::ostream& out, const Server& server)

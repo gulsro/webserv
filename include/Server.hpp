@@ -4,6 +4,8 @@
 #include "Webserv.hpp"
 
 class Location;
+class Server;
+typedef void (Server::*setFunc) (std::string&, int);
 
 class Server
 {
@@ -42,12 +44,16 @@ public:
     //std::vector<Location> getLocationList() const;
     bool matchesHostAndPort(const std::string &host, int port) const;
     
-    void setPort(std::string cont, int key);
-    void setHost(std::string cont);
+    void setPort(std::string& cont, int key);
+    void setHost(std::string& cont);
     // void setServerFd(int fd);
-    void setRoot(std::string cont, int key);
-    void setIndex(std::string cont, int key);
-    void setMaxBodySize(std::string cont, int key);
+    void setRoot(std::string& cont, int key);
+    void setIndex(std::string& cont, int key);
+    void setMaxBodySize(std::string& cont, int key);
+    setFunc func[4] {&Server::setPort, &Server::setRoot, &Server::setIndex, &Server::setMaxBodySize};
+
+    void setServerVar(std::stringstream& iss);
+
     // void setPort(int port);
     // void setServerFd(int fd);
     // void setServerName(std::string serverName);
