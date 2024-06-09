@@ -4,6 +4,7 @@
 
 #include "utils.hpp"
 
+
 class Location
 {
 private:

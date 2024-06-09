@@ -31,7 +31,6 @@ class HttpResponse
 		enum e_resourceType	resourceType;
 		std::string			content;
 		std::string			contentType;
-		std::string			location;
 		std::string			MIMEtype;
 
 		bool				completed; // check if request 
@@ -41,23 +40,6 @@ class HttpResponse
 		HttpResponse(const HttpResponse &response);
 		HttpResponse &operator=(const HttpResponse &other);
 		virtual ~HttpResponse();
-
-		class ErrorCodeException : public std::exception
-		{
-			private:
-                std::string errorResponse;
-				int	        errorCode;
-			public:
-				ErrorCodeException(enum e_statusCode code) : errorCode(code) 
-                {
-                    errorResponse = createErrorResponse(code);
-                }
-				virtual const char *what() const throw() override
-                {
-                    return errorResponse.c_str();
-                }
-		};
-		
 
 		//Getter
 		const	std::string	&getVersion() const { return version; }

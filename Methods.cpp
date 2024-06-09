@@ -117,8 +117,7 @@ void	HttpResponse::methodPost()
 
 	if (dirExists == false)
         createResponse(STATUS_NOT_FOUND);
-	// else
-	// 	postFile();
+	postFile();
 }
 
 void	HttpResponse::deleteFile()
@@ -180,7 +179,7 @@ void	HttpResponse::checkMethod()
 
 	// if (/*comparing location block method and requested method*/)
 	// {
-		if (method == "GET")
+		if (method == "GET" || (method == "POST" && this->body.size() == 0 ))
 			methodGet();
 		else if (method == "POST")
 		{

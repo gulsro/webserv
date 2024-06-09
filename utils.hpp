@@ -67,15 +67,23 @@ struct HttpHeader
 	std::string	value;
 };
 
-// std::map<std::string, std::string> makeMimeType ()
-// {
-// 	std::map<std::string, std::string> type_map;
-
-// 	type_map["bin"] = "application/octet-stream";
-// 	type_map["bmp"] = "image/bmp";
-// }
-
 std::vector<std::string> split(const std::string &str, char delimiter);
 std::string trim(const std::string &str);
 std::string	getStatusMessage(int statusCode);
 std::string	createErrorResponse(int code);
+
+class ErrorCodeException : public std::exception
+{
+    private:
+        std::string errorResponse;
+        int	        errorCode;
+    public:
+        ErrorCodeException(enum e_statusCode code) : errorCode(code) 
+        {
+            errorResponse = createErrorResponse(code);
+        }
+        virtual const char *what() const throw() override
+        {
+            return errorResponse.c_str();
+        }
+};
