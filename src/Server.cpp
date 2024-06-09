@@ -81,7 +81,7 @@ unsigned long Server::getMaxBodySize() const
     return this->maxBodySize;
 }
 
-std::vector<Location> Server::getLocationList() const
+std::vector<Location*> Server::getLocationList() const
 {
     return this->locationList;
 }
@@ -158,7 +158,43 @@ void Server::setServerVar(std::stringstream& iss)
     }
     std::cout << YEL << *this << RES << std::endl;
 }
-//std::vector<std::string> getServerNames() const;
+
+std::size_t Server::skipLocationPath(std::string cont, std::size_t found){
+    while (std::isspace(cont[found]))
+        found++;
+    if (cont[found] != '/' && cont[found] != '*')
+        throw std::runtime_error("Location misses a path");
+    while (!std::isspace(cont[found]))
+        found++;
+    return (found);
+}
+
+void Server::splitLocation(std::string cont){
+    std::size_t found = cont.find("location");
+    while (found != std::string::npos){
+        std::size_t begin = skipLocationPath(cont, found + 8);
+        begin = findScopeBegin(cont, begin);
+        std::size_t end = findScopeEnd(cont, begin);
+        this->locationCont.push_back(cont.substr(found + 9, end - begin));
+        this->nbLocation++;
+        begin = end + 1;
+        found = cont.find("location", begin, 8);
+    }
+    if (!this->nbLocation)
+        throw std::runtime_error("No server was found in config file");
+    std::cout << "# of Location is: " << nbLocation << std:: endl;
+    for (std::string s : locationCont)
+        std::cout << BLU << s << RES << std::endl;
+}
+
+void Server::initLocation(){
+    for (std::string cont : this->locationCont){
+        std::stringstream iss(cont);
+        Location* l = new Location();
+        l->setLocationVar(iss);
+        this->locationList.push_back(l);
+    }
+}
 
 std::ostream& operator<<(std::ostream& out, const Server& server)
 {

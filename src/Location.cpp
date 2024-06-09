@@ -26,20 +26,20 @@ Location& Location::operator=(const Location a){
     return (*this);
 }
 
-void Location::setLocationVar(std::stringstream iss){
+// void Location::setLocationVar(std::stringstream iss){
 
-    // std::size_t key;
-    // std::string line;
-    // std::string parameter[4] = {"listen", "root", "index", "client_size"};
-    //  while (std::getline(iss, line, '\n')){
-    //     for (int i = 0; i < 4; i++){
-    //         key = line.find(parameter[i]);
-    //         if(key != std::string::npos)
-    //             (this->*func[i])(line, key + parameter[i].size());
-    //     }
-    // }
-    // std::cout << YEL << *this << RES << std::endl;
-}
+//     // std::size_t key;
+//     // std::string line;
+//     // std::string parameter[4] = {"listen", "root", "index", "client_size"};
+//     //  while (std::getline(iss, line, '\n')){
+//     //     for (int i = 0; i < 4; i++){
+//     //         key = line.find(parameter[i]);
+//     //         if(key != std::string::npos)
+//     //             (this->*func[i])(line, key + parameter[i].size());
+//     //     }
+//     // }
+//     // std::cout << YEL << *this << RES << std::endl;
+// }
 
 
 std::string Location::getPath() const{
@@ -66,7 +66,77 @@ std::map<std::string, int> Location::getMethods() const{
     return this->methods;
 }
 
+std::string Location::getCgiPass() const{
+    return this->cgiPass;
+}
 
+void Location::setPath(std::string& cont, int key){
+    if (!getPath().empty())
+        return ;
+    // while(std::isspace(cont[key]))
+    //     key++;
+    // this->root = cont.substr(key, cont.find('\n') - key);
+}
+
+void Location::setRoot(std::string& cont, int key){
+    if (!getRoot().empty())
+        return ;
+    while(std::isspace(cont[key]))
+        key++;
+    this->root = cont.substr(key, cont.find('\n') - key);
+}
+
+void Location::setAutoindex(std::string& cont, int key){
+    if (!getAutoindex())
+        return ;
+}
+
+void Location::setIndex(std::string& cont, int key){
+    if (!getIndex().empty())
+        return ;
+    while(std::isspace(cont[key]))
+        key++;
+    this->index = cont.substr(key, cont.find('\n') - key);
+}
+
+void Location::setRedirect(std::string& cont, int key){
+    if (!getRedirect().empty())
+        return ;
+    while(std::isspace(cont[key]))
+        key++;
+    this->redirect = cont.substr(key, cont.find('\n') - key);
+}
+
+
+void Location::setErrorPage(std::string& cont, int key){
+
+}
+
+void Location::setCgiPass(std::string& cont, int key){
+    if (!getCgiPass().empty())
+        return ;
+    while(std::isspace(cont[key]))
+        key++;
+    this->cgiPass = cont.substr(key, cont.find('\n') - key);
+}
+
+void Location::setLocationVar(std::stringstream& iss){
+
+    std::size_t key;
+    std::string line;
+    std::string parameter[8] = {"{", "root", "autoindex", "index", "return", "methods", "error_page", "cgi_pass"};
+     while (std::getline(iss, line, '\n')){
+        for (int i = 0; i < 4; i++){
+            key = line.find(parameter[i]);
+            if(key != std::string::npos){
+                if (i == 0)
+                    key = -1;
+                (this->*func[i])(line, key + parameter[i].size());
+            }
+        }
+    }
+    std::cout << YEL << *this << RES << std::endl;
+}
 
 std::ostream& operator<<(std::ostream& out, const Location& location)
 {

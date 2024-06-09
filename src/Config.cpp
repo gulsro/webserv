@@ -67,7 +67,7 @@ std::size_t findScopeBegin(std::string& content, size_t found){
     while (std::isspace(content[begin]))
         begin++;
     if (content[begin] != '{')
-        throw std::runtime_error("Server scope is wrong");
+        throw std::runtime_error("Scope is wrong");
     return (begin + 1);
 }
 
@@ -82,7 +82,7 @@ std::size_t findScopeEnd(std::string& content, size_t begin){
         end++;
     }
     if (bracket)
-        throw std::runtime_error("Server scope is wrong");
+        throw std::runtime_error("Scope is wrong");
     return(end - 1);
 }
 
@@ -98,12 +98,13 @@ void Config::splitServer(){
     }
     if (!this->nbServer)
         throw std::runtime_error("No server was found in config file");
-    for (std::string s : serverCont)
-        std::cout << BLU << s << RES << std::endl << std::endl;
     std::cout << "# of server is: " << nbServer << std:: endl;
+    // for (std::string s : serverCont)
+    //     std::cout << BLU << s << RES << std::endl << std::endl;
 }
 
 void Config::parseServer(){
+    splitServer();
     for (std::string cont : serverCont){
         std::stringstream iss(cont);
         Server* s = new Server();
@@ -112,13 +113,13 @@ void Config::parseServer(){
     }
 }
 
+//add under each server -> first split location inside a Server
+// save it in locationCont (maybe do it in server.cpp)
 void Config::parseLocation(){
     int i = 0;
     for (std::string cont : serverCont){
-        std::stringstream iss(cont);
-        Location* l = new Location();
-        l->setLocationVar(iss);
-        this->serverList[i].getLocationList.push_back(l);
+        this->serverList[i]->splitLocation(cont);
+        // this->serverList[i]->initLocation();
         i++;
      }
 }
@@ -128,7 +129,6 @@ void Config::parseConfig(){
     // std::cout << "config file is: " << configFile << std::endl;
     checkConfig(file);
     readConfig(file);
-    splitServer();
     parseServer();
     parseLocation();
 }
