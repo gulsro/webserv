@@ -5,7 +5,13 @@ Config::Config(){
     this->nbServer = 0;
 }
 
-Config::~Config(){}
+Config::~Config(){
+    for (std::vector<Server *>::iterator i = serverList.begin();
+     i != serverList.end();i++){
+        delete *i;
+        *i = nullptr;
+     }
+}
 
 void    Config::setConfigFile(std::string file){
     this->configFile = file;
@@ -97,15 +103,12 @@ void Config::splitServer(){
     std::cout << "# of server is: " << nbServer << std:: endl;
 }
 
-//make array like Harl
 void Config::parseServer(){
     for (std::string cont : serverCont){
         std::stringstream iss(cont);
-        Server s;
-        s.setServerVar(iss);
-        std::cout << RED << s.getHost() <<RES <<std::endl;
+        Server* s = new Server();
+        s->setServerVar(iss);
         this->serverList.push_back(s);
-        std::cout << "listed?" << std::endl;
     }
 }
 

@@ -17,7 +17,7 @@ private:
     std::string index;
     unsigned long maxBodySize;
     
-    std::vector<Location> locationList;
+    std::vector<Location*> locationList;
     // struct sockaddr_in serverAddr;
 
 public:

@@ -12,7 +12,7 @@ private:
     std::string configFile; // config file name
     std::string content; // content of config file in one string
     int nbServer;
-    std::vector<Server> serverList; // list for Server class
+    std::vector<Server *> serverList; // list for Server class
     std::vector<std::string> serverCont; //splited contents inside each server {}
 
 

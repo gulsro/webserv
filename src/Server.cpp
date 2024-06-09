@@ -1,8 +1,8 @@
 #include "../include/Server.hpp"
 
-Server::Server() : port(0), root(""), index(""), maxBodySize(0)
+Server::Server() : port(0), serverFd(0), root(""), index(""), maxBodySize(0)
 {
-    std::cout << "Server constructor is called" << std::endl;
+    // std::cout << "Server constructor is called" << std::endl;
 }
 
 // Server::Server(int port,
@@ -20,7 +20,12 @@ Server::Server() : port(0), root(""), index(""), maxBodySize(0)
 
 Server::~Server()
 {
-    std::cout << "Server destructor is called" << std::endl;
+    // std::cout << "Server destructor is called" << std::endl;
+    for (std::vector<Location *>::iterator i = locationList.begin();
+     i != locationList.end();i++){
+        delete *i;
+        *i = nullptr;
+     }
 }
 
 
@@ -101,14 +106,12 @@ void Server::setPort(std::string& cont, int key){
     else {
         this->port = std::stoi(cont.substr(key, cont.find('\n') - key + 1));
     }
-    std::cout << "port is " << this->port << std::endl;
 }
 
 void Server::setHost(std::string& cont){
     if (!getHost().empty())
         return ;
     this->host = cont;
-    std::cout << "host is " << this->host << std::endl;
 }
 // void Server::setServerFd(int fd){
 
@@ -120,7 +123,6 @@ void Server::setRoot(std::string& cont, int key){
     while(std::isspace(cont[key]))
         key++;
     this->root = cont.substr(key, cont.find('\n') - key);
-    std::cout << "root is " << this->root << std::endl;
 }
 
 void Server::setIndex(std::string& cont, int key){
@@ -131,7 +133,6 @@ void Server::setIndex(std::string& cont, int key){
     while(std::isspace(cont[key]))
         key++;
     this->index = cont.substr(key, cont.find('\n') - key);
-    std::cout << "index is " << this->index << std::endl;
 }
 
 
@@ -141,7 +142,6 @@ void Server::setMaxBodySize(std::string& cont, int key){
     while(std::isspace(cont[key]))
         key++;
     this->maxBodySize = std::stoi(cont.substr(key, cont.find('\n') - key));
-    std::cout << "maxbodysize is " << this->maxBodySize << std::endl;
 }
 
 void Server::setServerVar(std::stringstream& iss)
@@ -152,27 +152,24 @@ void Server::setServerVar(std::stringstream& iss)
      while (std::getline(iss, line, '\n')){
         for (int i = 0; i < 4; i++){
             key = line.find(parameter[i]);
-            if(key != std::string::npos){
-                std::cout << std::endl << line <<  YEL << " - parameter is " << parameter[i] << RES << std::endl;
+            if(key != std::string::npos)
                 (this->*func[i])(line, key + parameter[i].size());
-            }
         }
     }
+    std::cout << YEL << *this << RES << std::endl;
 }
 //std::vector<std::string> getServerNames() const;
 
 std::ostream& operator<<(std::ostream& out, const Server& server)
 {
-    out << "port: " << server.getPort();
-    out << std::endl;
-    out << "serverFd: " << server.getServerFd();
-    out << std::endl;
-    out << "host: " << server.getHost();
-    out << std::endl;
+    out << "port: " << server.getPort()<< std::endl;
+    out << "serverFd: " << server.getServerFd()<< std::endl;
+    out << "host: " << server.getHost()<< std::endl;
     //out << server.serverNames;
-    out << "root: " << server.getRoot();
+    out << "root: " << server.getRoot()<< std::endl;
+    out << "index: " << server.getIndex()<< std::endl;
+    out << "Max body size: " << server.getMaxBodySize()<< std::endl;
     out << std::endl;
-
     return out;
 }
 
