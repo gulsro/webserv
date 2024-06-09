@@ -30,6 +30,8 @@ public:
     void    splitServer();
 
     void    parseServer();
+    void    parseLocation();
+
 };
 
 std::size_t findScopeBegin(std::string& content, size_t found);

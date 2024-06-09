@@ -112,6 +112,17 @@ void Config::parseServer(){
     }
 }
 
+void Config::parseLocation(){
+    int i = 0;
+    for (std::string cont : serverCont){
+        std::stringstream iss(cont);
+        Location* l = new Location();
+        l->setLocationVar(iss);
+        this->serverList[i].getLocationList.push_back(l);
+        i++;
+     }
+}
+
 void Config::parseConfig(){
     std::ifstream file;
     // std::cout << "config file is: " << configFile << std::endl;
@@ -119,4 +130,5 @@ void Config::parseConfig(){
     readConfig(file);
     splitServer();
     parseServer();
+    parseLocation();
 }
