@@ -15,7 +15,7 @@ private:
     std::string host; //address
     std::string root;
     std::string index;
-    unsigned long maxBodySize;
+    unsigned long maxBodySize; // in bytes
     int nbLocation;
     
     std::vector<Location*> locationList;
@@ -57,7 +57,7 @@ public:
     void splitLocation(std::string cont);
     std::size_t skipLocationPath(std::string cont, std::size_t found);
     void setServerVar(std::stringstream& iss);
-    void initLocation();
+    void initLocation(std::string serverCont);
     // void setPort(int port);
     // void setServerFd(int fd);
     // void setServerName(std::string serverName);

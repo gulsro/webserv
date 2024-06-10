@@ -1,6 +1,8 @@
 #include "../include/Location.hpp"
 
-Location::Location() : path(""), root(""), autoindex(false), index(""), redirect(""), cgiPass("")
+Location::Location() {}
+
+Location::Location(Server* s) : server(s), path(""), root(""), maxBodySize(0), autoindex(false), index(""), redirect(""), cgiPass("")
 {
     // std::cout << "Location is constructed" << std::endl;
     methods["GET"] = 1;
@@ -41,6 +43,10 @@ std::string Location::getRoot() const{
     return this->root;
 }
 
+unsigned long Location::getMaxBodySize() const{
+    return this->maxBodySize;
+}
+
 bool Location::getAutoindex() const{
     return this->autoindex;
 }
@@ -63,11 +69,16 @@ std::string Location::getCgiPass() const{
 
 //--------------Setters-------------------
 
+//path always starts with slash and no end slash
 void Location::setPath(std::string& cont, int key){
     if (!getPath().empty())
         return ;
     while(std::isspace(cont[key]))
         key--;
+    if (cont[0] != '/'){
+        cont = "/" + cont;
+        key++;
+    }
     this->path = cont.substr(0, key);
 }
 
@@ -77,6 +88,14 @@ void Location::setRoot(std::string& cont, int key){
     while(std::isspace(cont[key]))
         key++;
     this->root = cont.substr(key, cont.find('\n') - key);
+}
+
+void Location::setMaxBodySize(std::string& cont, int key){
+    if (getMaxBodySize())
+        return ;
+    while(std::isspace(cont[key]))
+        key++;
+    this->maxBodySize = std::stoi(cont.substr(key, cont.find('\n') - key));
 }
 
 void Location::setAutoindex(std::string& cont, int key){
@@ -115,6 +134,12 @@ void Location::setMethods(std::string& cont, int key){
 void Location::setErrorPage(std::string& cont, int key){
     while(std::isspace(cont[key]))
         key++;
+    int code = std::stoi(cont.substr(key, 3));
+    key += 3;
+    while(std::isspace(cont[key]))
+        key++;
+    if (code >= 0)
+        errorPage.insert({code, cont.substr(key, cont.find('\n') - key)});
 }
 
 void Location::setCgiPass(std::string& cont, int key){
@@ -131,9 +156,9 @@ void Location::setLocationVar(std::stringstream& iss){
 
     std::size_t key;
     std::string line;
-    std::string parameter[8] = {"{", "root", "autoindex", "index", "return", "methods", "error_page", "cgi_pass"};
+    std::string parameter[9] = {"{", "root", "client_size", "autoindex", "index", "return", "methods", "error_page", "cgi_pass"};
      while (std::getline(iss, line, '\n')){
-        for (int i = 0; i < 8; i++){
+        for (int i = 0; i < 9; i++){
             key = line.find(parameter[i]);
             if(key != std::string::npos){
                 if (i == 0)
@@ -142,7 +167,20 @@ void Location::setLocationVar(std::stringstream& iss){
             }
         }
     }
-    // std::cout << RED << *this << RES << std::endl;
+    std::cout << RED << *this << RES << std::endl;
+}
+
+void Location::checkLocationVar(std::string serverCont){
+    if (path.empty())
+        throw std::runtime_error("No path is available for the location");
+    if (errorPage.empty()){
+        std::stringstream iss(serverCont);
+        setLocationVar(iss);
+    }
+    if (!maxBodySize)
+        this->maxBodySize = (*server).getMaxBodySize();
+    if (serverCont.find("autoindex") != std::string::npos && autoindex == false)
+        autoindex = true;
 }
 
 std::ostream& operator<<(std::ostream& out, const Location& location)

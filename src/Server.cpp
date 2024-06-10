@@ -1,6 +1,6 @@
 #include "../include/Server.hpp"
 
-Server::Server() : port(0), serverFd(0), root(""), index(""), maxBodySize(0)
+Server::Server() : port(0), serverFd(0), root(""), index(""), maxBodySize(1000000)
 {
     // std::cout << "Server constructor is called" << std::endl;
 }
@@ -161,7 +161,7 @@ void Server::setServerVar(std::stringstream& iss)
                 (this->*func[i])(line, key + parameter[i].size());
         }
     }
-    // std::cout << YEL << *this << RES << std::endl;
+    std::cout << YEL << *this << RES << std::endl;
 }
 
 std::size_t Server::skipLocationPath(std::string cont, std::size_t found){
@@ -192,11 +192,12 @@ void Server::splitLocation(std::string cont){
     //     std::cout << BLU << s << RES << std::endl;
 }
 
-void Server::initLocation(){
+void Server::initLocation(std::string serverCont){
     for (std::string cont : this->locationCont){
         std::stringstream iss(cont);
-        Location* l = new Location();
+        Location* l = new Location(this);
         l->setLocationVar(iss);
+        l->checkLocationVar(serverCont);
         this->locationList.push_back(l);
     }
 }
