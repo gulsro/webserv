@@ -4,6 +4,7 @@
 
 #include "Webserv.hpp"
 
+class Location;
 typedef void (Location::*setFunc2) (std::string&, int);
 
 class Location
@@ -22,6 +23,7 @@ private:
 
     setFunc2 func[8] {&Location::setPath, &Location::setRoot, &Location::setAutoindex,\
     &Location::setIndex, &Location::setRedirect, &Location::setMethods, &Location::setErrorPage, &Location::setCgiPass};
+
 public:
     Location();
     ~Location();

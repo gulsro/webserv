@@ -98,7 +98,7 @@ void Config::splitServer(){
     }
     if (!this->nbServer)
         throw std::runtime_error("No server was found in config file");
-    std::cout << "# of server is: " << nbServer << std:: endl;
+    // std::cout << "# of server is: " << nbServer << std:: endl;
     // for (std::string s : serverCont)
     //     std::cout << BLU << s << RES << std::endl << std::endl;
 }
@@ -119,7 +119,7 @@ void Config::parseLocation(){
     int i = 0;
     for (std::string cont : serverCont){
         this->serverList[i]->splitLocation(cont);
-        // this->serverList[i]->initLocation();
+        this->serverList[i]->initLocation();
         i++;
      }
 }

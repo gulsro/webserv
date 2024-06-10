@@ -51,6 +51,8 @@ Server& Server::operator=(const Server s){
 //     this->serverFd = fd;
 // }
 
+//--------------Getters-------------------
+
 int Server::getPort() const
 {
     return this->port;
@@ -90,6 +92,7 @@ std::vector<Location*> Server::getLocationList() const
 //     return const_cast<sockaddr_in*>(&serverAddr);
 // }
 
+//--------------Setters-------------------
 //return needs to be an error
 
 void Server::setPort(std::string& cont, int key){
@@ -144,6 +147,8 @@ void Server::setMaxBodySize(std::string& cont, int key){
     this->maxBodySize = std::stoi(cont.substr(key, cont.find('\n') - key));
 }
 
+//--------------Functions-------------------
+
 void Server::setServerVar(std::stringstream& iss)
 {
     std::size_t key;
@@ -156,7 +161,7 @@ void Server::setServerVar(std::stringstream& iss)
                 (this->*func[i])(line, key + parameter[i].size());
         }
     }
-    std::cout << YEL << *this << RES << std::endl;
+    // std::cout << YEL << *this << RES << std::endl;
 }
 
 std::size_t Server::skipLocationPath(std::string cont, std::size_t found){
@@ -175,16 +180,16 @@ void Server::splitLocation(std::string cont){
         std::size_t begin = skipLocationPath(cont, found + 8);
         begin = findScopeBegin(cont, begin);
         std::size_t end = findScopeEnd(cont, begin);
-        this->locationCont.push_back(cont.substr(found + 9, end - begin));
+        this->locationCont.push_back(cont.substr(found + 9, end - found - 8));
         this->nbLocation++;
         begin = end + 1;
         found = cont.find("location", begin, 8);
     }
     if (!this->nbLocation)
         throw std::runtime_error("No server was found in config file");
-    std::cout << "# of Location is: " << nbLocation << std:: endl;
-    for (std::string s : locationCont)
-        std::cout << BLU << s << RES << std::endl;
+    // std::cout << "# of Location is: " << nbLocation << std:: endl;
+    // for (std::string s : locationCont)
+    //     std::cout << BLU << s << RES << std::endl;
 }
 
 void Server::initLocation(){
