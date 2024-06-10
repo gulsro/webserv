@@ -13,6 +13,26 @@ std::string trim(const std::string &str)
 	return result.substr(first, (last - first + 1));
 }
 
+std::vector<std::string> splitForKeyValue(const std::string &str, char delimiter)
+{
+	std::vector<std::string>	tokens;
+	std::string					line;
+	std::istringstream			iss(str);
+	
+	while (std::getline(iss, line))
+	{
+		size_t colonPos = line.find(delimiter);
+		if (colonPos != std::string::npos)
+		{
+			std::string	key = line.substr(0, colonPos);
+			tokens.push_back(key);
+			std::string	value = line.substr(colonPos + 1);
+			tokens.push_back(value);
+		}
+	}
+	return tokens;
+}
+
 std::vector<std::string> split(const std::string &str, char delimiter)
 {
 	std::vector<std::string>	tokens;
@@ -25,6 +45,7 @@ std::vector<std::string> split(const std::string &str, char delimiter)
 	}
 	return tokens;
 }
+
 
 std::string	getStatusMessage(int statusCode)
 {

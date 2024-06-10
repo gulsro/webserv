@@ -71,6 +71,7 @@ std::vector<std::string> split(const std::string &str, char delimiter);
 std::string trim(const std::string &str);
 std::string	getStatusMessage(int statusCode);
 std::string	createErrorResponse(int code);
+std::vector<std::string> splitForKeyValue(const std::string &str, char delimiter);
 
 class ErrorCodeException : public std::exception
 {

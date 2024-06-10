@@ -16,7 +16,7 @@ HttpRequest::HttpRequest()
 	this->requestedPort = 0;
 	this->location = "";
 
-    // this->location = Location->getRoot() + Location->getPath();
+    // this->location = ReqLocation->getRoot() + ReqLocation->getPath();
     // this->contentLength = 0;
 }
 
@@ -51,30 +51,85 @@ HttpRequest::~HttpRequest()
 	#endif
 }
 
+// void	HttpRequest::findFilename(auto it, std::vector<std::string> strings)
+// {
+// 	size_t	pos;
+
+// 	pos = (*it).find(" filename=");
+// 	parts.bodyFilename = (*it).substr(pos + 11, ((*it).size() - 1));
+// 	++it; // move to next line
+// 	if (it != data.end())
+// 	{
+// 		pos = (*it).find("Content-Type: ");
+// 		if (pos != std::string::npos)
+// 			parts.bodyContentType = (*it).substr(pos + 14, (*it).size());
+// 	}
+// }
+
+std::vector<std::string> HttpRequest::splitByBoundary()
+{
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] splitByBoundary" << DEFAULT << std::endl;
+	#endif
+	std::vector<std::string> parts;
+	size_t begin = 0;
+
+	while (begin != this->body.size() && begin != this->body.find(boundaryEnd))
+	{
+		size_t pos = this->body.find(this->boundaryBegin, begin);
+		if (pos != std::string::npos)
+		{
+			pos += this->boundaryBegin.size();
+			size_t next = this->body.find(this->boundaryBegin, pos);
+			if (next != std::string::npos)
+			{
+				parts.push_back(this->body.substr(pos, next - 1));
+				begin = next;
+			}
+			else
+				parts.push_back(this->body.substr(begin));
+		}
+	}
+	return parts;
+}
+
 void	HttpRequest::handleMultiPartForm()
 {
-	std::vector<std::pair<std::string, std::string>> body;
-	std::string						rawBody;
-	std::string	key;
-	std::string value;
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] handleMultiPartForm" << DEFAULT << std::endl;
+	#endif
+	// std::vector<std::pair<std::string, std::string>> body;
+	std::vector<std::string>	splittedBody;
+	// std::vector<t_part>			multiData;
+	// std::string	key;
+	// std::string value;
 
 	setBoundary();
-	std::istringstream iss(rawBody);
-	std::string line = "";
-	while (line != "\r\n\r\n")
+	splittedBody = splitByBoundary();
+	for (size_t i = 0; i < splittedBody.size(); ++i)
 	{
-		std::getline(iss, line, '\n');
-		if (line == this->boundaryBegin)
-		{
-			
-		}
-
+		std::cout << splittedBody[i] << std::endl;
 	}
+	// for (auto it = splittedBody.begin(); it != splittedBody.end(); it++)
+	// {
+	// 	if (*it == this->boundaryBegin)
+	// 	{
+	// 		it++;
+	// 		size_t pos = (*it).find(" filename=");
+	// 		if (pos != std::string::npos)
+	// 			findFilename(it, splittedBody);
+
+	// 	}
+	// }
+	
 
 }
 
 void	HttpRequest::checkContentType()
 {
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] checkContentType" << DEFAULT << std::endl;
+	#endif
 	if (this->contentType == "multipart/form-data")
 		handleMultiPartForm();
 	// else if (this->contentType == "application/x-www-form-urlencoded")
@@ -83,6 +138,9 @@ void	HttpRequest::checkContentType()
 
 void	HttpRequest::checkRequestValid()
 {
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] checkRequestValid" << DEFAULT << std::endl;
+	#endif
 	if (this->method == "POST" && this->headers.at("Content-Type").value.empty())
 		throw ErrorCodeException(STATUS_NOT_IMPLEMENTED);
 	if (this->body.size() > MAX_BODY)
@@ -91,6 +149,9 @@ void	HttpRequest::checkRequestValid()
 
 void	HttpRequest::setLocation()
 {
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] setLocation" << DEFAULT << std::endl;
+	#endif
 	// std::vector<Location*> locations;
 	std::vector<std::string>	locations;
 	size_t					len = 0;
@@ -101,7 +162,7 @@ void	HttpRequest::setLocation()
 	for (size_t i = 0; i < locations.size(); i++)
 	{
 		// path = location[i]->getPath();
-		path = Location->getPath();
+		path = ReqLocation->getPath();
 		if (path.size() > this->uri.size())
 			continue ;
 		size_t	tmp = 0;
@@ -181,13 +242,8 @@ void	HttpRequest::setBoundary()
 	if (pos != std::string::npos)
 	{
 		std::string boundary = str.substr(pos);
-		this->boundaryBegin = "--" + boundary;
-		this->boundaryEnd = "--" + boundary + "--";
-	}
-	else
-	{
-		this->boundaryBegin = ""; 
-		this->boundaryEnd = "";
+		this->boundaryBegin = "--" + boundary + '\n';
+		this->boundaryEnd = "--" + boundary + "--" + '\n';
 	}
 }
 
@@ -254,7 +310,7 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 		throw ErrorCodeException(STATUS_NOT_ALLOWED);
 		// return false;
 	}
-	checkUriValid();
+	// checkUriValid();
 	return true;
 }
 
@@ -270,19 +326,11 @@ void HttpRequest::setContentType()
 
 bool	HttpRequest::parseHeader(const std::string &line)
 {
-	std::vector<std::string> keyValue = split(line, ':');
+	std::vector<std::string> keyValue = splitForKeyValue(line, ':');
 	if (keyValue.size() != 2)
 	{
-		if (keyValue[0] == "Host")
-		{
-			std::string hostValue = keyValue[1] + ':' + keyValue[2];
-			keyValue[1] = hostValue;
-		}
-		else
-		{
-			std::cerr << "Invalid header format" << std::endl;
-			return false;
-		}
+		std::cerr << "Invalid header format" << std::endl;
+		return false;
 	}
 	std::string	key = trim(keyValue[0]);
 	std::string value = trim(keyValue[1]);

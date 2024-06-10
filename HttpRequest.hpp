@@ -8,6 +8,14 @@
 class	HttpResponse;
 class	Location;
 
+typedef	struct	s_part
+{
+	std::string	bodyContentType;
+	std::string	bodyFilename;
+	std::string	data;
+	std::vector<std::pair<std::string, std::string>> pairs;
+}	t_part;
+
 class	HttpRequest
 {
 	protected:
@@ -20,14 +28,13 @@ class	HttpRequest
 		std::string	contentType;
 
 		int			requestedPort;
-        Location	*Location;
+        Location	*ReqLocation;
 		std::string	location;
-
 		std::string	boundaryBegin;
 		std::string	boundaryEnd;
-		std::string	filename;
-		std::vector<std::pair<std::string, std::string>> multipartBody;
-	
+		
+		std::vector<t_part>	parts;	
+		
 	public:
 		HttpRequest();
 		HttpRequest(const HttpRequest &response);
@@ -63,7 +70,10 @@ class	HttpRequest
 		void	checkRequestValid();
 		void	checkUriValid();
 		void	handleMultiPartForm();
-		
+		void	findFilename(auto it, std::vector<std::string> strings);
+		void	initBodyStruct();
+
+		std::vector<std::string> splitByBoundary();
 		// void    handlePostContents();
 		// void	findFilename();
 		// void	createResponseHelper(enum e_statusCode code);

@@ -34,7 +34,6 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other)
 		this->resourceType = other.resourceType;
 		this->content = other.content;
 		this->contentType = other.contentType;
-		this->location = other.location;
 		this->MIMEtype = other.MIMEtype;
 	}
 	return *this;
@@ -64,7 +63,7 @@ void	HttpResponse::createResponse(enum e_statusCode code)
 		ostream << "HTTP/1.1 " << this->statusCode << " " << this->getStatusMessage() << "\r\n";
 		if (this->statusCode == STATUS_MOVED)
 		{
-			ostream << "Location: " << this->resource + "/" << "\r\n";
+			ostream << "ReqLocation: " << this->resource + "/" << "\r\n";
 		}
 		ostream << "Content-Length: 0\r\n";
  		ostream << "\r\n";
