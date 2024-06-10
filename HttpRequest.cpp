@@ -73,8 +73,9 @@ std::vector<std::string> HttpRequest::splitByBoundary()
 	#endif
 	std::vector<std::string> parts;
 	size_t begin = 0;
+	size_t end = this->body.find(boundaryEnd);
 
-	while (begin != this->body.size() && begin != this->body.find(boundaryEnd))
+	while (begin < this->body.size() && begin != end)
 	{
 		size_t pos = this->body.find(this->boundaryBegin, begin);
 		if (pos != std::string::npos)
@@ -83,12 +84,17 @@ std::vector<std::string> HttpRequest::splitByBoundary()
 			size_t next = this->body.find(this->boundaryBegin, pos);
 			if (next != std::string::npos)
 			{
-				parts.push_back(this->body.substr(pos, next - 1));
+				parts.push_back(this->body.substr(pos, next - pos));
 				begin = next;
 			}
 			else
-				parts.push_back(this->body.substr(begin));
+			{
+				parts.push_back(this->body.substr(pos, end - pos));
+				begin = pos;
+			}
 		}
+		else
+			begin = pos;
 	}
 	return parts;
 }
@@ -231,6 +237,7 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 			std::cout << PURPLE << "body	: " << this->body << DEFAULT << std::endl;
 		#endif	
 	}
+	checkContentType();
 	return true;
 }
 
@@ -241,9 +248,9 @@ void	HttpRequest::setBoundary()
 	
 	if (pos != std::string::npos)
 	{
-		std::string boundary = str.substr(pos);
+		std::string boundary = str.substr(pos + 9);
 		this->boundaryBegin = "--" + boundary + '\n';
-		this->boundaryEnd = "--" + boundary + "--" + '\n';
+		this->boundaryEnd = "--" + boundary + "--";
 	}
 }
 
@@ -318,7 +325,15 @@ void HttpRequest::setContentType()
 {
 	if (this->headers.count("Content-Type"))
 	{
-		this->contentType = headers.at("Content-Type").value;
+		std::string value = headers.at("Content-Type").value;
+
+		size_t pos = value.find(';');
+		if (pos != std::string::npos)
+		{
+			this->contentType = value.substr(0, pos);
+		}
+		else
+			this->contentType = value;
 	}
 	else
 		this->contentType = "";

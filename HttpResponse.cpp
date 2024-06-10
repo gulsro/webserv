@@ -63,7 +63,7 @@ void	HttpResponse::createResponse(enum e_statusCode code)
 		ostream << "HTTP/1.1 " << this->statusCode << " " << this->getStatusMessage() << "\r\n";
 		if (this->statusCode == STATUS_MOVED)
 		{
-			ostream << "ReqLocation: " << this->resource + "/" << "\r\n";
+			ostream << "Location: " << this->resource + "/" << "\r\n";
 		}
 		ostream << "Content-Length: 0\r\n";
  		ostream << "\r\n";
