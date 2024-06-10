@@ -17,7 +17,6 @@ private:
     bool autoindex;
     std::string index;
     std::string redirect;
-    // std::string alias;
     std::map<int, std::string> errorPage;
     std::map<std::string, int> methods;
     std::string cgiPass;
@@ -38,6 +37,7 @@ public:
     bool getAutoindex() const;
     std::string getIndex() const;
     std::string getRedirect() const;
+    std::map<int, std::string> getErrorPage() const;
     std::map<std::string, int> getMethods() const;
     std::string getCgiPass() const;
 

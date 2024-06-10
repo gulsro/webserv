@@ -59,6 +59,10 @@ std::string Location::getRedirect() const{
     return this->redirect;
 }
 
+std::map<int, std::string> Location::getErrorPage() const{
+    return this->errorPage;
+}
+
 std::map<std::string, int> Location::getMethods() const{
     return this->methods;
 }
@@ -167,7 +171,7 @@ void Location::setLocationVar(std::stringstream& iss){
             }
         }
     }
-    std::cout << RED << *this << RES << std::endl;
+    // std::cout << RED << *this << RES << std::endl;
 }
 
 void Location::checkLocationVar(std::string serverCont){
@@ -197,7 +201,15 @@ std::ostream& operator<<(std::ostream& out, const Location& location)
         out << "POST ";
     if (location.getMethods()["DELETE"] == 1)
         out << "DELETE";
-    out << std::endl<< "cgi_pass: " << location.getCgiPass() << std::endl;
+    out << std::endl << "Error pages: ";
+    if (!location.getErrorPage().empty()){
+        std::map<int, std::string >::iterator it;
+        std::map<int, std::string> test = location.getErrorPage();
+        for(it = (test.begin()); it != test.end(); ++it){
+            out << it->first << " => " << it->second << " - ";
+        }
+    }
+    out << std::endl << "cgi_pass: " << location.getCgiPass() << std::endl;
     out << std::endl;
     return out;
 }

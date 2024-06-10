@@ -161,7 +161,7 @@ void Server::setServerVar(std::stringstream& iss)
                 (this->*func[i])(line, key + parameter[i].size());
         }
     }
-    std::cout << YEL << *this << RES << std::endl;
+    // std::cout << YEL << *this << RES << std::endl;
 }
 
 std::size_t Server::skipLocationPath(std::string cont, std::size_t found){
