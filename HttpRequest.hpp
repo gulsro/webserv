@@ -10,8 +10,8 @@ class	Location;
 
 typedef	struct	s_part
 {
-	std::string	bodyContentType;
-	std::string	bodyFilename;
+	std::string	partContentType;
+	std::string	partFilename;
 	std::string	data;
 	std::vector<std::pair<std::string, std::string>> pairs;
 }	t_part;
@@ -33,7 +33,7 @@ class	HttpRequest
 		std::string	boundaryBegin;
 		std::string	boundaryEnd;
 		
-		std::vector<t_part>	parts;	
+		std::map<int, t_part>	parts;	
 		
 	public:
 		HttpRequest();
@@ -70,8 +70,9 @@ class	HttpRequest
 		void	checkRequestValid();
 		void	checkUriValid();
 		void	handleMultiPartForm();
+		void	makeKeyValuePair(int i, const std::string str);
+        void    handlePartInfo(const int i, const std::vector<std::string> strs);
 		void	findFilename(auto it, std::vector<std::string> strings);
-		void	initBodyStruct();
 
 		std::vector<std::string> splitByBoundary();
 		// void    handlePostContents();
