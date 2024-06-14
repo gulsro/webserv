@@ -112,8 +112,9 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     {
         throw std::runtime_error("Error: accept()");
     }
-    server.getConnectedClientFds().push_back(clientFd);
-    //server.printConnectedClientFds();
+    //server.getConnectedClientFds().push_back(clientFd);
+    server.connectedClientFds.push_back(clientFd);
+    server.printConnectedClientFds();
     addFdToPollFds(clientFd, POLLOUT);
 }
 
@@ -151,6 +152,7 @@ void ServerManager::startPoll()
                     // accept new connection
                     //selectedServer = mapServerFd[fd];
                     acceptClient(fd, *mapServerFd[fd]);
+                    
                     std::cout << "LALALO" << std::endl;
                     //std::cout << mapServerFd[fd]->getServerFd() << std::endl;
                     std::cout << *(mapServerFd[fd]) << std::endl;
