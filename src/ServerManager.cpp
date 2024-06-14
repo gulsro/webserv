@@ -134,8 +134,10 @@ void ServerManager::startPoll()
         int num_readyFds = poll(pollfds.data(), pollfds.size(), -1);  // Wait indefinitely
             if (num_readyFds == -1)
             {
-                throw std::runtime_error("Error: setsockopt()");
-                break;
+                // throw std::runtime_error("Error: setsockopt()");
+                // break;
+                //'continue' is from the book, not sure.
+                continue ;
             }
             // Process ready file descriptors
             for (int i = 0; i < num_readyFds; ++i)
@@ -148,10 +150,12 @@ void ServerManager::startPoll()
                 //In networking, bits are crucial for representing data packets efficiently and reliably.
                 if (revents & POLLIN)
                 {
-                    // THIS IS FOR FD -ABOVE-
-                    // accept new connection
-                    //selectedServer = mapServerFd[fd];
-                    acceptClient(fd, *mapServerFd[fd]);
+                    //if this fd == one of the serverSockets
+                        acceptClient(fd, *mapServerFd[fd]); //that client is accepted by
+                                        // *mapServerFd[fd] server
+                    //else if 
+                        //Request.readRequest(fd); fd will be client's
+                    
                     
                     std::cout << "LALALO" << std::endl;
                     //std::cout << mapServerFd[fd]->getServerFd() << std::endl;
@@ -162,6 +166,7 @@ void ServerManager::startPoll()
                     // when found, add new client, get request.
                 }
 
+
                 // Handle events for accepted connections (read/write data)
                 // You'll need to iterate over other servers and their connections here
                 // ...
@@ -170,6 +175,17 @@ void ServerManager::startPoll()
 
     //std::unique_ptr<Server>	getServer(std::string host) const; 
 }
+
+// if (_pollFds[i].revents & POLLIN)
+//                 {
+//                     if (_pollFds[i].fd == _serverSocket)
+//                         acceptConnection();
+//                     else
+//                         handleClientData(i);
+//                 }
+//                 else if (_pollFds[i].revents & POLLOUT)
+//                     sendClientData(i);
+
 
 std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
 {
