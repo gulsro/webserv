@@ -57,7 +57,7 @@ class	HttpRequest
 		//Setters
 		void	setContentLength(int len) { this->contentLength = len; }
 		void	setRequestedport();
-		void	setLocation();
+		void	setLocation(Location *ReqLocation);
 		void	setContentType();
 		void	setBoundary();
 		

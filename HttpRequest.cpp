@@ -74,7 +74,6 @@ std::vector<std::string> HttpRequest::splitByBoundary()
 	std::vector<std::string> parts;
 	size_t begin = 0;
 	size_t end = this->body.find(boundaryEnd);
-	std::cout << end << std::endl;
 
 	while (begin < this->body.size() && begin != end)
 	{
@@ -110,7 +109,6 @@ void	HttpRequest::makeKeyValuePair(int n, const std::string str)
 	// i = 1 : skipping Content-Disposition value. (e.g. form-data;)
 	for (size_t i = 1; i < splittedStr.size(); i++)
 	{
-		// std::cout << splittedStr[i] << std::endl;
 		std::vector<std::string> keyValue = splitForKeyValue(splittedStr[i], '=');
 		std::string key = trim(keyValue[0], ' ');
 		std::string value = trim(keyValue[1], '"');
@@ -134,13 +132,9 @@ void	HttpRequest::handlePartInfo(const int n, const std::vector<std::string> str
 void	HttpRequest::handleMultiPartForm()
 {
 	#ifdef FUNC
-	std::cout << YELLOW << "[FUNCTION] handleMultiPartForm" << DEFAULT << std::endl;
+		std::cout << YELLOW << "[FUNCTION] handleMultiPartForm" << DEFAULT << std::endl;
 	#endif
-	// std::vector<std::pair<std::string, std::string>> body;
 	std::vector<std::string>	splittedBody;
-	// std::vector<t_part>			multiData;
-	// std::string	key;
-	// std::string value;
 
 	setBoundary();
 	splittedBody = splitByBoundary();
@@ -157,19 +151,21 @@ void	HttpRequest::handleMultiPartForm()
         std::vector<std::string> strs = splitForKeyValue(partInfo, ':');
 		handlePartInfo(i, strs);
 	}
-    // for (size_t i = 0; i < this->parts.size(); i++)
-    // {
-    //     std::cout << "[ " << i << " ]" << std::endl;
-    //     std::cout << "Content type: " << parts[i].partContentType << std::endl;
-	// 	std::cout << "Filename: " << parts[i].partFilename << std::endl;
-    //     for (size_t j = 0; j < this->parts[i].pairs.size(); j++)
-    //     {
-    //         std::cout << "Key	: " << this->parts[i].pairs[j].first << std::endl;
-    //         std::cout << "Value	: " << this->parts[i].pairs[j].second << std::endl;
-    //     }
-	// 	std::cout << "data	: " << this->parts[i].data << std::endl;
-	// 	std::cout << "--------------------------------" << std::endl;
-    // }
+	#ifdef FUNC
+		for (size_t i = 0; i < this->parts.size(); i++)
+		{
+			std::cout << "[ " << i << " ]" << std::endl;
+			std::cout << "Content type: " << parts[i].partContentType << std::endl;
+			std::cout << "Filename: " << parts[i].partFilename << std::endl;
+			for (size_t j = 0; j < this->parts[i].pairs.size(); j++)
+			{
+				std::cout << "Key	: " << this->parts[i].pairs[j].first << std::endl;
+				std::cout << "Value	: " << this->parts[i].pairs[j].second << std::endl;
+			}
+			std::cout << "data	: " << this->parts[i].data << std::endl;
+			std::cout << "--------------------------------" << std::endl;
+		}
+	#endif
 }
 
 void	HttpRequest::checkContentType()
@@ -194,32 +190,22 @@ void	HttpRequest::checkRequestValid()
 		throw ErrorCodeException(STATUS_TOO_LARGE);
 }
 
-void	HttpRequest::setLocation()
+void	HttpRequest::setLocation(Location *ReqLocation)
 {
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] setLocation" << DEFAULT << std::endl;
 	#endif
 	// std::vector<Location*> locations;
-	std::vector<std::string>	locations;
-	size_t					len = 0;
-	std::string				path;
+	std::string	path = ReqLocation->getPath();
+	std::string	root = ReqLocation->getRoot();
+	std::string	uri = this->getURI();
 
 	// locations = Server->getServer()->getLocation();
-	locations = {"/root", "/html", "/bin"};
-	for (size_t i = 0; i < locations.size(); i++)
+	// path = location[i]->getPath();
+
+	if (uri == path)
 	{
-		// path = location[i]->getPath();
-		path = ReqLocation->getPath();
-		if (path.size() > this->uri.size())
-			continue ;
-		size_t	tmp = 0;
-		for (size_t j = 0; j < uri.size() && path[j] == uri[j]; j++)
-			tmp++;
-		if (tmp > len)
-		{
-			len = tmp;
-			this->location = location[i];
-		}
+		this->location = root + path;
 	}
 }
 
@@ -294,20 +280,6 @@ void	HttpRequest::setBoundary()
 		this->boundaryEnd = "--" + boundary + "--";
 	}
 }
-
-// void	HttpRequest::findFilename()
-// {
-// 	std::string line;
-// 	std::istringstream iss(this->body);
-
-// 	while (std::getline(iss, line, '\n'))
-// 	{
-// 		size_t pos = line.find("filename=");
-// 		if (pos != std::string::npos)
-// 			postStruct.filename = line.substr(pos + 9);
-// 	}
-// }
-
 
 bool	isInvalidChar(const	char c)
 {

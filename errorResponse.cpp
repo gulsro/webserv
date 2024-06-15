@@ -8,7 +8,7 @@ std::string	createErrorResponse(int code)
 	#endif
 		std::ostringstream	ostream;
 
-		ostream << "HTTP/1.1 " << code << " " << getStatusMessage(code) << "\r\n";
+		ostream << "HTTP/1.1 " << code << " " << returnStatusMessage(code) << "\r\n";
 		ostream << "Content-Length: 0\r\n";
  		ostream << "\r\n";
 

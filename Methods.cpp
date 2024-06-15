@@ -50,7 +50,9 @@ void	HttpResponse::checkResourceType()
 	if (this->completed == true)
 		return	;
 	// this->resource = Request->getRoot() + Request->getURI();
-	this->resource = "." + Request->getURI();
+    setResource( "." + Request->getLocation());
+    if (Request->location.empty())
+	    setResource("." + Request->getURI());
 	path = this->resource;
 	if (stat(path.c_str(), &buf) == 0)
 	{
@@ -107,17 +109,37 @@ void	HttpResponse::methodGet()
 	}
 }
 
+void    HttpResponse::postFile()
+{
+    std::string filename;
+    for (size_t i = 0; i < Request->parts.size(); i++)
+    {
+        filename = this->resource + "/" + Request->parts[i].partFilename;
+        std::ofstream   file(filename.c_str());
+        if (file.is_open())
+        {
+            file << Request->parts[i].data;
+            file.close();
+            createResponse(STATUS_CREATED);
+        }
+    }
+}
+
 void	HttpResponse::methodPost()
 {
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] methodPost" << DEFAULT << std::endl;
+	#endif
 	if (this->completed == true)
 		return ;
 	
-	std::string	location = Request->getLocation();
+	std::string	location = this->resource;
+    std::cout << "this->resource : " << this->resource << std::endl;
     bool		dirExists = std::filesystem::exists(location);
 
 	if (dirExists == false)
         createResponse(STATUS_NOT_FOUND);
-	// postFile();
+	postFile();
 }
 
 void	HttpResponse::deleteFile()
@@ -179,12 +201,10 @@ void	HttpResponse::checkMethod()
 
 	// if (/*comparing location block method and requested method*/)
 	// {
-		if (method == "GET" || (method == "POST" && this->body.size() == 0 ))
+		if (method == "GET" || (method == "POST" && Request->contentLength == 0 ))
 			methodGet();
 		else if (method == "POST")
 		{
-			if (Request->contentLength == 0)
-				methodGet();
 			methodPost();
 		}
 		else

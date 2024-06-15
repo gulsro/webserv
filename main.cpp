@@ -8,6 +8,7 @@ int main (int argc, char **argv)
 {
 	HttpResponse	Response;
 	HttpRequest		Request;
+    Location        Location;
     int fd;
 
     if (argc != 2)
@@ -16,6 +17,7 @@ int main (int argc, char **argv)
 	try{
 		if (Request.readRequest(fd) == true)
 		{
+            Request.setLocation(&Location);
 			Response.setRequest(&Request);
 			Response.checkMethod();
 			std::cout << Response.getContent() << std::endl;

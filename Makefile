@@ -8,7 +8,7 @@ CPPFLAGS	=	-Wall -Wextra -Werror -g -D DEBUG -std=c++20
 else ifdef FUNC
 CPPFLAGS	=	-Wall -Wextra -Werror -g -D FUNC -std=c++20
 else
-CPPFLAGS	=	-Wall -Wextra -Werror
+CPPFLAGS	=	-Wall -Wextra -Werror -std=c++20
 endif
 
 SRC_FILE	=	HttpRequest.cpp HttpResponse.cpp HttpUtils.cpp httpParsing.cpp Methods.cpp main.cpp errorResponse.cpp

@@ -47,7 +47,7 @@ std::vector<std::string> split(const std::string &str, char delimiter)
 }
 
 
-std::string	getStatusMessage(int statusCode)
+std::string	returnStatusMessage(int statusCode)
 {
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] getStatusMessage" << DEFAULT << std::endl;

@@ -22,7 +22,7 @@ private:
     public:
         Location() 
         { 
-            this->path  = "/html";
+            this->path  = "/upload";
             this->root = "/root";
             this->autoindex =  false;
             this->index =  "index.html";

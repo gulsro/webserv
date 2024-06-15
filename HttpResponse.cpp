@@ -24,7 +24,6 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other)
 	{
 		this->version = other.version;
 		this->statusCode = other.statusCode;
-		this->statusMessage = other.statusMessage;
 		this->body = other.body;
 		this->headers = other.headers;
 
@@ -60,7 +59,7 @@ void	HttpResponse::createResponse(enum e_statusCode code)
 		|| this->statusCode == STATUS_CREATED)
 	{
 		std::ostringstream	ostream;
-		ostream << "HTTP/1.1 " << this->statusCode << " " << this->getStatusMessage() << "\r\n";
+		ostream << "HTTP/1.1 " << this->statusCode << " " << returnStatusMessage(this->statusCode) << "\r\n";
 		if (this->statusCode == STATUS_MOVED)
 		{
 			ostream << "Location: " << this->resource + "/" << "\r\n";
@@ -106,6 +105,7 @@ void	HttpResponse::createResponse_File(std::string filename)
 	else
 		createResponse(STATUS_INTERNAL_ERR);
 }
+
 
 // void	sendRespose(int fd)
 // {

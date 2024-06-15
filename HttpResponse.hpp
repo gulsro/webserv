@@ -22,7 +22,6 @@ class HttpResponse
 		HttpRequest		*Request;
 		std::string		version;
 		int				statusCode;
-		std::string		statusMessage;
 		std::string		body;
 		std::unordered_map<std::string, HttpHeader> headers;
 
@@ -44,7 +43,7 @@ class HttpResponse
 		//Getter
 		const	std::string	&getVersion() const { return version; }
 		const	int			&getStatusCode()	const { return statusCode; }
-		const	std::string	&getStatusMessage() const { return statusMessage; }
+		// const	std::string	&getStatusMessage() const { statusMessage = returnStatusMessage(statusCode); return  statusMessage; }
 		const	std::string	&getBody() const { return body; }
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		HttpRequest			*getRequest() const { return Request; }
@@ -53,8 +52,8 @@ class HttpResponse
 
 		//Setter
 		void	setRequest(HttpRequest	*request) { Request = request; }
+        void    setResource(const std::string str) { resource = str; }
 		void	setResourceType(enum e_resourceType type) { resourceType = type; }
-
 		void		checkMethod();
 		void		createResponse(enum e_statusCode code);
 		// friend void		HttpRequest::createResponseHelper(enum e_statusCode code) { Response->createResponse(code);} 
@@ -67,5 +66,6 @@ class HttpResponse
 		void		methodDelete();
 		void		deleteFile();
 		void		deleteDir();
+        void        postFile();
         // void        postFile();
 };
