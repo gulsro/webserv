@@ -11,12 +11,25 @@ else
 CPPFLAGS	=	-Wall -Wextra -Werror -std=c++20
 endif
 
-SRC_FILE	=	HttpRequest.cpp HttpResponse.cpp HttpUtils.cpp httpParsing.cpp Methods.cpp main.cpp errorResponse.cpp
+HEADER_DIR	=	includes/
+HEADER_SRC	=	HttpRequest.hpp HttpResponse.hpp utils.hpp Location.hpp
+HEADERS		=	$(addprefix $(HEADER_DIR), $(HEADER_SRC))
+
+SRC_DIR		=	src/
+SRC_FILE	=	HttpUtils.cpp  main.cpp \
+				request/httpParsing.cpp \
+				request/HttpRequest.cpp \
+				request/multiPart.cpp \
+				response/errorResponse.cpp \
+				response/HttpResponse.cpp \
+				response/Methods.cpp \
+
 
 OBJ_DIR		=	obj/
-OBJ			=	$(addprefix $(OBJ_DIR), $(SRC_FILE:.cpp=.o))
+OBJ			=	$(addprefix ${OBJ_DIR}, ${SRC_FILE:%.cpp=%.o})
 
-HEADERS		=	HttpRequest.hpp HttpResponse.hpp utils.hpp Location.hpp
+
+INCLUDES	= -I$(HEADER_DIR)
 
 CYAN_B		=	\033[1;96m
 CYAN		=	\033[0;96m
@@ -29,10 +42,10 @@ $(NAME)			: $(OBJ) $(OBJF)
 					@$(CC) $(CPPFLAGS) -o $(NAME) $(OBJ)
 					@echo	"$(CYAN_B) - HTTP is compiled - $(DEFAULT)"
 
-$(OBJ_DIR)%.o	: %.cpp $(HEADERS) | $(OBJF)
+$(OBJ_DIR)%.o	:$(SRC_DIR)%.cpp $(HEADERS) | $(OBJF)
 					@mkdir -p $(@D)
 					@echo	"$(CYAN_B) Compiling... $(DEFAULT)"
-					@$(CC) $(CPPFLAGS) -c $< -o $@
+					@$(CC) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
 
 $(OBJF)			:
 					@mkdir -p $(OBJ_DIR)

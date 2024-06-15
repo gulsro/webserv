@@ -1,8 +1,6 @@
 #include "utils.hpp"
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
-
-
 #include <sys/stat.h> // stat()
 #include <filesystem> // filesystem
 
@@ -134,7 +132,6 @@ void	HttpResponse::methodPost()
 		return ;
 	
 	std::string	location = this->resource;
-    std::cout << "this->resource : " << this->resource << std::endl;
     bool		dirExists = std::filesystem::exists(location);
 
 	if (dirExists == false)

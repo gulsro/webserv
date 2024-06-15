@@ -103,3 +103,15 @@ std::string	returnStatusMessage(int statusCode)
 			return ("Not Implemented");
 	}
 }
+
+bool	isInvalidChar(const	char c)
+{
+	std::string	specialChar = "._~:/?#[]@!$&'()*+,;=%";
+
+	for (size_t i = 0; i < specialChar.size(); i++)
+	{
+		if (c != specialChar[i])
+			return (false);
+	}
+	return (true); 
+}

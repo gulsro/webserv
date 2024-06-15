@@ -51,21 +51,6 @@ HttpRequest::~HttpRequest()
 	#endif
 }
 
-// void	HttpRequest::findFilename(auto it, std::vector<std::string> strings)
-// {
-// 	size_t	pos;
-
-// 	pos = (*it).find(" filename=");
-// 	parts.bodyFilename = (*it).substr(pos + 11, ((*it).size() - 1));
-// 	++it; // move to next line
-// 	if (it != data.end())
-// 	{
-// 		pos = (*it).find("Content-Type: ");
-// 		if (pos != std::string::npos)
-// 			parts.bodyContentType = (*it).substr(pos + 14, (*it).size());
-// 	}
-// }
-
 std::vector<std::string> HttpRequest::splitByBoundary()
 {
 	#ifdef FUNC
@@ -118,56 +103,6 @@ void	HttpRequest::makeKeyValuePair(int n, const std::string str)
 	}
 }
 
-void	HttpRequest::handlePartInfo(const int n, const std::vector<std::string> strs)
-{
-	for (size_t i = 0; i < strs.size(); i++)
-	{
-		if (strs[i] == "Content-Disposition")
-			makeKeyValuePair(n, strs[i + 1]);
-		else if (strs[i] == "Content-Type")
-			parts[n].partContentType = strs[i + 1];
-	}
-}
-
-void	HttpRequest::handleMultiPartForm()
-{
-	#ifdef FUNC
-		std::cout << YELLOW << "[FUNCTION] handleMultiPartForm" << DEFAULT << std::endl;
-	#endif
-	std::vector<std::string>	splittedBody;
-
-	setBoundary();
-	splittedBody = splitByBoundary();
-	for (size_t i = 0; i < splittedBody.size(); i++)
-	{
-		std::istringstream	iss(splittedBody[i]);
-		std::string			line;
-		// size_t	pos = splittedBody[i].find("\r\n\r\n") + 4;
-		// Extracting file data
-		size_t	beginDataPos = splittedBody[i].find("\n\n") + 2;
-		parts[i].data = splittedBody[i].substr(beginDataPos);
-		// Extracting file info
-		std::string partInfo = splittedBody[i].substr(0, beginDataPos);
-        std::vector<std::string> strs = splitForKeyValue(partInfo, ':');
-		handlePartInfo(i, strs);
-	}
-	#ifdef FUNC
-		for (size_t i = 0; i < this->parts.size(); i++)
-		{
-			std::cout << "[ " << i << " ]" << std::endl;
-			std::cout << "Content type: " << parts[i].partContentType << std::endl;
-			std::cout << "Filename: " << parts[i].partFilename << std::endl;
-			for (size_t j = 0; j < this->parts[i].pairs.size(); j++)
-			{
-				std::cout << "Key	: " << this->parts[i].pairs[j].first << std::endl;
-				std::cout << "Value	: " << this->parts[i].pairs[j].second << std::endl;
-			}
-			std::cout << "data	: " << this->parts[i].data << std::endl;
-			std::cout << "--------------------------------" << std::endl;
-		}
-	#endif
-}
-
 void	HttpRequest::checkContentType()
 {
 	#ifdef FUNC
@@ -209,65 +144,6 @@ void	HttpRequest::setLocation(Location *ReqLocation)
 	}
 }
 
-bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
-{
-	std::istringstream	stream(rawRequest);
-	std::vector<std::string>	lines = split(rawRequest, '\n');
-
-	#ifdef FUNC
-	std::cout << YELLOW << "[FUNCTION] parseHttpRequest" << DEFAULT << std::endl;
-	#endif
-	if (lines.empty())
-		std::cerr << "Invalid HTTP request format." << std::endl;
-	if (!parseRequestLine(lines[0]))
-	{
-		std::cerr << "Invalid HTTP request line." << std::endl;
-		return false;
-	}
-	//parse headers
-	for (size_t i = 1; i < lines.size(); ++i)
-	{
-		if (lines[i].empty())
-			break ; // end of headers
-		if (!parseHeader(lines[i]))
-			return false;
-	}
-	setRequestedport();
-	setContentType();
-	#ifdef FUNC
-		auto it = headers.begin();
-		std::cout << PURPLE << "________HEADERS________" << std::endl;
-		while (it != headers.end())
-		{
-			std::cout << PURPLE << "[ " << it->first << " ]" << std::endl;
-			std::cout << PURPLE << it->second.key << " : " << it->second.value << DEFAULT << std::endl;
-			++it; 
-		}
-		std::cout << GREEN << "requestedPort : " << this->requestedPort << std::endl;
-		std::cout << GREEN << "contentType : " << this->contentType << std::endl;
-	#endif
-	// parse body
-	if (this->headers.count("Content-Length"))
-	{
-		this->setContentLength(std::stoi(headers.at("Content-Length").value));
-		// size_t	bodyStart = rawRequest.find("\r\n\r\n") + 4;
-		size_t	bodyStart = rawRequest.find("\n\n") + 2;
-		if (bodyStart + this->contentLength > rawRequest.size())
-		{
-			std::cerr << "Incomplete HTTP request body." << std::endl;
-			return false;
-		}
-		this->body = rawRequest.substr(bodyStart, this->contentLength);
-		#ifdef FUNC
-			std::cout << YELLOW << "[FUNCTION] parsing body" << DEFAULT << std::endl;
-			std::cout << PURPLE << "contentLength	: " << contentLength << DEFAULT << std::endl;
-			std::cout << PURPLE << "body	: " << this->body << DEFAULT << std::endl;
-		#endif	
-	}
-	checkContentType();
-	return true;
-}
-
 void	HttpRequest::setBoundary()
 {
 	std::string	str = headers.at("Content-Type").value;
@@ -279,18 +155,6 @@ void	HttpRequest::setBoundary()
 		this->boundaryBegin = "--" + boundary + '\n';
 		this->boundaryEnd = "--" + boundary + "--";
 	}
-}
-
-bool	isInvalidChar(const	char c)
-{
-	std::string	specialChar = "._~:/?#[]@!$&'()*+,;=%";
-
-	for (size_t i = 0; i < specialChar.size(); i++)
-	{
-		if (c != specialChar[i])
-			return (false);
-	}
-	return (true); 
 }
 
 void	HttpRequest::checkUriValid()
