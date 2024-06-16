@@ -51,7 +51,9 @@ public:
     //Server(Config& a);
 
     std::vector<int> connectedClientFds;
- 
+    
+    bool matchesHostAndPort(const std::string &host, int port) const;
+
  
     //***********GETTERSSS************
     int getPort() const;
@@ -63,7 +65,6 @@ public:
     struct sockaddr_in* getSocketAddr() const;
     //std::vector<Location> getLocationList() const;
     //std::vector<int> getConnectedClientFds() const;
-    bool matchesHostAndPort(const std::string &host, int port) const;
 
 
     //*************SETTERS***********

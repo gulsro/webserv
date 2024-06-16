@@ -16,6 +16,9 @@
 #include "Client.hpp"
 //#include "Location.hpp"
 
+void readRequest(int clientFd);
+
+
 
 #endif
 

@@ -93,7 +93,10 @@ void Server::setSocketAddr()
 
 void Server::setSocketOption()
 {
-
+    //This allows me to reuse a socket address
+    //even if it's still in the TIME_WAIT state from a previous connection.
+    //this is helpful when you quickly
+    //restart a server and want to bind to the same port without waiting
     int optval = 1;
     if (setsockopt(this->serverFd, SOL_SOCKET, SO_REUSEADDR, &optval,
                         sizeof(optval)) == -1)
@@ -129,3 +132,4 @@ void Server::printConnectedClientFds() const
         std::cout << "KAKAM" << std::endl;
     }
 }
+

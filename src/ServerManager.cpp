@@ -75,7 +75,7 @@ void ServerManager::startSockets()
         server->setSocketOption();
         server->bindSocket();
         server->listenSocket();
-        addFdToPollFds(server->getServerFd(), POLLIN);
+        addFdToPollFds(server->getServerFd(), POLLIN); //monitor incoming connections
        
         //get() returns a pointer to the managed object (server);   
         mapServerFd.emplace(server->getServerFd(), server.get());
@@ -93,11 +93,11 @@ void ServerManager::startSockets()
 // };
 void ServerManager::addFdToPollFds(int fd, int events)
 {
-    struct pollfd serverPollFd;
+    struct pollfd PollFd;
 
-    serverPollFd.fd = fd;
-    serverPollFd.events = events;
-    pollfds.push_back(serverPollFd);
+    PollFd.fd = fd;
+    PollFd.events = events;
+    pollfds.push_back(PollFd);
 }
 
 void ServerManager::acceptClient(int serverFd, Server& server)
@@ -115,9 +115,13 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     //server.getConnectedClientFds().push_back(clientFd);
     server.connectedClientFds.push_back(clientFd);
     server.printConnectedClientFds();
-    addFdToPollFds(clientFd, POLLOUT);
+    addFdToPollFds(clientFd, POLLIN | POLLOUT);
 }
 
+
+//Serverfd && POLLIN indicates incoming CONNECTION,
+//Clientfd && POLLIN indicates incoming data from CONNECTED CLIENT.
+//(the client has data ready to be read by the server)
 void ServerManager::startPoll()
 {
     //Copying original pollfds for safety.
@@ -139,8 +143,12 @@ void ServerManager::startPoll()
                 //'continue' is from the book, not sure.
                 continue ;
             }
+            
+            //counter is to see how many time poll loop turns.
+            int counter = 0;
             // Process ready file descriptors
-            for (int i = 0; i < num_readyFds; ++i)
+            //for (int i = 0; i < num_readyFds; ++i)
+            for (size_t i = 0; i < pollfds.size(); ++i)
             {
                 int fd = pollfds[i].fd;
                 int revents = pollfds[i].revents;
@@ -148,14 +156,27 @@ void ServerManager::startPoll()
                 //The bitwise AND operation allows you to check if a specific event
                 //bit (POLLIN) is present in the revents field.
                 //In networking, bits are crucial for representing data packets efficiently and reliably.
+                
+                //If a client attempts to connect to one of your listener
+                //server sockets, this will trigger the POLLIN event on that socket's file descriptor.
+                //When the loop iterates through the pollfd vector and
+                //encounters a listener socket, the revents & POLLIN condition
+                //will evaluate to true because the POLLIN bit is set in the
+                //revents flags.
+                counter = counter+ 1;
+                std::cout << "HUHUHUUH" << "counter = " << counter << std::endl;
                 if (revents & POLLIN)
                 {
-                    //if this fd == one of the serverSockets
+                    // if a server received a request. let's accept a client
+                    if (isFdInMap(fd, this->mapServerFd)) //fd is one of the server's fd
                         acceptClient(fd, *mapServerFd[fd]); //that client is accepted by
-                                        // *mapServerFd[fd] server
-                    //else if 
+                    else //continue reading operations on connected clients
                         //Request.readRequest(fd); fd will be client's
-                    
+                        readRequest(fd);
+                        
+                        
+                        //  ROUTING STARTS HERE?????
+                        // port-server map 
                     
                     std::cout << "LALALO" << std::endl;
                     //std::cout << mapServerFd[fd]->getServerFd() << std::endl;
@@ -166,6 +187,11 @@ void ServerManager::startPoll()
                     // when found, add new client, get request.
                 }
 
+                // Here check writing operation's klaarheid.
+                else if (revents & POLLOUT)
+                {
+                    std::cout << "RESPONSEEEEE" << std::endl;
+                }
 
                 // Handle events for accepted connections (read/write data)
                 // You'll need to iterate over other servers and their connections here
@@ -191,4 +217,14 @@ std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
 {
     (void)serverManager;
     return out;
+}
+
+bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
+{
+  // Find any element in the map where the key (file descriptor) matches the provided 'fd'
+  auto it = std::find_if(mapServerFd.begin(), mapServerFd.end(),
+                         [fd](const auto& pair) { return pair.first == fd; });
+
+  // Return true if a matching element is found, false otherwise
+  return it != mapServerFd.end();
 }
