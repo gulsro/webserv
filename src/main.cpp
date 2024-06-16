@@ -1,22 +1,22 @@
 #include "Webserv.hpp"
 
-void readRequest(int clientFd)
-{
-    //Response response(clientFd);
-	//response.handle_request();
+// void readRequest(int clientFd)
+// {
+//     //Response response(clientFd);
+// 	//response.handle_request();
 
-    // int byteRead;
+//     // int byteRead;
 
-	// if (byteRead = read(clientFd, &buf, BUF_SIZE)) < 0)
-    // {
-    //     if (byte_read != write(clientFd, "KOLONYAAAA", byte_read))
-    //         exit(1);
-    // }
+// 	// if (byteRead = read(clientFd, &buf, BUF_SIZE)) < 0)
+//     // {
+//     //     if (byte_read != write(clientFd, "KOLONYAAAA", byte_read))
+//     //         exit(1);
+//     // }
 
-    write(clientFd, "KOLONYAAAA", 11);
-    if (close(clientFd) == -1)
-        exit(1);
-}
+//     write(clientFd, "KOLONYAAAA", 11);
+//     if (close(clientFd) == -1)
+//         exit(1);
+// }
 
 int main(int argc, char **argv)
 {
@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     serverManager = std::make_unique<ServerManager>();
 
     // Use the unique_ptr
-    std::cout << "ServerManager at main.cpp: " << *serverManager << std::endl;
+    //std::cout << "ServerManager at main.cpp: " << *serverManager << std::endl;
 
     serverManager->startServerManager(*serverManager); 
     serverManager->startPoll();

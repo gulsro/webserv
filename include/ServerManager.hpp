@@ -41,7 +41,7 @@ class ServerManager
         void acceptClient(int serverFd, Server& server);
         void printServers() const;
 
-         bool isFdInMap(int fd, std::map<int, Server*>& mapServerFd);
+        bool isFdInMap(int fd, std::map<int, Server*>& mapServerFd);
 };
     
 std::ostream& operator<<(std::ostream& out, ServerManager& serverManager);

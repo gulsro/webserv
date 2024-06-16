@@ -129,7 +129,6 @@ void Server::printConnectedClientFds() const
     for (auto &clientFd: this->connectedClientFds)
     {
         std::cout << "Connected clientFd: " << clientFd << std::endl;
-        std::cout << "KAKAM" << std::endl;
     }
 }
 

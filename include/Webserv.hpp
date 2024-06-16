@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/types.h> //accept()
 #include <map>
