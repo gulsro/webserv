@@ -18,11 +18,18 @@ void ServerManager::printServers() const
     std::cout << "*****************************" << std::endl;
 }
 
+void ServerManager::printPollFds() const
+{
+    std::cout << "*****************************" << std::endl;
+    for (const auto &pollfd: pollfds)
+        std::cout << "FD in POLL: " << pollfd.fd << std::endl;
+    std::cout << "*****************************" << std::endl;
+}
+
 const std::vector<std::unique_ptr<Server>>& ServerManager::getServers() const
 {
     return this->servers;
 }
-
 
 // std::unique_ptr<Server>	ServerManager::getServer(std::string host) const
 // {
@@ -97,7 +104,7 @@ void ServerManager::addFdToPollFds(int fd, int events)
 
     PollFd.fd = fd;
     PollFd.events = events;
-    pollfds.push_back(PollFd);
+    this->pollfds.push_back(PollFd);
 }
 
 void ServerManager::acceptClient(int serverFd, Server& server)
@@ -126,8 +133,7 @@ void ServerManager::startPoll()
 {
     //Copying original pollfds for safety.
     //std::unique_ptr<Server> selectedServer;
-    std::vector<struct pollfd> pollfds = this->pollfds;
-
+    //std::vector<struct pollfd> pollfds = this->pollfds;
     //The poll() function expects its first argument to be
     //a pointer to an array of pollfd structures. In my case, fds is a vector,
     // not a raw array. However, the data() method provides a way
@@ -135,6 +141,7 @@ void ServerManager::startPoll()
     //are stored, essentially treating it like an array.
     while (1)
     {
+        this->printPollFds();
         int num_readyFds = poll(pollfds.data(), pollfds.size(), -1);  // Wait indefinitely
         if (num_readyFds == -1)
         {
@@ -143,6 +150,7 @@ void ServerManager::startPoll()
             //'continue' is from the book, not sure.
             continue ;
         }
+        std::cout << pollfds.size() << std::endl;
         
         //counter is to see how many time poll loop turns.
         int counter = 0;
@@ -163,27 +171,29 @@ void ServerManager::startPoll()
             //encounters a listener socket, the revents & POLLIN condition
             //will evaluate to true because the POLLIN bit is set in the
             //revents flags.
+
+            //std::cout << "THE FISH IS " << fd << std::endl;
             counter = counter+ 1;
-            std::cout << "counter = " << counter << std::endl;
+            //std::cout << "counter = " << counter << std::endl;
             if (revents & POLLIN)
             {
                 // if a server received a request. let's accept a client
                 if (isFdInMap(fd, mapServerFd)) //fd is one of the server's fd
+                {
                     acceptClient(fd, *mapServerFd[fd]); //that client is accepted by
                                     // *mapServerFd[fd] server
+                    //std::cout << pollfds.size() << std::endl;
+
+                    break ;
+                }
                 else //continue reading operations on connected clients
                 {    //Request.readRequest(fd); fd will be client's
                     std::cout << "REQUESTTTTTT" << std::endl;
                     readRequest(fd);
                 }
-                
-                std::cout << "LALALO" << std::endl;
-                //std::cout << mapServerFd[fd]->getServerFd() << std::endl;
-                std::cout << *(mapServerFd[fd]) << std::endl;
-                //mapServerFd[fd]->printConnectedClientFds();
-                // check to which server belongs fd. creating a map
-                //  map <int fd, std::vector servers>
-                // when found, add new client, get request.
+
+                //std::cout << "LALALO" << std::endl;
+                //std::cout << *(mapServerFd[fd]) << std::endl;
             }
 
             // Here check writing operation's klaarheid.
@@ -225,6 +235,14 @@ bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
   return it != mapServerFd.end();
 }
 
+bool isFdConnected(int fd, std::vector<int>& connectedClientFds)
+{
+    if (std::find(connectedClientFds.begin(), connectedClientFds.end(), fd) != connectedClientFds.end())
+        return true;
+    else
+        return false;
+}
+
 void readRequest(int clientFd)
 {
     //Response response(clientFd);
@@ -247,7 +265,7 @@ void readRequest(int clientFd)
     // Consider closing the client socket (optional)
   }
 
-    // write(clientFd, "KOLONYAAAA", 11);
+    std::cout << "KOLONYAAAA" << std::endl;
     if (close(clientFd) == -1)
         exit(1);
 }

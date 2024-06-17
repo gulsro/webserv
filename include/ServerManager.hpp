@@ -40,10 +40,12 @@ class ServerManager
 
         void acceptClient(int serverFd, Server& server);
         void printServers() const;
+        void printPollFds() const;
 
         bool isFdInMap(int fd, std::map<int, Server*>& mapServerFd);
 };
     
+bool isFdConnected(int fd, std::vector<int>& connectedClientFds);
 std::ostream& operator<<(std::ostream& out, ServerManager& serverManager);
 
 #endif
