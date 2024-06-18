@@ -12,11 +12,11 @@ CPPFLAGS	=	-Wall -Wextra -Werror -std=c++20
 endif
 
 HEADER_DIR	=	includes/
-HEADER_SRC	=	HttpRequest.hpp HttpResponse.hpp utils.hpp Location.hpp
+HEADER_SRC	=	HttpRequest.hpp HttpResponse.hpp utils.hpp Location.hpp Config.hpp Server.hpp Webserv.hpp
 HEADERS		=	$(addprefix $(HEADER_DIR), $(HEADER_SRC))
 
 SRC_DIR		=	src/
-SRC_FILE	=	HttpUtils.cpp  main.cpp \
+SRC_FILE	=	HttpUtils.cpp  main.cpp Config.cpp Server.cpp Location.cpp \
 				request/httpParsing.cpp \
 				request/HttpRequest.cpp \
 				request/multiPart.cpp \

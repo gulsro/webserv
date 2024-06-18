@@ -1,4 +1,4 @@
-#include "../include/Server.hpp"
+#include "Server.hpp"
 
 Server::Server() : port(0), root(""), index(""), maxBodySize(0)
 {

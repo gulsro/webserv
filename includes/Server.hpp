@@ -1,7 +1,7 @@
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
-#include "utils.hpp"
+#include "Webserv.hpp"
 
 class Location;
 class Server;
@@ -15,11 +15,9 @@ private:
     std::string host; //address
     std::string root;
     std::string index;
-    unsigned long maxBodySize; // in bytes
-    int nbLocation;
+    unsigned long maxBodySize;
     
-    std::vector<Location*> locationList;
-    std::vector<std::string> locationCont;
+    std::vector<Location> locationList;
     // struct sockaddr_in serverAddr;
 
 public:
