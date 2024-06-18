@@ -24,7 +24,6 @@ SRC_FILE	=	HttpUtils.cpp  main.cpp \
 				response/HttpResponse.cpp \
 				response/Methods.cpp \
 
-
 OBJ_DIR		=	obj/
 OBJ			=	$(addprefix ${OBJ_DIR}, ${SRC_FILE:%.cpp=%.o})
 

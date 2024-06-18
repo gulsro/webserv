@@ -1,5 +1,24 @@
 #include "HttpRequest.hpp"
 
+void	HttpRequest::makeKeyValuePair(int n, const std::string str)
+{
+    #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] makeKeyValuePair" << DEFAULT << std::endl;
+	#endif
+	(void)n;
+	std::vector<std::string> splittedStr = split(str, ';');
+	// i = 1 : skipping Content-Disposition value. (e.g. form-data;)
+	for (size_t i = 1; i < splittedStr.size(); i++)
+	{
+		std::vector<std::string> keyValue = splitForKeyValue(splittedStr[i], '=');
+		std::string key = trim(keyValue[0], ' ');
+		std::string value = trim(keyValue[1], '"');
+		this->parts[n].pairs.push_back(std::make_pair(key, value));
+		if (key == "filename")
+			this->parts[n].partFilename = value;
+	}
+}
+
 void	HttpRequest::handlePartInfo(const int n, const std::vector<std::string> strs)
 {
 	for (size_t i = 0; i < strs.size(); i++)
@@ -9,6 +28,39 @@ void	HttpRequest::handlePartInfo(const int n, const std::vector<std::string> str
 		else if (strs[i] == "Content-Type")
 			parts[n].partContentType = strs[i + 1];
 	}
+}
+
+std::vector<std::string> HttpRequest::splitByBoundary()
+{
+	#ifdef FUNC
+		std::cout << YELLOW << "[FUNCTION] splitByBoundary" << DEFAULT << std::endl;
+	#endif
+	std::vector<std::string> parts;
+	size_t begin = 0;
+	size_t end = this->body.find(boundaryEnd);
+
+	while (begin < this->body.size() && begin != end)
+	{
+		size_t pos = this->body.find(this->boundaryBegin, begin);
+		if (pos != std::string::npos)
+		{
+			pos += this->boundaryBegin.size();
+			size_t next = this->body.find(this->boundaryBegin, pos);
+			if (next != std::string::npos)
+			{
+				parts.push_back(this->body.substr(pos, (next - pos) - 1));
+				begin = next;
+			}
+			else
+			{
+				parts.push_back(this->body.substr(pos, (end - pos) - 1));
+				begin = pos;
+			}
+		}
+		else
+			begin = pos;
+	}
+	return parts;
 }
 
 void	HttpRequest::handleMultiPartForm()

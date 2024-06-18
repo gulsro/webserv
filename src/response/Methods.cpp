@@ -187,6 +187,12 @@ void	HttpResponse::methodDelete()
 	}
 }
 
+bool    HttpResponse::checkAllowedMethod()
+{
+    std::map allowedMethods = this->Request->ReqLocation->getMethods();
+	
+}
+
 // Iterates allowed methods container and execute method. 
 void	HttpResponse::checkMethod()
 {
@@ -195,7 +201,9 @@ void	HttpResponse::checkMethod()
 	#endif
 	std::string	method = Request->getMethod();
 	this->checkResourceType();
-
+    
+    if (checkAllowedMethod() == true)
+    {
 	// if (/*comparing location block method and requested method*/)
 	// {
 		if (method == "GET" || (method == "POST" && Request->contentLength == 0 ))
@@ -206,6 +214,7 @@ void	HttpResponse::checkMethod()
 		}
 		else
 			methodDelete();
+    }
 	// }
 	// else
 	// {

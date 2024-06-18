@@ -76,7 +76,7 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		if (!parseHeader(lines[i]))
 			return false;
 	}
-	setRequestedport();
+	setRequestedPort();
 	setContentType();
 	#ifdef FUNC
 		auto it = headers.begin();

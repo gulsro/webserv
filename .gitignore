@@ -4,3 +4,8 @@
 *.obj
 Http
 .vscode
+*.vscode/*
+.vscode/settings.json
+Makefile
+configs/test.conf
+webserv

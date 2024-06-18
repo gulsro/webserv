@@ -50,13 +50,13 @@ class	HttpRequest
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		const	std::string	&getBody() const { return body; }
 		const	std::string	&getContentType() const { return contentType; }
-		const	std::string	getRequestedPort() const; 
+		const	int	        &getRequestedPort() const { return requestedPort; } 
 
         const	std::string &getLocation() const { return location; }
 
 		//Setters
 		void	setContentLength(int len) { this->contentLength = len; }
-		void	setRequestedport();
+		void	setRequestedPort();
 		void	setLocation(Location *ReqLocation);
 		void	setContentType();
 		void	setBoundary();

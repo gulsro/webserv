@@ -61,6 +61,7 @@ class HttpResponse
 		std::string	getMIMEtype() const;
 		void		checkURI();
 		void		checkResourceType();
+        bool        checkAllowedMethod();
 		void		methodGet();
 		void		methodPost();
 		void		methodDelete();

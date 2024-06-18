@@ -27,5 +27,27 @@ int main (int argc, char **argv)
 		std::cerr << e.what();
 	}
     close(fd);
+}
+#include "../include/Webserv.hpp"
+
+int main(int ac, char **av)
+{
+    if (ac > 2){
+        std::cout << "too many argument" << std::endl;
+        return 1;
+    }
+    else{
+        try{
+            Config config;
+            if (ac == 2)
+                config.setConfigFile(av[1]);
+            config.parseConfig();
+            
+        }
+        catch (const std::exception& e){
+            std::cout << e.what() << std::endl;
+            return 1;
+        }
+    }
     return 0;
 }

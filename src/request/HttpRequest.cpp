@@ -3,7 +3,7 @@
 #include "utils.hpp"
 #include <cstring>
 
-#define MAX_BODY 5000
+#define MAX_BODY 1000000
 
 HttpRequest::HttpRequest()
 {
@@ -15,9 +15,6 @@ HttpRequest::HttpRequest()
 	this->contentType = "";
 	this->requestedPort = 0;
 	this->location = "";
-
-    // this->location = ReqLocation->getRoot() + ReqLocation->getPath();
-    // this->contentLength = 0;
 }
 
 HttpRequest::HttpRequest(const HttpRequest &other)
@@ -49,58 +46,6 @@ HttpRequest::~HttpRequest()
 	#ifdef DEBUG
 		std::cout << GREY << "HttpRequest : Destructor called" << DEFAULT << std::endl; 
 	#endif
-}
-
-std::vector<std::string> HttpRequest::splitByBoundary()
-{
-	#ifdef FUNC
-		std::cout << YELLOW << "[FUNCTION] splitByBoundary" << DEFAULT << std::endl;
-	#endif
-	std::vector<std::string> parts;
-	size_t begin = 0;
-	size_t end = this->body.find(boundaryEnd);
-
-	while (begin < this->body.size() && begin != end)
-	{
-		size_t pos = this->body.find(this->boundaryBegin, begin);
-		if (pos != std::string::npos)
-		{
-			pos += this->boundaryBegin.size();
-			size_t next = this->body.find(this->boundaryBegin, pos);
-			if (next != std::string::npos)
-			{
-				parts.push_back(this->body.substr(pos, (next - pos) - 1));
-				begin = next;
-			}
-			else
-			{
-				parts.push_back(this->body.substr(pos, (end - pos) - 1));
-				begin = pos;
-			}
-		}
-		else
-			begin = pos;
-	}
-	return parts;
-}
-
-void	HttpRequest::makeKeyValuePair(int n, const std::string str)
-{
-    #ifdef FUNC
-	    std::cout << YELLOW << "[FUNCTION] makeKeyValuePair" << DEFAULT << std::endl;
-	#endif
-	(void)n;
-	std::vector<std::string> splittedStr = split(str, ';');
-	// i = 1 : skipping Content-Disposition value. (e.g. form-data;)
-	for (size_t i = 1; i < splittedStr.size(); i++)
-	{
-		std::vector<std::string> keyValue = splitForKeyValue(splittedStr[i], '=');
-		std::string key = trim(keyValue[0], ' ');
-		std::string value = trim(keyValue[1], '"');
-		this->parts[n].pairs.push_back(std::make_pair(key, value));
-		if (key == "filename")
-			this->parts[n].partFilename = value;
-	}
 }
 
 void	HttpRequest::checkContentType()
@@ -137,6 +82,9 @@ void	HttpRequest::setLocation(Location *ReqLocation)
 
 	// locations = Server->getServer()->getLocation();
 	// path = location[i]->getPath();
+
+    // iterate location blocks, if is there a match, then set location.
+    // otherwise empty.
 
 	if (uri == path)
 	{
@@ -230,7 +178,7 @@ bool	HttpRequest::parseHeader(const std::string &line)
 	return true;
 }
 
-void	HttpRequest::setRequestedport()
+void	HttpRequest::setRequestedPort()
 {
 	if (this->headers.count("Host"))
 	{
