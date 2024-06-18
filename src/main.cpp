@@ -10,16 +10,17 @@ int main(int ac, char **av)
         try{
             Config config;
             // Declare a unique_ptr without initializing
-            std::unique_ptr<ServerManager> serverManager;
+            //std::unique_ptr<ServerManager> serverManager;
+            ServerManager serverManager(config);
             // Later, assign a dynamically allocated object to it
             // The std::make_unique function creates a new instance of ServerPool on the heap
             // and returns a std::unique_ptr<ServerPool> that owns this instance
-            serverManager = std::make_unique<ServerManager>(&config);
+            //serverManager = std::make_unique<ServerManager>(&config);
             if (ac == 2)
                 config.setConfigFile(av[1]);
             config.parseConfig();
-            serverManager->startServerManager(*serverManager); 
-            serverManager->startPoll();
+            serverManager.startServerManager(); 
+            serverManager.startPoll();
             
         }
         catch (const std::exception& e){

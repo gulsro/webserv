@@ -1,5 +1,6 @@
 
 #include "../include/Server.hpp"
+#include "Webserv.hpp"
 
 Server::Server() : port(0), serverFd(0), root(""), index(""), maxBodySize(1000000)
 {
@@ -85,20 +86,20 @@ struct sockaddr_in* Server::getSocketAddr() const
 //     return connectedClientFds;
 // }
 
-std::ostream& operator<<(std::ostream& out, const Server& server)
-{
-    out << "port: " << server.getPort();
-    out << std::endl;
-    out << "serverFd: " << server.getServerFd();
-    out << std::endl;
-    out << "host: " << server.getHost();
-    out << std::endl;
-    //out << server.serverNames;
-    out << "root: " << server.getRoot();
-    out << std::endl;
+// std::ostream& operator<<(std::ostream& out, const Server& server)
+// {
+//     out << "port: " << server.getPort();
+//     out << std::endl;
+//     out << "serverFd: " << server.getServerFd();
+//     out << std::endl;
+//     out << "host: " << server.getHost();
+//     out << std::endl;
+//     //out << server.serverNames;
+//     out << "root: " << server.getRoot();
+//     out << std::endl;
 
-    return out;
-}
+//     return out;
+// }
 
 void Server::createSocket()
 {
@@ -183,7 +184,7 @@ void Server::setPort(std::string& cont, int key){
     size_t colon = cont.find(':');
     if (colon != std::string::npos){
         std::string host = cont.substr(key, colon - key);
-        setHost(host);
+        this->setHost(host);
         this->port = std::stoi(cont.substr(colon + 1, cont.find('\n') - colon + 1));
     }
     else {

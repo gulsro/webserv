@@ -14,6 +14,7 @@
 
 // serverManager manages multiple Server instances, each representing a virtual host.
 class Server;
+class Config;
 
 class ServerManager
 {
@@ -34,7 +35,7 @@ class ServerManager
 	    std::unique_ptr<Server>	getServer(std::string host) const; 
         
         void addServer(std::unique_ptr<Server> server);        
-        void startServerManager(ServerManager&); // init vServers in a loop
+        void startServerManager(); // init vServers in a loop
         void startSockets();
         void addFdToPollFds(int fd, int events);
         void startPoll();

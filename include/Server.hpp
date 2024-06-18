@@ -67,13 +67,13 @@ public:
     void setServerVar(std::stringstream& iss);
     void initLocation(std::string serverCont);
 
-    void setPort(int port);
-    void setServerFd(int fd);
-    void setServerName(std::string serverName);
-    void setRoot(std::string root);
-    void setIndex(std::string index);
-    void setHost(std::string host);
-    void setMaxBodySize(unsigned long maxBodySize);
+    // void setPort(int port);
+    // void setServerFd(int fd);
+    // void setServerName(std::string serverName);
+    // void setRoot(std::string root);
+    // void setIndex(std::string index);
+    // void setHost(std::string host);
+    // void setMaxBodySize(unsigned long maxBodySize);
 
 
     void createSocket();

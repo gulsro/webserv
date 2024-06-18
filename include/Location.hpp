@@ -4,32 +4,6 @@
 
 #include "Webserv.hpp"
 
-<<<<<<< HEAD
-
-// class Location
-// {
-// private:
-//     std::string path;
-//     std::string root;
-//     bool autoindex;
-//     std::string index;
-//     std::string redirect;
-//     std::string alias;
-//     std::string errorPage;
-
-//     std::vector<bool> methods; //GET, POST DELETE
-
-//     std::string cgiPass;
-
-
-// public:
-//     Location();
-//     ~Location();
-//     Location(Location& a);
-//     Location& operator=(const Location a);
-
-// };
-=======
 class Location;
 typedef void (Location::*setFunc2) (std::string&, int);
 
@@ -83,6 +57,5 @@ public:
 
 std::ostream& operator<<(std::ostream& out, const Location& location);
 
->>>>>>> origin/parsing
 
 #endif
