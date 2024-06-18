@@ -1,9 +1,16 @@
 #include "Webserv.hpp"
 
-ServerManager::ServerManager()
-{
-    std::cout << "ServerManager constructor is called" << std::endl;
+ServerManager::ServerManager(const Config& config) {
+  // Loop and copy raw pointers (not recommended)
+  for (Server* server : config.serverList) {
+    servers.push_back(server);
+  }
 }
+
+// ServerManager::ServerManager()
+// {
+//     std::cout << "ServerManager constructor is called" << std::endl;
+// }
 
 ServerManager::~ServerManager()
 {
@@ -61,7 +68,7 @@ void ServerManager::startServerManager(ServerManager& serverManager)
 {
     auto &servers = serverManager.getServers();
     
-    tempConfigServer(serverManager);
+    //tempConfigServer(serverManager);
     startSockets();
     for (const auto &server: servers)
     {

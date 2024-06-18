@@ -4,7 +4,6 @@
 
 #include "Webserv.hpp"
 
-//class Location;
 class ServerManager;
 
 // The server will use the Host header from incoming HTTP requests
@@ -14,11 +13,9 @@ class ServerManager;
 //     -Nginx translates all “incomplete” listen directives by substituting missing values with their default values
 //     so that each block can be evaluated by its IP address and port.
 
-
-//SUBSERVER???
-//struct addrinfo
-
 // config parser gives values to port, serverName, etc.
+class Location;
+typedef void (Server::*setFunc) (std::string&, int);
 
 class Server
 {
@@ -26,64 +23,68 @@ private:
     int port;
     int serverFd;
     std::string host; //address
-    std::vector<std::string> serverNames;
     std::string root;
     std::string index;
-    unsigned long maxBodySize;
-    //ServerManager& serverManager;
+    unsigned long maxBodySize; // in bytes
+    int nbLocation;
     
-   // struct pollfd pollfd;
-  //  std::vector<Location> locationList;
+    std::vector<Location*> locationList;
+    std::vector<std::string> locationCont;
     struct sockaddr_in serverAddr;
+    setFunc func[4] {&Server::setPort, &Server::setRoot, &Server::setIndex, &Server::setMaxBodySize};
 
 public:
     Server();
     ~Server();
-    Server(int port,
-				std::string host,
-				std::vector<std::string> serverNames,
-				std::string root,
-                std::string index,
-				unsigned long maxBodySize);
-			//	std::vector<std::unique_ptr<Location>> locations,
-    //or alternative to member default constructor belove,
-    //we could use below;
-    //Server(Config& a);
-
     std::vector<int> connectedClientFds;
-    
-    bool matchesHostAndPort(const std::string &host, int port) const;
 
- 
-    //***********GETTERSSS************
+    Server(const Server& s);
+    Server& operator=(const Server s);
+
+//**********GETTERS*********************
     int getPort() const;
     std::string getHost() const;
     std::string getRoot() const;
     std::string getIndex() const;
-    std::vector<std::string> getServerNames() const;
     int getServerFd() const;
+    unsigned long getMaxBodySize() const;
+    std::vector<Location*> getLocationList() const;
     struct sockaddr_in* getSocketAddr() const;
     //std::vector<Location> getLocationList() const;
-    //std::vector<int> getConnectedClientFds() const;
 
+    
+//**********SETTERS*********************
 
-    //*************SETTERS***********
+    void setPort(std::string& cont, int key);
+    void setHost(std::string& cont);
+    // void setServerFd(int fd);
+    void setRoot(std::string& cont, int key);
+    void setIndex(std::string& cont, int key);
+    void setMaxBodySize(std::string& cont, int key);
+
+    void splitLocation(std::string cont);
+    std::size_t skipLocationPath(std::string cont, std::size_t found);
+    void setServerVar(std::stringstream& iss);
+    void initLocation(std::string serverCont);
+
     void setPort(int port);
-    //void setServerFd(int fd);
+    void setServerFd(int fd);
     void setServerName(std::string serverName);
     void setRoot(std::string root);
     void setIndex(std::string index);
     void setHost(std::string host);
     void setMaxBodySize(unsigned long maxBodySize);
 
-    //*********SOCKET OPERATIONS******
+
     void createSocket();
     void setSocketAddr();
     void setSocketOption();
     void bindSocket();
     void listenSocket();
+    int acceptConnection();
 
-    //*******PRINT**********
+    bool matchesHostAndPort(const std::string &host, int port) const;
+
     void printConnectedClientFds() const;
 
 };

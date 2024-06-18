@@ -6,45 +6,39 @@
 
 class Server;
 class ServerManager;
-//class Location;
 
-// A function to assign values to server's members. (port, serverName etc.)
 
-struct server_ {
-    int port;
-    int serverFd;
-    std::string host; //address
-    std::vector<std::string> serverNames;
-    std::string root;
-    std::string index;
-    unsigned long maxBodySize;
+class Config
+{
+private:
+    std::string configFile; // config file name
+    std::string content; // content of config file in one string
+    int nbServer;
+    std::vector<Server*> serverList; // list for Server class
+    std::vector<std::string> serverCont; //splited contents inside each server {}
+
+    //Gul added this:
+    friend class ServerManager;
     
-  //  std::vector<Location> locationList;
+public:
+    Config();
+    ~Config();
+    Config(Config& a);
+    Config& operator=(const Config a);
+
+    void    setConfigFile(std::string file);
+    void    parseConfig();
+    void    checkConfig(std::ifstream& file);
+    bool    isBlank(std::ifstream& file);
+    void    readConfig(std::ifstream& file);
+    void    splitServer();
+
+    void    parseServer();
+    void    parseLocation();
+
 };
 
-
-
-// class Config
-// {
-// private:
-//     int nbServer;
-//     std::vector<Server> servers;
-
-// public:
-//     Config();
-//     ~Config();
-//     Config(Config& a);
-    
-//     //functions that we need (??)
-    
-//     //initServer(); -declare single virtualserver
-//     //configServer(); -assign values(after parsing) in a loop
-
-
-// };
-
-//std::ostream& operator<<(std::ostream& out, const Config& config);
-
-void tempConfigServer(ServerManager& serverManager); //before getting parsed value i ll init server with this func
+std::size_t findScopeBegin(std::string& content, size_t found);
+std::size_t findScopeEnd(std::string& content, size_t begin);
 
 #endif

@@ -26,7 +26,8 @@ class ServerManager
         std::vector<struct pollfd> pollfds;
     
     public:
-        ServerManager();
+       // ServerManager();
+        ServerManager(const Config& config);
         ~ServerManager();
 
         const std::vector<std::unique_ptr<Server>>& getServers() const;
