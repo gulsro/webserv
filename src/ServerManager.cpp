@@ -190,6 +190,7 @@ void ServerManager::startPoll()
                 {    //Request.readRequest(fd); fd will be client's
                     std::cout << "REQUESTTTTTT" << std::endl;
                     readRequest(fd);
+                    pollfds[i].fd = -1;
                 }
 
                 //std::cout << "LALALO" << std::endl;
@@ -247,16 +248,6 @@ void readRequest(int clientFd)
 {
     //Response response(clientFd);
 	//response.handle_request();
-
-    // int byteRead;
-    // char buf[1064];
-
-	// if ((byteRead = read(clientFd, &buf, 1064)) > 0)
-    // {
-    //     if (byteRead != write(clientFd, "KOLONYAAAA", byteRead))
-    //         exit(1);
-    // }
-
   const char* response = "HTTP/1.1 200 OK\r\nContent-Length: 7\r\n\r\nKOLONYA";
 
   // Send the response to the client
@@ -265,7 +256,6 @@ void readRequest(int clientFd)
     // Consider closing the client socket (optional)
   }
 
-    std::cout << "KOLONYAAAA" << std::endl;
     if (close(clientFd) == -1)
         exit(1);
 }
