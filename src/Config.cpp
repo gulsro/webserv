@@ -110,6 +110,7 @@ void Config::parseServer(){
         Server* s = new Server();
         s->setServerVar(iss);
         this->serverList.push_back(s);
+        
         //GUL added:
         //ServerManager::getInstance().addServer(std::unique_ptr<Server>(newServer)); // Add to servers using ServerManager method
 

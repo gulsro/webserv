@@ -2,6 +2,7 @@
 # define WEBSERV_HPP
 
 #include <string>
+#include <sstream> // std::stringstream
 #include <iostream>
 #include <vector>
 #include <unistd.h>

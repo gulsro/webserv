@@ -64,7 +64,7 @@ void ServerManager::addServer(std::unique_ptr<Server> server)
     this->servers.push_back(std::move(server));
 }
 
-void ServerManager::startServerManager()
+void ServerManager::startServerManager(ServerManager &serverManager)
 {
     auto &servers = serverManager.getServers();
     
