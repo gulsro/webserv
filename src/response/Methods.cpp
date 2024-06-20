@@ -48,9 +48,9 @@ void	HttpResponse::checkResourceType()
 	if (this->completed == true)
 		return	;
 	// this->resource = Request->getRoot() + Request->getURI();
-    setResource( "." + Request->getLocation());
-    if (Request->location.empty())
-	    setResource("." + Request->getURI());
+    setResource();
+    // if (Request->location.empty())
+	//     setResource("." + Request->getURI());
 	path = this->resource;
 	if (stat(path.c_str(), &buf) == 0)
 	{
@@ -109,6 +109,9 @@ void	HttpResponse::methodGet()
 
 void    HttpResponse::postFile()
 {
+	#ifdef FUNC
+		std::cout << YELLOW << "[FUNCTION] postFile" << DEFAULT << std::endl;
+	#endif
     std::string filename;
     for (size_t i = 0; i < Request->parts.size(); i++)
     {

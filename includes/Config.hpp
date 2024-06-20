@@ -12,7 +12,7 @@ private:
     std::string configFile; // config file name
     std::string content; // content of config file in one string
     int nbServer;
-    std::vector<Server> serverList; // list for Server class
+    std::vector<Server*> serverList; // list for Server class
     std::vector<std::string> serverCont; //splited contents inside each server {}
 
 
@@ -30,6 +30,10 @@ public:
     void    splitServer();
 
     void    parseServer();
+    void    parseLocation();
+
+    const std::vector<Server*>  getServerList() { return this->serverList; }
+
 };
 
 std::size_t findScopeBegin(std::string& content, size_t found);

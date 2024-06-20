@@ -106,6 +106,31 @@ void	HttpResponse::createResponse_File(std::string filename)
 		createResponse(STATUS_INTERNAL_ERR);
 }
 
+void    HttpResponse::setResource()
+{
+	Location	*Location = this->Request->ReqLocation;
+
+	// Check redirection 
+	if	(!(Location->getRedirect().empty()))
+	{
+		this->resource = Location->getRedirect();
+		createResponse(STATUS_FOUND);
+	}
+	// Check index
+	if (Location->getIndex().empty())
+	{
+		if (Location->getAutoindex() == true)
+		{
+			Server	*Server = this->Request->ReqServer;
+			this->resource = "." + Server->getRoot() + Server->getIndex();
+		}
+	}
+	else
+	{
+		this->resource = "." + Location->getRoot() + Location->getPath() + Location->getIndex();
+	}
+	this->resource = "." + Location->getPath() + this->Request->getURI();
+}
 
 // void	sendRespose(int fd)
 // {

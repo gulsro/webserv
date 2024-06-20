@@ -14,7 +14,6 @@ HttpRequest::HttpRequest()
 	this->contentLength = 0;
 	this->contentType = "";
 	this->requestedPort = 0;
-	this->location = "";
 }
 
 HttpRequest::HttpRequest(const HttpRequest &other)
@@ -70,26 +69,41 @@ void	HttpRequest::checkRequestValid()
 		throw ErrorCodeException(STATUS_TOO_LARGE);
 }
 
-void	HttpRequest::setLocation(Location *ReqLocation)
+void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 {
 	#ifdef FUNC
-	std::cout << YELLOW << "[FUNCTION] setLocation" << DEFAULT << std::endl;
+		std::cout << YELLOW << "[FUNCTION] setReqServer" << DEFAULT << std::endl;
 	#endif
-	// std::vector<Location*> locations;
-	std::string	path = ReqLocation->getPath();
-	std::string	root = ReqLocation->getRoot();
+	for (size_t i = 0; i < serverList.size(); i++)
+	{
+		int	port = serverList[i]->getPort();
+		std::cout << "Server Port : " << port << std::endl;
+
+		if (this->requestedPort == port)
+			this->ReqServer = serverList[i];
+		else
+			continue;
+	}
+	this->ReqServer = serverList[0]; // Default server
+}
+
+void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
+{
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] setReqLocation" << DEFAULT << std::endl;
+	#endif
+	
 	std::string	uri = this->getURI();
 
-	// locations = Server->getServer()->getLocation();
-	// path = location[i]->getPath();
-
-    // iterate location blocks, if is there a match, then set location.
-    // otherwise empty.
-
-	if (uri == path)
+	for (size_t i; i < locationList.size(); i++)
 	{
-		this->location = root + path;
+		std::string	path = locationList[i]->getPath();
+		if (uri == path)
+			this->ReqLocation = locationList[i];
+		else
+			continue ;
 	}
+	this->ReqLocation = nullptr;
 }
 
 void	HttpRequest::setBoundary()
@@ -140,9 +154,7 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
 		throw ErrorCodeException(STATUS_NOT_ALLOWED);
-		// return false;
 	}
-	// checkUriValid();
 	return true;
 }
 

@@ -66,7 +66,9 @@ std::string	returnStatusMessage(int statusCode)
 		case 205:
 			return ("Reset Content");
 		case 301:
-			return ("Moved Permanently");
+			return ("Moved Permanently"); // redirection
+		case 302:
+			return ("Found"); // redirection
 		case 400:
 			return ("Bad Request");
 		case 401:

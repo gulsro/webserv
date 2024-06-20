@@ -66,8 +66,9 @@
     "thread": "cpp",
     "cinttypes": "cpp",
     "typeinfo": "cpp",
-    "semaphore": "cpp"
-  },
+    "semaphore": "cpp",
+    "regex": "cpp"
+},
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
   "C_Cpp_Runner.debuggerPath": "gdb",

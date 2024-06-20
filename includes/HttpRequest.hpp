@@ -7,6 +7,7 @@
 
 class	HttpResponse;
 class	Location;
+class	Server;
 
 typedef	struct	s_part
 {
@@ -28,8 +29,8 @@ class	HttpRequest
 		std::string	contentType;
 
 		int			requestedPort;
+        Server      *ReqServer;
         Location	*ReqLocation;
-		std::string	location;
 		std::string	boundaryBegin;
 		std::string	boundaryEnd;
 		
@@ -52,12 +53,12 @@ class	HttpRequest
 		const	std::string	&getContentType() const { return contentType; }
 		const	int	        &getRequestedPort() const { return requestedPort; } 
 
-        const	std::string &getLocation() const { return location; }
 
 		//Setters
 		void	setContentLength(int len) { this->contentLength = len; }
 		void	setRequestedPort();
-		void	setLocation(Location *ReqLocation);
+        void    setReqServer(const std::vector<Server*> serverList);
+		void	setReqLocation(const std::vector<Location*> locationList);
 		void	setContentType();
 		void	setBoundary();
 		
@@ -68,7 +69,9 @@ class	HttpRequest
 		const	std::string	getHeaderValue(const std::string &name) const;
 		void	checkContentType();
 		void	checkRequestValid();
+		void	checkLocations();
 		void	checkUriValid();
+		void	checkAllowedMethods();
 		void	handleMultiPartForm();
 		void	makeKeyValuePair(int i, const std::string str);
         void    handlePartInfo(const int i, const std::vector<std::string> strs);

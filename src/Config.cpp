@@ -5,7 +5,13 @@ Config::Config(){
     this->nbServer = 0;
 }
 
-Config::~Config(){}
+Config::~Config(){
+    for (std::vector<Server *>::iterator i = serverList.begin();
+     i != serverList.end();i++){
+        delete *i;
+        *i = nullptr;
+     }
+}
 
 void    Config::setConfigFile(std::string file){
     this->configFile = file;
@@ -61,7 +67,7 @@ std::size_t findScopeBegin(std::string& content, size_t found){
     while (std::isspace(content[begin]))
         begin++;
     if (content[begin] != '{')
-        throw std::runtime_error("Server scope is wrong");
+        throw std::runtime_error("Scope is wrong");
     return (begin + 1);
 }
 
@@ -76,7 +82,7 @@ std::size_t findScopeEnd(std::string& content, size_t begin){
         end++;
     }
     if (bracket)
-        throw std::runtime_error("Server scope is wrong");
+        throw std::runtime_error("Scope is wrong");
     return(end - 1);
 }
 
@@ -92,21 +98,30 @@ void Config::splitServer(){
     }
     if (!this->nbServer)
         throw std::runtime_error("No server was found in config file");
-    for (std::string s : serverCont)
-        std::cout << BLU << s << RES << std::endl << std::endl;
-    std::cout << "# of server is: " << nbServer << std:: endl;
+    // std::cout << "# of server is: " << nbServer << std:: endl;
+    // for (std::string s : serverCont)
+    //     std::cout << BLU << s << RES << std::endl << std::endl;
 }
 
-//make array like Harl
 void Config::parseServer(){
+    splitServer();
     for (std::string cont : serverCont){
         std::stringstream iss(cont);
-        Server s;
-        s.setServerVar(iss);
-        std::cout << RED << s.getHost() <<RES <<std::endl;
+        Server* s = new Server();
+        s->setServerVar(iss);
         this->serverList.push_back(s);
-        std::cout << "listed?" << std::endl;
     }
+}
+
+//add under each server -> first split location inside a Server
+// save it in locationCont (maybe do it in server.cpp)
+void Config::parseLocation(){
+    int i = 0;
+    for (std::string cont : serverCont){
+        this->serverList[i]->splitLocation(cont);
+        this->serverList[i]->initLocation(cont);
+        i++;
+     }
 }
 
 void Config::parseConfig(){
@@ -114,6 +129,6 @@ void Config::parseConfig(){
     // std::cout << "config file is: " << configFile << std::endl;
     checkConfig(file);
     readConfig(file);
-    splitServer();
     parseServer();
+    parseLocation();
 }

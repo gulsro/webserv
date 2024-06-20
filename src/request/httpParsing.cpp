@@ -109,5 +109,33 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		#endif	
 	}
 	checkContentType();
+	checkLocations();
 	return true;
+}
+
+void	HttpRequest::checkAllowedMethods()
+{
+	#ifdef FUNC
+		std::cout << YELLOW << "[FUNCTION] checkAllowedMethods" << DEFAULT << std::endl;
+	#endif
+	std::map<std::string, int> methods = this->ReqLocation->getMethods();
+	std::string	requestedMethod = this->getMethod();
+
+	if ((methods["POST"] == 0 && methods["DELETE"] == 0)
+		|| (methods["POST"] == 0 && requestedMethod == "POST")
+		|| (methods["DELETE"] == 0 && requestedMethod == "DELETE"))
+	{
+		throw ErrorCodeException(STATUS_NOT_ALLOWED);
+	}
+}
+
+void	HttpRequest::checkLocations()
+{
+	#ifdef FUNC
+		std::cout << YELLOW << "[FUNCTION] checkLocation" << DEFAULT << std::endl;
+	#endif
+	setReqLocation(this->ReqServer->getLocationList());
+	// GET is always allowed depending on our own config file
+	if (this->getMethod() != "GET")
+		checkAllowedMethods();
 }

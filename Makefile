@@ -1,4 +1,4 @@
-NAME		=	Http
+NAME		=	webserv
 CC			=	c++
 
 ifdef DEBUG
@@ -39,7 +39,7 @@ all				:	$(NAME)
 
 $(NAME)			: $(OBJ) $(OBJF)
 					@$(CC) $(CPPFLAGS) -o $(NAME) $(OBJ)
-					@echo	"$(CYAN_B) - HTTP is compiled - $(DEFAULT)"
+					@echo	"$(CYAN_B) - Webserv is compiled - $(DEFAULT)"
 
 $(OBJ_DIR)%.o	:$(SRC_DIR)%.cpp $(HEADERS) | $(OBJF)
 					@mkdir -p $(@D)

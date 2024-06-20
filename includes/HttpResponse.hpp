@@ -52,7 +52,7 @@ class HttpResponse
 
 		//Setter
 		void	setRequest(HttpRequest	*request) { Request = request; }
-        void    setResource(const std::string str) { resource = str; }
+        void    setResource();
 		void	setResourceType(enum e_resourceType type) { resourceType = type; }
 		void		checkMethod();
 		void		createResponse(enum e_statusCode code);

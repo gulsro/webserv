@@ -9,29 +9,28 @@ int main(int ac, char **av)
 {
     HttpResponse	Response;
 	HttpRequest		Request;
-    Location        Location;
 
-    if (ac > 2){
+    if (ac > 3){
         std::cout << "too many argument" << std::endl;
         return 1;
     }
     else{
         try{
             Config config;
-            if (ac == 2)
+
+            // if (ac == 2)
+			if (ac == 3)
                 config.setConfigFile(av[1]);
-            config.parseConfig();
-            std::string filename;
+            config.parseConfig();  
+            std::string filename = av[2];
             std::fstream   file;
-            std::cout << "Enter a request : ";
-            std::cin >> filename;
 
             int fd = open(filename.c_str(), O_RDONLY);
             if (fd)
             {
                 if (Request.readRequest(fd) == true)
                 {
-                    Request.setLocation(&Location);
+                    Request.setReqServer(config.getServerList());
                     Response.setRequest(&Request);
                     Response.checkMethod();
                     std::cout << Response.getContent() << std::endl;

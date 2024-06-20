@@ -22,7 +22,8 @@ enum	e_statusCode
 	STATUS_NO_CONTENT = 204,	// successfully processed the request but there is n content to send back.
 	
 	STATUS_MOVED = 301,			// The requested resource has been permanently moved to a new location. (New URL should be contained in the Location header.)
-	
+	STATUS_FOUND = 302,			// The requested resource has been temporarily moved.
+
 	STATUS_BAD_REQUEST = 400, 	// Invalid syntax request
 	STATUS_UNAUTHORIZED = 401,
 	STATUS_FORBIDDEN = 403, 	// No permission to access the requested resource.
