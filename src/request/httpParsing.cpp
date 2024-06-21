@@ -109,7 +109,6 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		#endif	
 	}
 	checkContentType();
-	checkLocations();
 	return true;
 }
 
@@ -136,6 +135,6 @@ void	HttpRequest::checkLocations()
 	#endif
 	setReqLocation(this->ReqServer->getLocationList());
 	// GET is always allowed depending on our own config file
-	if (this->getMethod() != "GET")
+	if (this->getMethod() != "GET" && this->ReqLocation != nullptr)
 		checkAllowedMethods();
 }

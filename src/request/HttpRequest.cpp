@@ -77,7 +77,7 @@ void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 	for (size_t i = 0; i < serverList.size(); i++)
 	{
 		int	port = serverList[i]->getPort();
-		std::cout << "Server Port : " << port << std::endl;
+		// std::cout << "Server Port : " << port << std::endl;
 
 		if (this->requestedPort == port)
 			this->ReqServer = serverList[i];

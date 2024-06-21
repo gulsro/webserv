@@ -31,6 +31,7 @@ int main(int ac, char **av)
                 if (Request.readRequest(fd) == true)
                 {
                     Request.setReqServer(config.getServerList());
+					Request.checkLocations();
                     Response.setRequest(&Request);
                     Response.checkMethod();
                     std::cout << Response.getContent() << std::endl;

@@ -52,6 +52,7 @@ void	HttpResponse::checkResourceType()
     // if (Request->location.empty())
 	//     setResource("." + Request->getURI());
 	path = this->resource;
+	std::cout << path << std::endl;
 	if (stat(path.c_str(), &buf) == 0)
 	{
 		if (S_ISDIR(buf.st_mode))

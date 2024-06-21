@@ -108,28 +108,38 @@ void	HttpResponse::createResponse_File(std::string filename)
 
 void    HttpResponse::setResource()
 {
-	Location	*Location = this->Request->ReqLocation;
-
-	// Check redirection 
-	if	(!(Location->getRedirect().empty()))
+	#ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] setResource" << DEFAULT << std::endl;
+	#endif
+	Server	*Server = this->Request->ReqServer;
+	if (this->Request->ReqLocation != nullptr)
 	{
-		this->resource = Location->getRedirect();
-		createResponse(STATUS_FOUND);
-	}
-	// Check index
-	if (Location->getIndex().empty())
-	{
-		if (Location->getAutoindex() == true)
+		Location	*Location = this->Request->ReqLocation;
+		// Check redirection S
+		if	(!(Location->getRedirect().empty()))
 		{
-			Server	*Server = this->Request->ReqServer;
-			this->resource = "." + Server->getRoot() + Server->getIndex();
+			this->resource = Location->getRedirect();
+			createResponse(STATUS_FOUND);
 		}
+		// Check index
+		if (Location->getIndex().empty())
+		{
+			if (Location->getAutoindex() == true)
+			{
+				// Set default index
+				this->resource = "." + Server->getRoot() + Server->getIndex();
+			}
+		}
+		else
+		{
+			this->resource = "." + Location->getRoot() + Location->getPath() + Location->getIndex();
+		}
+		this->resource = "." + Location->getPath() + this->Request->getURI();
 	}
-	else
+	else // No selected Location
 	{
-		this->resource = "." + Location->getRoot() + Location->getPath() + Location->getIndex();
+		this->resource = "." + Server->getRoot() + this->Request->getURI();
 	}
-	this->resource = "." + Location->getPath() + this->Request->getURI();
 }
 
 // void	sendRespose(int fd)
