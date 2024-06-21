@@ -142,15 +142,3 @@ void    HttpResponse::setResource()
 	}
 }
 
-// void	sendRespose(int fd)
-// {
-// 	std::string content = createResponse();
-// 	int val = send(fd, content.c_str(), content.size(), 0);
-// 	if (val == -1)
-// 	{
-// 		// Sending error occured
-// 		//clean up
-// 	}
-// 	deleteRequest();
-// }
-

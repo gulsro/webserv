@@ -41,18 +41,14 @@ void	HttpResponse::checkResourceType()
 	#ifdef FUNC
 	    std::cout << YELLOW << "[FUNCTION] checkResourceType" << DEFAULT << std::endl;
 	#endif
-	
 	std::string	path;
 	struct stat buf;
 	
 	if (this->completed == true)
 		return	;
-	// this->resource = Request->getRoot() + Request->getURI();
     setResource();
-    // if (Request->location.empty())
-	//     setResource("." + Request->getURI());
 	path = this->resource;
-	std::cout << path << std::endl;
+	std::cout << "path : " << path << std::endl;
 	if (stat(path.c_str(), &buf) == 0)
 	{
 		if (S_ISDIR(buf.st_mode))
@@ -92,7 +88,6 @@ void	HttpResponse::methodGet()
 	// Resource is a file
 	if (this->resourceType == RESOURCE_FILE)
 	{
-		// checkMethod();
 		createResponse_File(getResource());
 	}
 	else // Resource is a directory
@@ -100,10 +95,7 @@ void	HttpResponse::methodGet()
 		checkURI();
 		if (completed == false)
 		{
-			// if (checkIndexFileExistence(Request->getIndex()) == true)
-				createResponse_File(getResource());
-			// else
-			// 	checkAutoindex();
+			createResponse_File(getResource());
 		}
 	}
 }
@@ -191,12 +183,6 @@ void	HttpResponse::methodDelete()
 	}
 }
 
-// bool    HttpResponse::checkAllowedMethod()
-// {
-//     std::map allowedMethods = this->Request->ReqLocation->getMethods();
-	
-// }
-
 // Iterates allowed methods container and execute method. 
 void	HttpResponse::checkMethod()
 {
@@ -204,25 +190,12 @@ void	HttpResponse::checkMethod()
 	    std::cout << YELLOW << "[FUNCTION] checkMethod" << DEFAULT << std::endl;
 	#endif
 	std::string	method = Request->getMethod();
+
 	this->checkResourceType();
-    
-    // if (checkAllowedMethod() == true)
-    // {
-	// if (/*comparing location block method and requested method*/)
-	// {
-		if (method == "GET" || (method == "POST" && Request->contentLength == 0 ))
-			methodGet();
-		else if (method == "POST")
-		{
-			methodPost();
-		}
-		else
-			methodDelete();
-    // }
-	// }
-	// else
-	// {
-	// 	this->statusCode == STATUS_NOT_ALLOWED; // Method Not Allowed
-	// 	getStatusMessage();
-	// }
+	if (method == "GET" || (method == "POST" && Request->contentLength == 0 ))
+		methodGet();
+	else if (method == "POST")
+		methodPost();
+	else
+		methodDelete();
 }
