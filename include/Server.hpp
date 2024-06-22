@@ -5,6 +5,11 @@
 #include "Webserv.hpp"
 
 class ServerManager;
+class Server;
+class Location;
+
+typedef void (Server::*setFunc) (std::string&, int);
+
 
 // The server will use the Host header from incoming HTTP requests
 // to determine which virtual host configuration to apply.
@@ -14,8 +19,6 @@ class ServerManager;
 //     so that each block can be evaluated by its IP address and port.
 
 // config parser gives values to port, serverName, etc.
-class Location;
-typedef void (Server::*setFunc) (std::string&, int);
 
 class Server
 {
@@ -88,6 +91,7 @@ public:
     void printConnectedClientFds() const;
 
 };
+
 
 std::ostream& operator<<(std::ostream& out, const Server& server);
 

@@ -13,7 +13,7 @@ FILES =	main.cpp \
 		ServerManager.cpp \
 		Config.cpp \
 		Client.cpp \
-		#Location.cpp \
+		Location.cpp \
 		#Socket.cpp
 
 

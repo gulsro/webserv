@@ -3,8 +3,9 @@
 ServerManager::ServerManager(const Config& config) {
   // Loop and copy raw pointers (not recommended)
   for (Server* server : config.serverList) {
-    servers.push_back(server);
-  }
+            servers.emplace_back(std::move(server)); // Move ownership
+        }
+        //config->serverList.clear(); // Clear temporary list after moving servers
 }
 
 // ServerManager::ServerManager()
