@@ -115,6 +115,8 @@ void ServerManager::addFdToPollFds(int fd, int events)
     this->pollfds.push_back(PollFd);
 }
 
+// Establish waiting client connections if poll returns an event on listenerFd
+// Adds that clientFd to pollFds vector.
 void ServerManager::acceptClient(int serverFd, Server& server)
 {
     struct sockaddr_in cliAddr;
