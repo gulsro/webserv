@@ -48,7 +48,6 @@ void	HttpResponse::checkResourceType()
 		return	;
     setResource();
 	path = this->resource;
-	std::cout << "path : " << path << std::endl;
 	if (stat(path.c_str(), &buf) == 0)
 	{
 		if (S_ISDIR(buf.st_mode))
@@ -83,7 +82,7 @@ void	HttpResponse::methodGet()
 	    std::cout << YELLOW << "[FUNCTION] methodGet" << DEFAULT << std::endl;
 	#endif
 
-	if (completed == true)
+	if (this->completed == true)
 		return ;
 	// Resource is a file
 	if (this->resourceType == RESOURCE_FILE)
@@ -171,14 +170,14 @@ void	HttpResponse::methodDelete()
     #ifdef FUNC
 	    std::cout << YELLOW << "[FUNCTION] methodDelete" << DEFAULT << std::endl;
 	#endif
-	if (completed == true)
+	if (this->completed == true)
 		return ;
 	if (this->resourceType == RESOURCE_FILE)	
 		deleteFile();
 	else
 	{
 		checkURI();
-		if (completed == false)
+		if (this->completed == false)
 			deleteDir();
 	}
 }

@@ -6,14 +6,11 @@
 #define MAX_BODY 1000000
 
 HttpRequest::HttpRequest()
+	: method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd("")
 {
 	#ifdef DEBUG
 		std::cout << GREY << "HttpRequest : Default constructor called" << DEFAULT << std::endl; 
 	#endif
-	this->version = "";
-	this->contentLength = 0;
-	this->contentType = "";
-	this->requestedPort = 0;
 }
 
 HttpRequest::HttpRequest(const HttpRequest &other)
@@ -74,7 +71,7 @@ void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 	#ifdef FUNC
 		std::cout << YELLOW << "[FUNCTION] setReqServer" << DEFAULT << std::endl;
 	#endif
-	for (size_t i = 0; i < serverList.size(); i++)
+	for (size_t i = 0; i < serverList.size(); ++i)
 	{
 		int	port = serverList[i]->getPort();
 		// std::cout << "Server Port : " << port << std::endl;
@@ -95,13 +92,14 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 	
 	std::string	uri = this->getURI();
 
-	for (size_t i; i < locationList.size(); i++)
+	for (size_t i = 0; i < locationList.size(); ++i)
 	{
 		std::string	path = locationList[i]->getPath();
 		if (uri == path)
+		{
 			this->ReqLocation = locationList[i];
-		else
-			continue ;
+			break;
+		}
 	}
 	this->ReqLocation = nullptr;
 }

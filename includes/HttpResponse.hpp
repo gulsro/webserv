@@ -20,7 +20,6 @@ class HttpResponse
 {
 	protected:
 		HttpRequest		*Request;
-		std::string		version;
 		int				statusCode;
 		std::string		body;
 		std::unordered_map<std::string, HttpHeader> headers;
@@ -41,7 +40,6 @@ class HttpResponse
 		virtual ~HttpResponse();
 
 		//Getter
-		const	std::string	&getVersion() const { return version; }
 		const	int			&getStatusCode()	const { return statusCode; }
 		// const	std::string	&getStatusMessage() const { statusMessage = returnStatusMessage(statusCode); return  statusMessage; }
 		const	std::string	&getBody() const { return body; }
