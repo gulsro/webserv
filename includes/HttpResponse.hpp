@@ -62,6 +62,7 @@ class HttpResponse
 		void		checkURI();
 		void		checkResourceType();
         bool        checkAllowedMethod();
+		bool		checkIndexFileExists(const std::string path, const std::string filename);
 		void		methodGet();
 		void		methodPost();
 		void		methodDelete();

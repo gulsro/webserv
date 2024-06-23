@@ -117,3 +117,11 @@ bool	isInvalidChar(const	char c)
 	}
 	return (true); 
 }
+
+bool	fileExistsInDir(const std::string dir, const std::string filename)
+{
+	std::string		path = dir + "/" + filename;
+	std::ifstream	file(path);
+
+	return file.is_open();
+}

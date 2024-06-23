@@ -132,7 +132,10 @@ void    HttpResponse::setResource()
 		}
 		else
 		{
-			this->resource = "." + Location->getRoot() + Location->getPath() + Location->getIndex();
+			if (fileExistsInDir(Location->getRoot() + Location->getPath(), Location->getIndex()) == true)
+				this->resource = "." + Location->getRoot() + Location->getPath() + Location->getIndex();
+			else
+				throw ErrorCodeException(STATUS_FORBIDDEN);
 		}
 		this->resource = "." + Location->getPath() + this->Request->getURI();
 	}
