@@ -14,10 +14,16 @@
 #include <memory>
 #include <functional>
 #include <poll.h>
+#include <sys/types.h> 
 
 #include "Config.hpp"
 #include "Server.hpp"
 #include "Location.hpp"
+#include "HttpRequest.hpp"
+#include "HttpResponse.hpp"
+#include "Cgi.hpp"
+#include "utils.hpp"
+
 
 #define BOLD "\033[1m"
 #define RES "\033[0m"

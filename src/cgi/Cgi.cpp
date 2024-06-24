@@ -10,9 +10,13 @@ from the CGI, EOF will mark the end of the returned data.
 ∗ Your server should work with one CGI (php-CGI, Python, and so forth)*/
 
 
-Cgi::Cgi(){
+Cgi::Cgi(){}
 
+Cgi::Cgi(HttpResponse& response){
+    this->env = initCgiEnv(response);
 }
+
+
 Cgi::~Cgi(){
 
 }
@@ -21,14 +25,52 @@ Cgi::Cgi(Cgi& a){
 
 }
 
-Cgi::Cgi& operator=(const Cgi a){
+Cgi& Cgi::operator=(const Cgi a){
 
 }
 
+// parse in tmp and copy it to char* env
+char **Cgi::initCgiEnv(HttpResponse& response){
+    std::vector<std::string> tmp;
+    std::vector<char *> env;
+
+    tmp.push_back("GATEWAY_INTERFACE=cgi/1.1");
+    tmp.push_back("SERVER_NAME="); //server hostname
+    tmp.push_back("SERVER_SOFTWARE=webserv/1.0");
+    tmp.push_back("SERVER_PROTOCOL=HTTP/1.1");
+    tmp.push_back("SERVER_PORT="); //server port
+    tmp.push_back("REQUEST_METHOD="); //request method
+    tmp.push_back("SCRIPT_NAME="); //cgi pass
+    tmp.push_back("DOCUMENT_ROOT="); //location getRoot()
+    tmp.push_back("QUERY_STRING="); //getQuery
+    tmp.push_back("CONTENT_TYPE=");
+    tmp.push_back("CONTENT_LENGTH="); //location-maxbodysize
+
+    for (std::string s : tmp)
+        env.push_back(&s.front());
+    return (env.data());
+}
+
+void    Cgi::execCgi(){
+    int pip[2];
+    pid_t pid;
+
+    if (pipe(pip) < 0)
+		perror("pipe failed"); //error
+	pid = fork();
+	if (pid < 0)
+		perror("fork failed"); //error
+	if (pid == 0){
+        if (execve(, , env) < 0)
+            //error
+    }
+}
+
 /*
-1. check if the file requested is located in the location directory with cgi pass (part of HTTP request parsing?)
-2. if yes, make a child process by fork() and open pipe
-3. parse a full path for cgi program (= cgi path??)
+1. check if the file requested is located in the location directory with cgi pass (maybe before checkMethods() in main)
+2. if yes, initialize Cgi class. parse a full path for cgi program (= cgi path??)
+3. make a child process by fork() and open pipe
+
 4. Execute CGI in child process.
     av[0] = cgi file name 
     av[1] = path to the cgi file
