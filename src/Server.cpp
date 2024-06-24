@@ -283,6 +283,12 @@ void Server::initLocation(std::string serverCont){
     }
 }
 
+// void Server::removeClientFd(int clientFd)
+// {
+//     this->connectedClientFds.erase(clientFd);
+// }
+
+
 std::ostream& operator<<(std::ostream& out, const Server& server)
 {
     out << "port: " << server.getPort()<< std::endl;

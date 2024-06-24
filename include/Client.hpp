@@ -7,9 +7,14 @@ class Server;
 
 class Client
 {
+private:
+    Server& server;
+    int clientFd;
+//        Request&
+//         Response&
 
 public:
-    Client();
+    Client(Server&, int fd);
     ~Client();
 
 };

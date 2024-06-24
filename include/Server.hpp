@@ -65,20 +65,13 @@ public:
     void setIndex(std::string& cont, int key);
     void setMaxBodySize(std::string& cont, int key);
 
+//********PARSING************************
     void splitLocation(std::string cont);
     std::size_t skipLocationPath(std::string cont, std::size_t found);
     void setServerVar(std::stringstream& iss);
     void initLocation(std::string serverCont);
 
-    // void setPort(int port);
-    // void setServerFd(int fd);
-    // void setServerName(std::string serverName);
-    // void setRoot(std::string root);
-    // void setIndex(std::string index);
-    // void setHost(std::string host);
-    // void setMaxBodySize(unsigned long maxBodySize);
-
-
+//*******SOCKET***************************
     void createSocket();
     void setSocketAddr();
     void setSocketOption();
@@ -86,8 +79,13 @@ public:
     void listenSocket();
     int acceptConnection();
 
-    bool matchesHostAndPort(const std::string &host, int port) const;
+//not sure if this is necessary anymore
+ //   bool matchesHostAndPort(const std::string &host, int port) const;
+    
+    // param of the func might be changed as Client obj later.
+    void removeClientFd(int clientFd);
 
+//*********PRINT**************************
     void printConnectedClientFds() const;
 
 };

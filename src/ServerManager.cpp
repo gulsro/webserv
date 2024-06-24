@@ -129,6 +129,7 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     {
         throw std::runtime_error("Error: accept()");
     }
+    Client* client = new Client(server, clientFd);
     //server.getConnectedClientFds().push_back(clientFd);
     server.connectedClientFds.push_back(clientFd);
     server.printConnectedClientFds();
@@ -201,6 +202,7 @@ void ServerManager::startPoll()
                     std::cout << "REQUESTTTTTT" << std::endl;
                     readRequest(fd);
                     pollfds[i].fd = -1;
+                    //here call (client.server->)removeClientFd()
                 }
 
                 //std::cout << "LALALO" << std::endl;
@@ -269,6 +271,11 @@ void readRequest(int clientFd)
     if (close(clientFd) == -1)
         exit(1);
 }
+
+// int valueToBeDeleted = 3;
+//     auto it = std::find(vector.begin(), vector.end(),
+//                    valueToBeDeleted);
+
 
 std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
 {
