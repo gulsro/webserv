@@ -7,6 +7,7 @@
 class ServerManager;
 class Server;
 class Location;
+class Client;
 
 typedef void (Server::*setFunc) (std::string&, int);
 
@@ -40,6 +41,7 @@ public:
     Server();
     ~Server();
     std::vector<int> connectedClientFds;
+    std::vector<Client*> clientList;
 
     Server(const Server& s);
     Server& operator=(const Server s);
@@ -83,7 +85,7 @@ public:
  //   bool matchesHostAndPort(const std::string &host, int port) const;
     
     // param of the func might be changed as Client obj later.
-    void removeClientFd(int clientFd);
+//    void removeClientFd(int clientFd); //THIS FUNC REPLACED WITH A TEMPLATE FUNC
 
 //*********PRINT**************************
     void printConnectedClientFds() const;

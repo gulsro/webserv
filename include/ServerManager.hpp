@@ -19,7 +19,7 @@ class Config;
 class ServerManager
 {
     private:
-        std::vector<std::unique_ptr<Server>> servers;
+        std::vector<Server*> servers;
         //std::map<int, std::unique_ptr<Server>> mapServerFd;
         std::map<int, Server*> mapServerFd;
         // an array of fd's
@@ -31,14 +31,16 @@ class ServerManager
         ServerManager(const Config& config);
         ~ServerManager();
 
-        const std::vector<std::unique_ptr<Server>>& getServers() const;
-	    std::unique_ptr<Server>	getServer(std::string host) const; 
+        //const std::vector<std::unique_ptr<Server>>& getServers() const;
+        const std::vector<Server*>& getServers() const;
+	    // std::unique_ptr<Server>	getServer(std::string host) const; 
         
-        void addServer(std::unique_ptr<Server> server);        
+        void addServer(Server* server);        
         void startServerManager(ServerManager &); // init vServers in a loop
         void startSockets();
         void addFdToPollFds(int fd, int events);
         void startPoll();
+        int handleIncoming(int fd);
 
         void acceptClient(int serverFd, Server& server);
         void printServers() const;
@@ -49,5 +51,14 @@ class ServerManager
     
 bool isFdConnected(int fd, std::vector<int>& connectedClientFds);
 std::ostream& operator<<(std::ostream& out, ServerManager& serverManager);
+
+template <typename T>
+void deleteFromVector(std::vector<T>& vec, const T& itemToDelete)
+{
+  auto it = std::find(vec.begin(), vec.end(), itemToDelete);
+  if (it != vec.end()) {
+    vec.erase(it);
+  }
+}
 
 #endif

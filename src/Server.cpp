@@ -4,12 +4,12 @@
 
 Server::Server() : port(0), serverFd(0), root(""), index(""), maxBodySize(1000000)
 {
-    // std::cout << "Server constructor is called" << std::endl;
+    std::cout << "Server constructor is called" << std::endl;
 }
 
 // Server::Server(int port,
 // 				std::string host,
-// 				std::vector<std::string> serverNames,
+// 				std::vector<std::string> serverNames,map
 // 				std::string root,
 //                 std::string index,
 // 				unsigned long maxBodySize

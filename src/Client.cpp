@@ -12,3 +12,8 @@ Client::~Client()
 {
     std::cout << "Client destructor is called" << std::endl;
 }
+
+int Client::getClientFd()
+{
+    return this->clientFd;
+}

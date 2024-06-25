@@ -14,11 +14,16 @@ private:
 //         Response&
 
 public:
-    Client(Server&, int fd);
+    Client(Server& server, int fd);
     ~Client();
+
+    int getClientFd();
 
 };
 
 std::ostream& operator<<(std::ostream& out, const Client& client);
 
 #endif
+
+
+//    Client* client = new Client(server, clientFd);

@@ -3,7 +3,7 @@
 ServerManager::ServerManager(const Config& config) {
   // Loop and copy raw pointers (not recommended)
   for (Server* server : config.serverList) {
-            servers.emplace_back(std::move(server)); // Move ownership
+            servers.emplace_back(server);
         }
         //config->serverList.clear(); // Clear temporary list after moving servers
 }
@@ -34,7 +34,7 @@ void ServerManager::printPollFds() const
     std::cout << "*****************************" << std::endl;
 }
 
-const std::vector<std::unique_ptr<Server>>& ServerManager::getServers() const
+const std::vector<Server*>& ServerManager::getServers() const
 {
     return this->servers;
 }
@@ -59,10 +59,10 @@ const std::vector<std::unique_ptr<Server>>& ServerManager::getServers() const
 //explicitly moves the std::unique_ptr into the vector.
 //This transfer of ownership ensures that the vector now
 //owns the resource, and the original std::unique_ptr becomes empty.
-void ServerManager::addServer(std::unique_ptr<Server> server)
+void ServerManager::addServer(Server* server)
 {
     //this->servers.push_back(server);
-    this->servers.push_back(std::move(server));
+    this->servers.push_back(server);
 }
 
 void ServerManager::startServerManager(ServerManager &serverManager)
@@ -93,7 +93,9 @@ void ServerManager::startSockets()
         addFdToPollFds(server->getServerFd(), POLLIN); //monitor incoming connections
        
         //get() returns a pointer to the managed object (server);   
-        mapServerFd.emplace(server->getServerFd(), server.get());
+        // mapServerFd.emplace(server->getServerFd(), server);
+        mapServerFd[server->getServerFd()] = server;
+        //mapServerFd.emplace(server->getServerFd(), server);
 
     }
     std::cout << "SIZE OF MAP IS: " << mapServerFd.size() << std::endl;
@@ -121,7 +123,6 @@ void ServerManager::acceptClient(int serverFd, Server& server)
 {
     struct sockaddr_in cliAddr;
 
-    (void)server;
     std::memset(&cliAddr, 0, sizeof(cliAddr));
     unsigned int cliLen = sizeof(cliAddr);
     int clientFd = accept(serverFd, (struct sockaddr *)&cliAddr, &cliLen);
@@ -129,10 +130,12 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     {
         throw std::runtime_error("Error: accept()");
     }
-    Client* client = new Client(server, clientFd);
-    //server.getConnectedClientFds().push_back(clientFd);
+    //Client* client = new Client(server, clientFd);
+    //(void)client;
+    //server.clientList.push_back(client);
     server.connectedClientFds.push_back(clientFd);
-    server.printConnectedClientFds();
+    //std::cout << "CLIENT FD " << client->getClientFd() << std::endl;
+    //server.printConnectedClientFds();
     addFdToPollFds(clientFd, (POLLIN | POLLOUT));
 }
 
@@ -142,9 +145,6 @@ void ServerManager::acceptClient(int serverFd, Server& server)
 //(the client has data ready to be read by the server)
 void ServerManager::startPoll()
 {
-    //Copying original pollfds for safety.
-    //std::unique_ptr<Server> selectedServer;
-    //std::vector<struct pollfd> pollfds = this->pollfds;
     //The poll() function expects its first argument to be
     //a pointer to an array of pollfd structures. In my case, fds is a vector,
     // not a raw array. However, the data() method provides a way
@@ -164,9 +164,8 @@ void ServerManager::startPoll()
         std::cout << pollfds.size() << std::endl;
         
         //counter is to see how many time poll loop turns.
-        int counter = 0;
+        //int counter = 0;
         // Process ready file descriptors
-        //for (int i = 0; i < num_readyFds; ++i)
         for (size_t i = 0; i < pollfds.size(); ++i)
         {
             int fd = pollfds[i].fd;
@@ -184,23 +183,25 @@ void ServerManager::startPoll()
             //revents flags.
 
             //std::cout << "THE FISH IS " << fd << std::endl;
-            counter = counter+ 1;
+            
+            //counter = counter+ 1;
             //std::cout << "counter = " << counter << std::endl;
             if (revents & POLLIN)
             {
                 // if a server received a request. let's accept a client
                 if (isFdInMap(fd, mapServerFd)) //fd is one of the server's fd
                 {
-                    acceptClient(fd, *mapServerFd[fd]); //that client is accepted by
+                    Server* server = mapServerFd[fd];
+                    acceptClient(fd, *server); //that client is accepted by
                                     // *mapServerFd[fd] server
-                    //std::cout << pollfds.size() << std::endl;
-
-                    break ;
+                    continue ;
                 }
                 else //continue reading operations on connected clients
                 {    //Request.readRequest(fd); fd will be client's
                     std::cout << "REQUESTTTTTT" << std::endl;
-                    readRequest(fd);
+                    handleIncoming(fd);
+                    //readRequest(fd);
+                    //fd = -1;
                     pollfds[i].fd = -1;
                     //here call (client.server->)removeClientFd()
                 }
@@ -214,7 +215,6 @@ void ServerManager::startPoll()
             {
                 std::cout << "RESPONSEEEEE" << std::endl;
             }
-            std::cout << "ENDDDDDD" << std::endl;
             // Handle events for accepted connections (read/write data)
             // You'll need to iterate over other servers and their connections here
             // ...
@@ -234,6 +234,17 @@ void ServerManager::startPoll()
 //                 else if (_pollFds[i].revents & POLLOUT)
 //                     sendClientData(i);
 
+//AT THIS POINT WE DECIDE CGI? IN READREQUEST()?
+int ServerManager::handleIncoming(int fd)
+{
+    //int retVal;
+
+    //Eunbi's readRequest() later will be merged.
+    readRequest(fd);
+    fd = -1;
+
+    return 0;
+}
 
 
 bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
@@ -243,8 +254,8 @@ bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
                          [fd](const auto& pair) { return pair.first == fd; });
 
   // Return true if a matching element is found, false otherwise
-  bool a = it != mapServerFd.end();
-  std::cout << "BOOL = " << a << std::endl;
+  //it != mapServerFd.end();
+  //std::cout << "BOOL = " << a << std::endl;
   return it != mapServerFd.end();
 }
 
