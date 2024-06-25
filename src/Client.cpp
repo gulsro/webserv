@@ -1,9 +1,9 @@
 #include "Webserv.hpp"
 
-Client::Client(Server& server, int fd)
-    :server(server), clientFd(fd)
+Client::Client(int fd)
+    :clientFd(fd)
 {
-    this->server = server;
+    //this->server = server;
     this->clientFd = fd; 
     std::cout << "Client constructor is called" << std::endl;
 }

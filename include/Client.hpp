@@ -8,13 +8,13 @@ class Server;
 class Client
 {
 private:
-    Server& server;
+    //Server& server;
     int clientFd;
 //        Request&
 //         Response&
 
 public:
-    Client(Server& server, int fd);
+    Client(int fd);
     ~Client();
 
     int getClientFd();

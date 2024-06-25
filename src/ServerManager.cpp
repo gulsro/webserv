@@ -130,9 +130,11 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     {
         throw std::runtime_error("Error: accept()");
     }
-    //Client* client = new Client(server, clientFd);
+    //std::cout << "MAAAAAA" << server << std::endl;
+    Client* client = new Client(clientFd);
     //(void)client;
-    //server.clientList.push_back(client);
+    //std::cout << "MAAAAAA" << server.getPort() << std::endl;
+    server.clientList.push_back(client);
     server.connectedClientFds.push_back(clientFd);
     //std::cout << "CLIENT FD " << client->getClientFd() << std::endl;
     //server.printConnectedClientFds();
@@ -241,8 +243,6 @@ int ServerManager::handleIncoming(int fd)
 
     //Eunbi's readRequest() later will be merged.
     readRequest(fd);
-    fd = -1;
-
     return 0;
 }
 
