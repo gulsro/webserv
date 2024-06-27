@@ -201,8 +201,7 @@ void ServerManager::startPoll()
                 else //continue reading operations on connected clients
                 {    //Request.readRequest(fd); fd will be client's
                     std::cout << "REQUESTTTTTT" << std::endl;
-                    handleIncoming(fd);
-                    //readRequest(fd);
+                    readRequest(fd);
                     //fd = -1;
                     pollfds[i].fd = -1;
                     //here call (client.server->)removeClientFd()
@@ -237,14 +236,14 @@ void ServerManager::startPoll()
 //                     sendClientData(i);
 
 //AT THIS POINT WE DECIDE CGI? IN READREQUEST()?
-int ServerManager::handleIncoming(int fd)
-{
-    //int retVal;
+// int ServerManager::handleIncoming(int fd)
+// {
+//     //int retVal;
 
-    //Eunbi's readRequest() later will be merged.
-    readRequest(fd);
-    return 0;
-}
+//     //Eunbi's readRequest() later will be merged.
+//     readRequest(fd);
+//     return 0;
+// }
 
 
 bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
