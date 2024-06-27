@@ -145,8 +145,8 @@ void    HttpResponse::setResource()
 	}
 }
 
-void	sendResponse(int fd)
-{
+// void	sendResponse(int fd)
+// {
 
-}
+// }
 

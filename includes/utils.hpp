@@ -81,9 +81,8 @@ class ErrorCodeException : public std::exception
 {
     private:
         std::string errorResponse;
-        int	        errorCode;
     public:
-        ErrorCodeException(enum e_statusCode code) : errorCode(code) 
+        ErrorCodeException(enum e_statusCode code)
         {
             errorResponse = createErrorResponse(code);
         }
