@@ -7,6 +7,7 @@
 #include <vector>
 #include <unistd.h>
 #include <sys/socket.h>
+# include <netdb.h> // getaddrinfo()
 #include <sys/types.h> //accept()
 #include <map>
 #include <poll.h> // poll() and struct
@@ -17,11 +18,11 @@
 #include <algorithm>
 #include <iterator>
 #include <cctype>
+#include <cstring>
 #include <functional>
 
 
 #include "Config.hpp"
-#include "Socket.hpp"
 #include "Server.hpp"
 #include "ServerManager.hpp"
 #include "Client.hpp"
