@@ -1,10 +1,9 @@
 
-#include "../include/Server.hpp"
 #include "Webserv.hpp"
 
-Server::Server() : port(0), serverFd(0), root(""), index(""), maxBodySize(1000000)
+Server::Server() : port(0), root(""), index(""), maxBodySize(0)
 {
-    std::cout << "Server constructor is called" << std::endl;
+    // std::cout << "Server constructor is called" << std::endl;
 }
 
 // Server::Server(int port,
@@ -52,6 +51,7 @@ Server& Server::operator=(const Server s){
 // {
 //     this->serverFd = fd;
 // }
+
 
 //--------------Getters-------------------
 int Server::getPort() const
@@ -240,10 +240,11 @@ void Server::setServerVar(std::stringstream& iss)
             key = line.find(parameter[i]);
             if(key != std::string::npos)
                 (this->*func[i])(line, key + parameter[i].size());
+            }
         }
-    }
     // std::cout << YEL << *this << RES << std::endl;
 }
+
 
 std::size_t Server::skipLocationPath(std::string cont, std::size_t found){
     while (std::isspace(cont[found]))
@@ -288,6 +289,7 @@ void Server::initLocation(std::string serverCont){
 //     this->connectedClientFds.erase(clientFd);
 // }
 
+//std::vector<std::string> getServerNames() const;
 
 std::ostream& operator<<(std::ostream& out, const Server& server)
 {

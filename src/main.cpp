@@ -2,7 +2,10 @@
 
 int main(int ac, char **av)
 {
-    if (ac > 2){
+    HttpResponse	Response;
+	HttpRequest		Request;
+
+    if (ac > 3){
         std::cout << "too many argument" << std::endl;
         return 1;
     }
@@ -24,9 +27,18 @@ int main(int ac, char **av)
             serverManager.startServerManager(serverManager); 
             serverManager.startPoll();
             
+            // if (Request.readRequest(fd) == true)
+            // {
+            //     Request.setReqServer(config.getServerList());
+            //     Request.checkLocations();
+            //     Response.setRequest(&Request);
+            //     Response.checkMethod();
+            //     std::cout << Response.getContent() << std::endl;
+            // }
+           
         }
         catch (const std::exception& e){
-            std::cout << e.what() << std::endl;
+            std::cerr << e.what() << std::endl;
             return 1;
         }
     }

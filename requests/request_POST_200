@@ -1,0 +1,42 @@
+POST /upload HTTP/1.1
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:126.0) Gecko/20100101 Firefox/126.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br, zstd
+Content-Type:   multipart/form-data; boundary=---------------------------27147608688520855272614014148
+Content-Length: 572
+Origin: http://127.0.0.1:8080
+Connection: keep-alive
+Referer: http://127.0.0.1:8080
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: cross-site
+Sec-Fetch-User: ?1
+Priority: u=1
+Pragma: no-cache
+Cache-Control: no-cache
+
+-----------------------------27147608688520855272614014148
+Content-Disposition: form-data; name="fileUpload"; filename="test1.txt"
+Content-Type: text/plain
+
+abc
+
+test111
+-----------------------------27147608688520855272614014148
+Content-Disposition: form-data; name="fileUpload"; filename="test2.txt"
+Content-Type: text/plain
+
+defg
+
+test222
+-----------------------------27147608688520855272614014148
+Content-Disposition: form-data; name="fileUpload"; filename="test3.txt"
+Content-Type: text/plain
+
+hijk
+
+test333
+-----------------------------27147608688520855272614014148--

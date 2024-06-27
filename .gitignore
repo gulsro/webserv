@@ -1,11 +1,11 @@
 *.DS_Store
 *.out
-<<<<<<< HEAD
-*.vscode
-=======
+/obj
+*.obj
+Http
+.vscode
 *.vscode/*
 .vscode/settings.json
 Makefile
 configs/test.conf
 webserv
->>>>>>> origin/parsing

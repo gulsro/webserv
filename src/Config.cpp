@@ -1,4 +1,4 @@
-#include "../include/Config.hpp"
+#include "Config.hpp"
 
 Config::Config(){
     this->configFile = "./configs/default.conf";
@@ -110,13 +110,8 @@ void Config::parseServer(){
         Server* s = new Server();
         s->setServerVar(iss);
         this->serverList.push_back(s);
-        
-        //GUL added:
-        //ServerManager::getInstance().addServer(std::unique_ptr<Server>(newServer)); // Add to servers using ServerManager method
-
     }
 }
-
 
 //add under each server -> first split location inside a Server
 // save it in locationCont (maybe do it in server.cpp)

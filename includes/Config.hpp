@@ -5,8 +5,6 @@
 #include "Webserv.hpp"
 
 class Server;
-class ServerManager;
-
 
 class Config
 {
@@ -17,9 +15,7 @@ private:
     std::vector<Server*> serverList; // list for Server class
     std::vector<std::string> serverCont; //splited contents inside each server {}
 
-    //Gul added this:
-    friend class ServerManager;
-    
+
 public:
     Config();
     ~Config();
@@ -35,6 +31,8 @@ public:
 
     void    parseServer();
     void    parseLocation();
+
+    const std::vector<Server*>  getServerList() { return this->serverList; }
 
 };
 
