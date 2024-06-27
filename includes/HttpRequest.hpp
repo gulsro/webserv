@@ -9,6 +9,7 @@ class	HttpResponse;
 class	Location;
 class	Server;
 
+
 typedef	struct	s_part
 {
 	std::string	partContentType;
@@ -31,11 +32,15 @@ class	HttpRequest
 		int			requestedPort;
         Server      *ReqServer;
         Location	*ReqLocation;
+		
+		//multi-part form-data
 		std::string	boundaryBegin;
 		std::string	boundaryEnd;
-		
 		std::map<int, t_part>	parts;	
 		
+		//cgi environment
+		std::vector<std::pair<std::string, std::string>>	queryPairs;
+
 	public:
 		HttpRequest();
 		HttpRequest(const HttpRequest &response);
@@ -51,8 +56,8 @@ class	HttpRequest
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		const	std::string	&getBody() const { return body; }
 		const	std::string	&getContentType() const { return contentType; }
-		const	int	        &getRequestedPort() const { return requestedPort; } 
-
+		const	int	       	&getRequestedPort() const { return requestedPort; } 
+		const	std::vector<std::pair<std::string, std::string>> &getQueryPairs() const { return queryPairs; }
 
 		//Setters
 		void	setContentLength(int len) { this->contentLength = len; }
@@ -61,6 +66,7 @@ class	HttpRequest
 		void	setReqLocation(const std::vector<Location*> locationList);
 		void	setContentType();
 		void	setBoundary();
+		void	setQueryPairs();
 		
 		bool	readRequest(int fd);
 		bool	parseHttpRequest(const std::string &rawRequest);
@@ -75,10 +81,6 @@ class	HttpRequest
 		void	handleMultiPartForm();
 		void	makeKeyValuePair(int i, const std::string str);
         void    handlePartInfo(const int i, const std::vector<std::string> strs);
-		void	findFilename(auto it, std::vector<std::string> strings);
 
 		std::vector<std::string> splitByBoundary();
-		// void    handlePostContents();
-		// void	findFilename();
-		// void	createResponseHelper(enum e_statusCode code);
 };

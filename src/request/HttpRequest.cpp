@@ -198,3 +198,21 @@ void	HttpRequest::setRequestedPort()
 	else
 		this->requestedPort = 0;
 }
+
+void	HttpRequest::setQueryPairs()
+{
+	size_t		begin;
+	std::string	uri = this->getURI();
+	std::vector<std::string>	queryPair;
+
+	begin = uri.find('?');
+	std::string queryStr = uri.substr(begin + 1, uri.size());
+	queryPair = split(queryStr, '&');
+	for (size_t i = 0; i < queryPair.size(); ++i)
+	{
+		std::vector<std::string> keyValue = splitForKeyValue(queryPair[i], '=');
+		std::string	key = keyValue[0];
+		std::string value = keyValue[1];
+		this->queryPairs.push_back(std::make_pair(key, value));
+	}
+}
