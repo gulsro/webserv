@@ -27,6 +27,9 @@
 #include "ServerManager.hpp"
 #include "Client.hpp"
 #include "Location.hpp"
+#include "utils.hpp"
+#include "HttpRequest.hpp"
+#include "HttpResponse.hpp"
 
 
 #define BOLD "\033[1m"
