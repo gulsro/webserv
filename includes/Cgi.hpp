@@ -12,13 +12,13 @@ private:
     
 public:
     Cgi();
-    Cgi(HttpResponse& response);
+    Cgi(HttpRequest& req, Location& loc, Server& ser);
     ~Cgi();
     Cgi(Cgi& a);
     Cgi& operator=(const Cgi a);
 
-    char **initCgiEnv(HttpResponse& response);
-    void    execCgi();
+    char **initCgiEnv(HttpRequest& req, Location& loc, Server& ser);
+    std::string    execCgi();
 };
 
 #endif

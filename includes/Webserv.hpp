@@ -15,6 +15,8 @@
 #include <functional>
 #include <poll.h>
 #include <sys/types.h> 
+#include <unistd.h>
+#include <sys/wait.h>
 
 #include "Config.hpp"
 #include "Server.hpp"

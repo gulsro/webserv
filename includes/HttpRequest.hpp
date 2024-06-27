@@ -8,6 +8,7 @@
 class	HttpResponse;
 class	Location;
 class	Server;
+class   Cgi;
 
 typedef	struct	s_part
 {
@@ -36,6 +37,8 @@ class	HttpRequest
 		
 		std::map<int, t_part>	parts;	
 		
+		Cgi			*cgi;
+	
 	public:
 		HttpRequest();
 		HttpRequest(const HttpRequest &response);
@@ -52,7 +55,7 @@ class	HttpRequest
 		const	std::string	&getBody() const { return body; }
 		const	std::string	&getContentType() const { return contentType; }
 		const	int	        &getRequestedPort() const { return requestedPort; } 
-
+		Cgi			*getCgi() const { return cgi; }
 
 		//Setters
 		void	setContentLength(int len) { this->contentLength = len; }

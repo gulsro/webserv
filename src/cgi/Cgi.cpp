@@ -12,8 +12,8 @@ from the CGI, EOF will mark the end of the returned data.
 
 Cgi::Cgi(){}
 
-Cgi::Cgi(HttpResponse& response){
-    this->env = initCgiEnv(response);
+Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser){
+    this->env = initCgiEnv();
 }
 
 
@@ -30,28 +30,29 @@ Cgi& Cgi::operator=(const Cgi a){
 }
 
 // parse in tmp and copy it to char* env
-char **Cgi::initCgiEnv(HttpResponse& response){
+char **Cgi::initCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     std::vector<std::string> tmp;
     std::vector<char *> env;
 
     tmp.push_back("GATEWAY_INTERFACE=cgi/1.1");
-    tmp.push_back("SERVER_NAME="); //server hostname
+    tmp.push_back("SERVER_NAME=" + ser.getHost()); //server hostname
     tmp.push_back("SERVER_SOFTWARE=webserv/1.0");
     tmp.push_back("SERVER_PROTOCOL=HTTP/1.1");
-    tmp.push_back("SERVER_PORT="); //server port
-    tmp.push_back("REQUEST_METHOD="); //request method
-    tmp.push_back("SCRIPT_NAME="); //cgi pass
-    tmp.push_back("DOCUMENT_ROOT="); //location getRoot()
-    tmp.push_back("QUERY_STRING="); //getQuery
-    tmp.push_back("CONTENT_TYPE=");
-    tmp.push_back("CONTENT_LENGTH="); //location-maxbodysize
+    tmp.push_back("SERVER_PORT=" +ser.getPort()); //server port
+    tmp.push_back("REQUEST_METHOD=" + req.getMethod()); //request method
+    tmp.push_back("SCRIPT_NAME="+ loc.getCgiPass()); //cgi pass
+    tmp.push_back("DOCUMENT_ROOT=" + loc.getRoot()); //location getRoot()
+    tmp.push_back("QUERY_STRING=" + req.getQuery()); //getQuery
+    tmp.push_back("CONTENT_TYPE="); // ex. text/html
+    tmp.push_back("CONTENT_LENGTH=" + loc.getMaxBodySize()); //location-maxbodysize
 
     for (std::string s : tmp)
         env.push_back(&s.front());
     return (env.data());
 }
 
-void    Cgi::execCgi(){
+//return http response msg or '\0' in case of internal error
+std::string    Cgi::execCgi(){
     int pip[2];
     pid_t pid;
 
@@ -61,17 +62,57 @@ void    Cgi::execCgi(){
 	if (pid < 0)
 		perror("fork failed"); //error
 	if (pid == 0){
+        // close read end and write to pipe 
+        //-> output of cgi script will be written in pipe
+        close(pip[0]); 
+        if (dup2(pip[1], STDOUT_FILENO) < 0) 
+            perror("write pipe failed"); //error
         if (execve(, , env) < 0)
-            //error
+            exit(1);
+    }
+    else{
+        int status;
+    //close write end and read output from pipe
+    //still not sure about the order of wait and dup2!!!
+        close(pip[1]);
+        if (waitpid(pid, &status, 0) < 0)
+            perror("wait failed");
+        if (WIFEXITED(status))
+            return ; // give error?
+        if (dup2(pip[0], STDIN_FILENO) < 0)
+            perror("read pipe failed"); // error
+        /*read content to buf
+        this content is gonna be a part of http response
+        string join with headers+status code 200 and return
+
+*/
     }
 }
 
+//place this in main before checkMethod()
+void    HttpResponse::runCgi(){
+    if (Request->getCgi() != NULL){
+        content = Request->getCgi()->execCgi();
+        if (content[0] == '\0')
+            //internal error
+        else
+            //success 
+            //print content
+            // complete = true;
+
+    }
+
+}
 /*
-1. check if the file requested is located in the location directory with cgi pass (maybe before checkMethods() in main)
-2. if yes, initialize Cgi class. parse a full path for cgi program (= cgi path??)
+1. check if the file requested is located in the location directory with cgi pass 
+    in HttpRequest::setReqLocation 
+    a) add pointer to class Cgi in HttpRequest
+    b) take env variable from request
+    c) if there is pointer in httpRequest class -> run execution before checkMethods() in main
 3. make a child process by fork() and open pipe
 
 4. Execute CGI in child process.
+    redirect stdout to write end of the pipe
     av[0] = cgi file name 
     av[1] = path to the cgi file
     av[2] = env or NULL (need to figure out)
@@ -84,7 +125,7 @@ The HTTP header field name is converted to upper case, has all
 occurrences of "-" replaced with "_" and has "HTTP_" prepended to give the meta-variable name.
 
 5. Pass requested data through pipe in Parent Process.
-
+Parent, preads from 
 
 
 if config file contains following:

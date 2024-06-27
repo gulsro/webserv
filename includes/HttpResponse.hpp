@@ -70,4 +70,6 @@ class HttpResponse
 		void		deleteDir();
         void        postFile();
         // void        postFile();
+
+		void		runCgi();
 };
