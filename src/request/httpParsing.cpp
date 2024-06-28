@@ -79,14 +79,22 @@ bool	HttpRequest::readRequest(int fd)
 
 std::vector<std::string>	splitHeaderByLine(const std::string &rawRequest)
 {
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] splitHeaderByLine" << DEFAULT << std::endl;
+	#endif
+
 	std::vector<std::string>	tokens;
 	std::string					line;
 	std::istringstream			iss(rawRequest);
 
 	while (std::getline(iss, line))
 	{
-		size_t	pos	= line.find("\r\n\r\n");
-		if (pos != std::string::npos)
+		size_t	pos	= line.find('\r');
+		size_t	bodyBegin = line.find("\r\n\r\n");
+
+		if (bodyBegin != std::string::npos)
+			continue ;
+		if (pos != std::string::npos && pos != bodyBegin)
 		{
 			std::string str = line.substr(0, pos);
 			tokens.push_back(str);
@@ -122,10 +130,10 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 	setContentType();
 	#ifdef FUNC
 		auto it = headers.begin();
-		std::cout << PURPLE << "________HEADERS________" << std::endl;
+		std::cout << GREEN "________HEADERS________" << std::endl;
 		while (it != headers.end())
 		{
-			std::cout << PURPLE << "[ " << it->first << " ]" << std::endl;
+			std::cout << GREY << "[ " << it->first << " ]" << std::endl;
 			std::cout << PURPLE << it->second.key << " : " << it->second.value << DEFAULT << std::endl;
 			++it; 
 		}

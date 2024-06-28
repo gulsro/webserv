@@ -141,6 +141,7 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	std::cout << YELLOW << "[FUNCTION] parseRequestLine" << DEFAULT << std::endl;
 	#endif
 
+	std::cout << GREEN << line << DEFAULT << std::endl;
 	stream >> this->method >> this->uri >> rawVersion;
 	std::istringstream	iss(rawVersion);
 	std::getline(iss, this->version, '\r');
@@ -176,7 +177,6 @@ void HttpRequest::setContentType()
 
 bool	HttpRequest::parseHeader(const std::string &line)
 {
-	std::cout << RED << line << std::endl;
 	std::vector<std::string> keyValue = splitForKeyValue(line, ':');
 	if (keyValue.size() != 2)
 	{
