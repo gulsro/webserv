@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <iterator>
 #include <cctype>
+#include <cstring>
 #include <memory>
 #include <functional>
 #include <poll.h>

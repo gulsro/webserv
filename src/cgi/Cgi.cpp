@@ -1,5 +1,7 @@
 #include "../../includes/Cgi.hpp"
 
+
+#define BUFFER_SIZE 1024
 /*Because you won’t call the CGI directly, use the full path as PATH_INFO.
 ∗ Just remember that, for chunked request, your server needs to unchunk
 it, the CGI will expect EOF as end of the body.
@@ -72,27 +74,33 @@ std::string    Cgi::execCgi(){
     }
     else{
         int status;
+        char buf[BUFFER_SIZE]; 
+        std::string body = NULL;
+        ssize_t bytes = 1;// is buffer_size defined in config?
     //close write end and read output from pipe
     //still not sure about the order of wait and dup2!!!
         close(pip[1]);
         if (waitpid(pid, &status, 0) < 0)
-            perror("wait failed");
-        if (WIFEXITED(status))
+            perror("wait failed"); 
+        if (WIFEXITED(status)) // why do we need WEXITSTATUS == 0?
             return ; // give error?
         if (dup2(pip[0], STDIN_FILENO) < 0)
             perror("read pipe failed"); // error
-        /*read content to buf
-        this content is gonna be a part of http response
-        string join with headers+status code 200 and return
-
-*/
+        while (bytes > 0){
+            std::memset(buf, '\0', BUFFER_SIZE - 1);
+            bytes = read(pip[1], buf, BUFFER_SIZE);
+            body = body + buf;
+        }
+        close(pip[0]);
+        return ("HTTP/1.1 200 OK\r\n" + body);
     }
 }
+
 
 //place this in main before checkMethod()
 void    HttpResponse::runCgi(){
     if (Request->getCgi() != NULL){
-        content = Request->getCgi()->execCgi();
+        content = Request->getCgi()->execCgi(*this);
         if (content[0] == '\0')
             //internal error
         else
