@@ -201,7 +201,8 @@ void ServerManager::startPoll()
                 else //continue reading operations on connected clients
                 {    //Request.readRequest(fd); fd will be client's
                     std::cout << "REQUESTTTTTT" << std::endl;
-                    readRequest(fd);
+					handleIncoming(fd);
+                    // readRequest(fd);
                     //fd = -1;
                     pollfds[i].fd = -1;
                     //here call (client.server->)removeClientFd()
@@ -252,6 +253,7 @@ int ServerManager::handleIncoming(int fd)
 		Response.checkMethod();
 		// Response.sendResponse();
 	}
+	// else continue reading
     return 0;
 }
 

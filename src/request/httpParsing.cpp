@@ -72,15 +72,33 @@ bool	HttpRequest::readRequest(int fd)
 		// Check for complete request
 		std::string rawRequest = stream.str();
 		if (isReadingRequestFinished(rawRequest) == false)
-			return true;
+			return false;
 		else
 			return parseHttpRequest(rawRequest);
+}
+
+std::vector<std::string>	splitHeaderByLine(const std::string &rawRequest)
+{
+	std::vector<std::string>	tokens;
+	std::string					line;
+	std::istringstream			iss(rawRequest);
+
+	while (std::getline(iss, line))
+	{
+		size_t	pos	= line.find("\r\n\r\n");
+		if (pos != std::string::npos)
+		{
+			std::string str = line.substr(0, pos);
+			tokens.push_back(str);
+		}
+	}
+	return	tokens;
 }
 
 bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 {
 	std::istringstream	stream(rawRequest);
-	std::vector<std::string>	lines = split(rawRequest, '\r');
+	std::vector<std::string>	lines = splitHeaderByLine(rawRequest);
 
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] parseHttpRequest" << DEFAULT << std::endl;
