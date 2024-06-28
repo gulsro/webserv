@@ -69,6 +69,7 @@ class	HttpRequest
 		void	setQueryPairs();
 		
 		bool	readRequest(int fd);
+		bool	isReadingRequestFinished(std::string rawRequest);
 		bool	parseHttpRequest(const std::string &rawRequest);
 		bool	parseRequestLine(const std::string &line);
 		bool	parseHeader(const std::string &line);

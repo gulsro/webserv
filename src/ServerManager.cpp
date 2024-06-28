@@ -216,6 +216,7 @@ void ServerManager::startPoll()
             else if (revents & POLLOUT)
             {
                 std::cout << "RESPONSEEEEE" << std::endl;
+				//eunbi's sendResponse(clientFd)
             }
             // Handle events for accepted connections (read/write data)
             // You'll need to iterate over other servers and their connections here
@@ -239,10 +240,19 @@ void ServerManager::startPoll()
 //AT THIS POINT WE DECIDE CGI? IN READREQUEST()?
 int ServerManager::handleIncoming(int fd)
 {
+	HttpRequest		Request;
+	HttpResponse	Response;
     //int retVal;
 
     //Eunbi's readRequest() later will be merged.
-    readRequest(fd);
+	if (Request.readRequest(fd) == true)
+	{
+		Request.setReqServer(servers);
+		Request.checkLocations();
+		Response.setRequest(&Request);
+		Response.checkMethod();
+		// Response.sendResponse();
+	}
     return 0;
 }
 
@@ -267,21 +277,21 @@ bool isFdConnected(int fd, std::vector<int>& connectedClientFds)
         return false;
 }
 
-void readRequest(int clientFd)
-{
-    //Response response(clientFd);
-	//response.handle_request();
-  const char* response = "HTTP/1.1 200 OK\r\nContent-Length: 7\r\n\r\nKOLONYA";
+// void readRequest(int clientFd)
+// {
+//     //Response response(clientFd);
+// 	//response.handle_request();
+//   const char* response = "HTTP/1.1 200 OK\r\nContent-Length: 7\r\n\r\nKOLONYA";
 
-  // Send the response to the client
-  if (write(clientFd, response, strlen(response)) == -1) {
-    perror("write");
-    // Consider closing the client socket (optional)
-  }
+//   // Send the response to the client
+//   if (write(clientFd, response, strlen(response)) == -1) {
+//     perror("write");
+//     // Consider closing the client socket (optional)
+//   }
 
-    if (close(clientFd) == -1)
-        exit(1);
-}
+//     if (close(clientFd) == -1)
+//         exit(1);
+// }
 
 // int valueToBeDeleted = 3;
 //     auto it = std::find(vector.begin(), vector.end(),
