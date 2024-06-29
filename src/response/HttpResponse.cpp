@@ -149,8 +149,20 @@ void    HttpResponse::setResource()
 	std::cout << YELLOW << this->resource <<std::endl;
 }
 
-// void	sendResponse(int fd)
+// void	HttpResponse::sendResponse(int fd)
 // {
+// 	//Checking client is still connected??
 
+// 	//checking is clientFd is still connected
+// 	//also check "if reading request is done" therefor we need a flag ?
+// 	//if (fd ....)
+
+// 	//What's that enum status code???
+// 	std::string	content = createResponse();
+// 	int retVal = write(fd, content.c_str(), content.size());
+// 	if (retVal == -1)
+// 	{
+// 		std::cout << "Here disconnect the client" << std::endl;
+// 	}
+// 	//delete the request, it s done
 // }
-

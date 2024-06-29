@@ -6,7 +6,7 @@
 #include <cstring> // strerror()
 #include <unistd.h>
 
-#define BUFFER_SIZE 4096 // common page size
+#define BUFFER_SIZE 10 // common page size
 
 
 bool	HttpRequest::isReadingRequestFinished(std::string rawRequest)
@@ -34,12 +34,13 @@ bool	HttpRequest::isReadingRequestFinished(std::string rawRequest)
 bool	HttpRequest::readRequest(int fd)
 {
 	char				buffer[BUFFER_SIZE];
-	std::stringstream 	stream;
+	std::string 	stream;
 
     #ifdef FUNC
     std::cout << YELLOW << "[FUNCTION] readRequest" << DEFAULT << std::endl;
 	#endif
 		// size_t	byteRead = recv(fd, buffer, BUFFER_SIZE, 0);
+		//memset(buffer, 0, BUFFER_SIZE);
 		long long byteRead = read(fd, buffer, BUFFER_SIZE);
         if (byteRead == 0)
 		{
@@ -67,10 +68,12 @@ bool	HttpRequest::readRequest(int fd)
 			// 	this->contentLength = stoll(tmp.substr(pos + 37), 0, 16);
 			// }
 			// Append received data to the stream
-			stream.write(buffer, byteRead);
+			//stream.write(buffer, byteRead);
+			stream.append(buffer, byteRead);
 		}
 		// Check for complete request
-		std::string rawRequest = stream.str();
+		//std::string rawRequest = stream.str();
+		std::string rawRequest = stream;
 		if (isReadingRequestFinished(rawRequest) == false)
 			return false;
 		else

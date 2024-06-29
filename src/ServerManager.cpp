@@ -204,7 +204,7 @@ void ServerManager::startPoll()
                     //readRequest(fd);
                     handleIncoming(fd);
                     //fd = -1;
-                    pollfds[i].fd = -1;
+                    //pollfds[i].fd = -1;
                     //here call (client.server->)removeClientFd()
                 }
 
@@ -216,6 +216,7 @@ void ServerManager::startPoll()
             else if (revents & POLLOUT)
             {
                 std::cout << "RESPONSEEEEE" << std::endl;
+                pollfds[i].fd = -1;
 				//eunbi's sendResponse(clientFd)
             }
             // Handle events for accepted connections (read/write data)
@@ -240,21 +241,17 @@ void ServerManager::startPoll()
 //AT THIS POINT WE DECIDE CGI? IN READREQUEST()?
 int ServerManager::handleIncoming(int fd)
 {
-    //int retVal;
-
-    //Eunbi's readRequest() later will be merged.
     //readRequest(fd);
     HttpRequest		Request;
 	HttpResponse	Response;
-    //int retVal;
 
-    //Eunbi's readRequest() later will be merged.
 	if (Request.readRequest(fd) == true)
 	{
 		Request.setReqServer(servers);
 		Request.checkLocations();
 		Response.setRequest(&Request);
 		Response.checkMethod();
+
 		std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
 		std::cout << Response.getContent() << DEFAULT << std::endl;
 		// Response.sendResponse();

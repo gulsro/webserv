@@ -4,14 +4,16 @@
 #include "Webserv.hpp"
 
 class Server;
+class HttpRequest;
+class HttpResponse;
 
 class Client
 {
 private:
     //Server& server;
     int clientFd;
-//        Request&
-//         Response&
+    // HttpRequest&
+    // HttpResponse&
 
 public:
     Client(int fd);
