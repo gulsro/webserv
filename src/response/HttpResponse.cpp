@@ -115,7 +115,7 @@ void    HttpResponse::setResource()
 	if (this->Request->ReqLocation != nullptr)
 	{
 		Location	*Location = this->Request->ReqLocation;
-		// Check redirection S
+		// Check redirection
 		if	(!(Location->getRedirect().empty()))
 		{
 			this->resource = Location->getRedirect();
@@ -127,7 +127,7 @@ void    HttpResponse::setResource()
 			if (Location->getAutoindex() == true)
 			{
 				// Set default index
-				this->resource = "." + Server->getRoot() + Server->getIndex();
+				this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
 			}
 		}
 		else
@@ -141,8 +141,12 @@ void    HttpResponse::setResource()
 	}
 	else // No selected Location
 	{
-		this->resource = "." + Server->getRoot() + this->Request->getURI();
+		if (this->Request->getURI() == "/")
+			this->resource = "." + Server->getRoot() + '/' + Server->getIndex();	
+		else
+			this->resource = "." + Server->getRoot() + this->Request->getURI();
 	}
+	std::cout << YELLOW << this->resource <<std::endl;
 }
 
 // void	sendResponse(int fd)

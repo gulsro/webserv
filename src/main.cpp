@@ -3,7 +3,6 @@
 int main(int ac, char **av)
 {
     HttpResponse	Response;
-	HttpRequest		Request;
 
     if (ac > 3){
         std::cout << "too many argument" << std::endl;

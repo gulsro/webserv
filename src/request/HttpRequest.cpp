@@ -89,8 +89,6 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] setReqLocation" << DEFAULT << std::endl;
 	#endif
-	
-	std::string	uri = this->getURI();
 
 	for (size_t i = 0; i < locationList.size(); ++i)
 	{
@@ -141,6 +139,7 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	std::cout << YELLOW << "[FUNCTION] parseRequestLine" << DEFAULT << std::endl;
 	#endif
 
+	std::cout << GREEN << line << DEFAULT << std::endl;
 	stream >> this->method >> this->uri >> rawVersion;
 	std::istringstream	iss(rawVersion);
 	std::getline(iss, this->version, '\r');
@@ -179,6 +178,7 @@ bool	HttpRequest::parseHeader(const std::string &line)
 	std::vector<std::string> keyValue = splitForKeyValue(line, ':');
 	if (keyValue.size() != 2)
 	{
+		std::cout << YELLOW << "size : " << keyValue.size() << DEFAULT << std::endl;
 		std::cerr << "Invalid header format" << std::endl;
 		return false;
 	}
