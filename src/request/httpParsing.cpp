@@ -79,8 +79,25 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 	setRequestedPort();
 	setContentType();
 	#ifdef FUNC
+		std::cout << PURPLE << "Method	:	" << this->method << DEFAULT<< std::endl;
+		std::cout << PURPLE << "URI	:	" << this->uri << DEFAULT<< std::endl;
+		std::cout << PURPLE << "Version	:	" << this->version << DEFAULT<< std::endl;
+	#endif
+	#ifdef FUNC
+		if (!this->queryPairs.empty())
+		{
+			std::cout << "________QUERY________" << std::endl;
+			for (const auto& [key, value] : queryPairs)
+			{
+				std::cout << PURPLE << "key [ " << key << " ]"  << DEFAULT;
+				std::cout << PURPLE << " & value [ " << value << " ]" << DEFAULT << std::endl;
+				std::cout << std::endl;
+			}
+		}
+	#endif
+	#ifdef FUNC
 		auto it = headers.begin();
-		std::cout << PURPLE << "________HEADERS________" << std::endl;
+		std::cout << "________HEADERS________" << std::endl;
 		while (it != headers.end())
 		{
 			std::cout << PURPLE << "[ " << it->first << " ]" << std::endl;
