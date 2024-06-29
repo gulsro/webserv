@@ -196,12 +196,13 @@ void ServerManager::startPoll()
                     Server* server = mapServerFd[fd];
                     acceptClient(fd, *server); //that client is accepted by
                                     // *mapServerFd[fd] server
-                    continue ;
+                    //continue ;
                 }
                 else //continue reading operations on connected clients
                 {    //Request.readRequest(fd); fd will be client's
                     std::cout << "REQUESTTTTTT" << std::endl;
-                    readRequest(fd);
+                    //readRequest(fd);
+                    handleIncoming(fd);
                     //fd = -1;
                     pollfds[i].fd = -1;
                     //here call (client.server->)removeClientFd()
@@ -236,14 +237,28 @@ void ServerManager::startPoll()
 //                     sendClientData(i);
 
 //AT THIS POINT WE DECIDE CGI? IN READREQUEST()?
-// int ServerManager::handleIncoming(int fd)
-// {
-//     //int retVal;
+int ServerManager::handleIncoming(int fd)
+{
+    //int retVal;
 
-//     //Eunbi's readRequest() later will be merged.
-//     readRequest(fd);
-//     return 0;
-// }
+    //Eunbi's readRequest() later will be merged.
+    //readRequest(fd);
+    HttpRequest		Request;
+	HttpResponse	Response;
+    //int retVal;
+
+    //Eunbi's readRequest() later will be merged.
+	if (Request.readRequest(fd) == true)
+	{
+		Request.setReqServer(servers);
+		Request.checkLocations();
+		Response.setRequest(&Request);
+		Response.checkMethod();
+		// Response.sendResponse();
+	}
+	// else continue reading
+    return 0;
+}
 
 
 bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
