@@ -146,6 +146,7 @@ void    HttpResponse::setResource()
 		else
 			this->resource = "." + Server->getRoot() + this->Request->getURI();
 	}
+	std::cout << YELLOW << this->resource <<std::endl;
 }
 
 // void	sendResponse(int fd)

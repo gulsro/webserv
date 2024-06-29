@@ -251,6 +251,8 @@ int ServerManager::handleIncoming(int fd)
 		Request.checkLocations();
 		Response.setRequest(&Request);
 		Response.checkMethod();
+		std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
+		std::cout << Response.getContent() << DEFAULT << std::endl;
 		// Response.sendResponse();
 	}
 	// else continue reading

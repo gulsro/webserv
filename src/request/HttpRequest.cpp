@@ -89,8 +89,6 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] setReqLocation" << DEFAULT << std::endl;
 	#endif
-	
-	std::string	uri = this->getURI();
 
 	for (size_t i = 0; i < locationList.size(); ++i)
 	{
