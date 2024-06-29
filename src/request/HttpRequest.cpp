@@ -144,11 +144,11 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	stream >> this->method >> this->uri >> rawVersion;
 	std::istringstream	iss(rawVersion);
 	std::getline(iss, this->version, '\r');
-	#ifdef FUNC
-		std::cout << PURPLE << "Method	:	" << this->method << DEFAULT<< std::endl;
-		std::cout << PURPLE << "URI	:	" << this->uri << DEFAULT<< std::endl;
-		std::cout << PURPLE << "Version	:	" << this->version << DEFAULT<< std::endl;
-	#endif
+	// check query string in URI
+	if (this->uri.find('?') != std::string::npos)
+	{
+		this->setQueryPairs();
+	}
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
 		throw ErrorCodeException(STATUS_NOT_ALLOWED);
