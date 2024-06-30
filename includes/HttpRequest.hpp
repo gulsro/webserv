@@ -39,6 +39,7 @@ class	HttpRequest
 		std::map<int, t_part>	parts;	
 		
 		//cgi environment
+		std::string	queryString;
 		std::vector<std::pair<std::string, std::string>>	queryPairs;
 
 	public:
@@ -57,6 +58,7 @@ class	HttpRequest
 		const	std::string	&getBody() const { return body; }
 		const	std::string	&getContentType() const { return contentType; }
 		const	int	       	&getRequestedPort() const { return requestedPort; } 
+		const	std::string	&getQueryString() const { return queryString; }
 		const	std::vector<std::pair<std::string, std::string>> &getQueryPairs() const { return queryPairs; }
 
 		//Setters
@@ -66,10 +68,10 @@ class	HttpRequest
 		void	setReqLocation(const std::vector<Location*> locationList);
 		void	setContentType();
 		void	setBoundary();
+		void	setQueryString(std::string str);
 		void	setQueryPairs();
 		
 		bool	readRequest(int fd);
-		bool	isReadingRequestFinished(std::string rawRequest);
 		bool	parseHttpRequest(const std::string &rawRequest);
 		bool	parseRequestLine(const std::string &line);
 		bool	parseHeader(const std::string &line);
