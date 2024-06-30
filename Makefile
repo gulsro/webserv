@@ -12,7 +12,7 @@ CPPFLAGS	=	-Wall -Wextra -Werror -std=c++20
 endif
 
 HEADER_DIR	=	includes/
-HEADER_SRC	=	HttpRequest.hpp HttpResponse.hpp utils.hpp Location.hpp Config.hpp Server.hpp Webserv.hpp
+HEADER_SRC	=	HttpRequest.hpp HttpResponse.hpp utils.hpp Location.hpp Config.hpp Server.hpp Webserv.hpp Cgi.hpp
 HEADERS		=	$(addprefix $(HEADER_DIR), $(HEADER_SRC))
 
 SRC_DIR		=	src/
@@ -23,6 +23,7 @@ SRC_FILE	=	HttpUtils.cpp  main.cpp Config.cpp Server.cpp Location.cpp \
 				response/errorResponse.cpp \
 				response/HttpResponse.cpp \
 				response/Methods.cpp \
+				cgi/Cgi.cpp\
 
 OBJ_DIR		=	obj/
 OBJ			=	$(addprefix ${OBJ_DIR}, ${SRC_FILE:%.cpp=%.o})

@@ -4,10 +4,15 @@
 #include "Webserv.hpp"
 
 class Server;
+class HttpRequest;
+class HttpResponse;
+class Location;
 
 class Cgi
 {
 private:
+    std::string cgiPass;
+    char *cgiFile;
     char **env;
     
 public:
@@ -17,7 +22,12 @@ public:
     Cgi(Cgi& a);
     Cgi& operator=(const Cgi a);
 
-    char **initCgiEnv(HttpRequest& req, Location& loc, Server& ser);
+    std::string getCgiPass() const {return cgiPass; };
+    char* getCgiFile() const {return cgiFile; };
+    char** getEnv() const {return env; };
+
+    void   setCgiFile();
+    void setCgiEnv(HttpRequest& req, Location& loc, Server& ser);
     std::string    execCgi();
 };
 

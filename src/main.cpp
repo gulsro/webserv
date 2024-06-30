@@ -33,6 +33,7 @@ int main(int ac, char **av)
                     Request.setReqServer(config.getServerList());
 					Request.checkLocations();
                     Response.setRequest(&Request);
+                    Response.runCgi();
                     Response.checkMethod();
                     std::cout << Response.getContent() << std::endl;
                 }

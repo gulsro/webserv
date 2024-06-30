@@ -4,11 +4,12 @@
 #include "utils.hpp"
 #include "HttpResponse.hpp"
 #include "Location.hpp"
+#include "Cgi.hpp"
 
 class	HttpResponse;
 class	Location;
 class	Server;
-class   Cgi;
+class	Cgi;
 
 typedef	struct	s_part
 {
@@ -32,13 +33,19 @@ class	HttpRequest
 		int			requestedPort;
         Server      *ReqServer;
         Location	*ReqLocation;
+		
+		//multi-part form-data
 		std::string	boundaryBegin;
 		std::string	boundaryEnd;
-		
 		std::map<int, t_part>	parts;	
 		
+		//cgi environment
+		std::string	queryString;
+		std::vector<std::pair<std::string, std::string>>	queryPairs;
+
+		//Yuka added
 		Cgi			*cgi;
-	
+
 	public:
 		HttpRequest();
 		HttpRequest(const HttpRequest &response);
@@ -54,8 +61,12 @@ class	HttpRequest
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		const	std::string	&getBody() const { return body; }
 		const	std::string	&getContentType() const { return contentType; }
-		const	int	        &getRequestedPort() const { return requestedPort; } 
-		Cgi			*getCgi() const { return cgi; }
+		const	int			&getContentLength() const { return contentLength; }
+		const	int	       	&getRequestedPort() const { return requestedPort; }
+		const	std::string	&getQueryString() const { return queryString; }
+		const	std::vector<std::pair<std::string, std::string>> &getQueryPairs() const { return queryPairs; }
+		//Yuka added
+		Cgi*		getCgi() const  { return cgi; }
 
 		//Setters
 		void	setContentLength(int len) { this->contentLength = len; }
@@ -64,6 +75,8 @@ class	HttpRequest
 		void	setReqLocation(const std::vector<Location*> locationList);
 		void	setContentType();
 		void	setBoundary();
+		void	setQueryString(std::string str);
+		void	setQueryPairs();
 		
 		bool	readRequest(int fd);
 		bool	parseHttpRequest(const std::string &rawRequest);
@@ -78,10 +91,6 @@ class	HttpRequest
 		void	handleMultiPartForm();
 		void	makeKeyValuePair(int i, const std::string str);
         void    handlePartInfo(const int i, const std::vector<std::string> strs);
-		void	findFilename(auto it, std::vector<std::string> strings);
 
 		std::vector<std::string> splitByBoundary();
-		// void    handlePostContents();
-		// void	findFilename();
-		// void	createResponseHelper(enum e_statusCode code);
 };

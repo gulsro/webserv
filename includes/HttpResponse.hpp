@@ -5,6 +5,7 @@
 #include <cstdlib> // remove(), std::system()
 #include <fstream> // ifstream
 #include "HttpRequest.hpp"
+#include "Webserv.hpp"
 #include <exception>
 
 
@@ -15,6 +16,7 @@ enum	e_resourceType
 };
 
 class HttpRequest;
+class Cgi;
 
 class HttpResponse
 {
