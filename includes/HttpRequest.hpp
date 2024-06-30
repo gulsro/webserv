@@ -42,6 +42,9 @@ class	HttpRequest
 		std::string	queryString;
 		std::vector<std::pair<std::string, std::string>>	queryPairs;
 
+		//chunked request
+		bool	isChunked;
+
 	public:
 		HttpRequest();
 		HttpRequest(const HttpRequest &response);
@@ -84,6 +87,7 @@ class	HttpRequest
 		void	handleMultiPartForm();
 		void	makeKeyValuePair(int i, const std::string str);
         void    handlePartInfo(const int i, const std::vector<std::string> strs);
+		bool	isReadingRequestFinished(std::string rawRequest);
 
 		std::vector<std::string> splitByBoundary();
 };

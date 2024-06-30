@@ -8,7 +8,6 @@
 
 #define BUFFER_SIZE 4096 // common page size
 
-
 bool	HttpRequest::isReadingRequestFinished(std::string rawRequest)
 {
 	size_t	headerEnd = rawRequest.find("\r\n\r\n");
@@ -61,11 +60,10 @@ bool	HttpRequest::readRequest(int fd)
 				pos = tmp.find("Content-Length: ");
 				this->contentLength = stoll(tmp.substr(pos + 16));
 			}
-			// if (tmp.find("Transfer-Encoding: chunked") != std::string::npos)
-			// {
-			// 	pos = tmp.find("application/x-www-form-urlendcoded");
-			// 	this->contentLength = stoll(tmp.substr(pos + 37), 0, 16);
-			// }
+			if (tmp.find("Transfer-Encoding: chunked") != std::string::npos)
+			{
+				this->isChunked = true;
+			}
 			// Append received data to the stream
 			stream.write(buffer, byteRead);
 		}
@@ -159,11 +157,9 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		std::cout << GREEN << "contentType : " << this->contentType << std::endl;
 	#endif
 	// parse body
-	if (this->headers.count("Content-Length"))
+	if (this->contentLength > 0 || isChunked == true)
 	{
-		this->setContentLength(std::stoi(headers.at("Content-Length").value));
 		size_t	bodyStart = rawRequest.find("\r\n\r\n") + 4;
-		// size_t	bodyStart = rawRequest.find("\n\n") + 2;
 		if (bodyStart + this->contentLength > rawRequest.size())
 		{
 			std::cerr << "Incomplete HTTP request body." << std::endl;

@@ -6,7 +6,7 @@
 #define MAX_BODY 1000000
 
 HttpRequest::HttpRequest()
-	: method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd("")
+	: method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false)
 {
 	#ifdef DEBUG
 		std::cout << GREY << "HttpRequest : Default constructor called" << DEFAULT << std::endl; 
