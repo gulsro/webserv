@@ -87,6 +87,7 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		if (!this->queryPairs.empty())
 		{
 			std::cout << "________QUERY________" << std::endl;
+			std::cout << PURPLE << "QUERY_STRING : " << this->queryString << std::endl << std::endl;
 			for (const auto& [key, value] : queryPairs)
 			{
 				std::cout << PURPLE << "key [ " << key << " ]"  << DEFAULT;

@@ -199,6 +199,11 @@ void	HttpRequest::setRequestedPort()
 		this->requestedPort = 0;
 }
 
+void	HttpRequest::setQueryString(std::string str)
+{
+	this->queryString = str;
+}
+
 void	HttpRequest::setQueryPairs()
 {
 	size_t		begin;
@@ -206,7 +211,8 @@ void	HttpRequest::setQueryPairs()
 	std::vector<std::string>	queryPair;
 
 	begin = uri.find('?');
-	std::string queryStr = uri.substr(begin + 1, uri.size());
+	std::string queryStr = uri.substr(begin + 1, uri.size() - (begin + 1));
+	setQueryString(queryStr);
 	queryPair = split(queryStr, '&');
 	for (size_t i = 0; i < queryPair.size(); ++i)
 	{
