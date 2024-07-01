@@ -15,6 +15,7 @@
 // serverManager manages multiple Server instances, each representing a virtual host.
 class Server;
 class Config;
+class Client;
 
 class ServerManager
 {
@@ -22,6 +23,7 @@ class ServerManager
         std::vector<Server*> servers;
         //std::map<int, std::unique_ptr<Server>> mapServerFd;
         std::map<int, Server*> mapServerFd;
+        std::map<int, Server*> mapClientFdToServer;
         // an array of fd's
         // first elem of the pollpds is serverfd, the rest will be client's
         std::vector<struct pollfd> pollfds;
@@ -33,12 +35,13 @@ class ServerManager
 
         //const std::vector<std::unique_ptr<Server>>& getServers() const;
         const std::vector<Server*>& getServers() const;
-	    // std::unique_ptr<Server>	getServer(std::string host) const; 
+	      Server*	getServer(int serverFd) const; 
         
         void addServer(Server* server);        
         void startServerManager(ServerManager &); // init vServers in a loop
         void startSockets();
         void addFdToPollFds(int fd, int events);
+        void rmFdFromPollfd(int fd);
         void startPoll();
         int handleIncoming(int fd);
 
@@ -47,6 +50,9 @@ class ServerManager
         void printPollFds() const;
 
         bool isFdInMap(int fd, std::map<int, Server*>& mapServerFd);
+
+    		void	sendResponse(int fd);
+
 };
     
 bool isFdConnected(int fd, std::vector<int>& connectedClientFds);

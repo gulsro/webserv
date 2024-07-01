@@ -69,5 +69,4 @@ class HttpResponse
         void        postFile();
         // void        postFile();
 
-		void	sendResponse(int fd);
 };

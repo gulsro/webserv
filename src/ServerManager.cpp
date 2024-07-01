@@ -136,6 +136,9 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     //std::cout << "MAAAAAA" << server.getPort() << std::endl;
     server.clientList.push_back(client);
     server.connectedClientFds.push_back(clientFd);
+
+    //TEST THAT ONE
+    mapClientFdToServer[clientFd] = &server;
     //std::cout << "CLIENT FD " << client->getClientFd() << std::endl;
     //server.printConnectedClientFds();
     addFdToPollFds(clientFd, (POLLIN | POLLOUT));
@@ -226,8 +229,6 @@ void ServerManager::startPoll()
             // ...
         }
     }
-
-    //std::unique_ptr<Server>	getServer(std::string host) const; 
 }
 
 // if (_pollFds[i].revents & POLLIN)
@@ -250,6 +251,7 @@ int ServerManager::handleIncoming(int fd)
     if (Request.readRequest(fd) == true)//continue reading operations on connected clients
     {    //Request.readRequest(fd); fd will be client's
 
+        std::cout << "BANANAAAAAA" << std::endl;
 		Request.setReqServer(servers);
 		Request.checkLocations();
 		Response.setRequest(&Request);
@@ -262,6 +264,29 @@ int ServerManager::handleIncoming(int fd)
 	// else continue reading
     return 0;
 }
+
+// void	ServerManager::sendResponse(int fd)
+// {
+//     HttpResponse	Response;
+
+//     //getClient from fd
+
+//     //from client getResponse
+// 	//Checking client is still connected??
+
+// 	//checking is clientFd is still connected
+// 	//also check "if reading request is done" therefor we need a flag ?
+// 	//if (fd ....)
+
+// 	//What's that enum status code???
+// 	std::string	content = createResponse();
+// 	int retVal = write(fd, content.c_str(), content.size());
+// 	if (retVal == -1)
+// 	{
+// 		std::cout << "Here disconnect the client" << std::endl;
+// 	}
+// 	//delete the request, it s done
+// }
 
 
 bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
@@ -304,6 +329,33 @@ bool isFdConnected(int fd, std::vector<int>& connectedClientFds)
 //     auto it = std::find(vector.begin(), vector.end(),
 //                    valueToBeDeleted);
 
+void	ServerManager::rmFdFromPollfd(int fd)
+{
+	for (std::vector<struct pollfd>::iterator it = pollfds.begin();
+		it != pollfds.end(); it++)
+	{
+		if (it -> fd == fd)
+		{
+			pollfds.erase(it);
+			break ;
+		}
+	}
+	//close(fd);
+}
+
+//Dont know if necessary when we have mapServerFd ????
+Server* ServerManager::getServer(int serverFd) const
+{
+    std::cout << "serverFd: " << std::endl;
+    auto it = mapServerFd.find(serverFd);
+    if (it != mapServerFd.end())
+    {
+        return it->second;
+    }
+
+    throw std::runtime_error("Server not found");
+
+}
 
 std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
 {
