@@ -12,8 +12,8 @@ class Client
 private:
     //Server& server;
     int clientFd;
-    // HttpRequest&
-    // HttpResponse&
+    //HttpRequest& request;
+    //HttpResponse&
 
 public:
     Client(int fd);

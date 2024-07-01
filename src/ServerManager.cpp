@@ -191,21 +191,20 @@ void ServerManager::startPoll()
             if (revents & POLLIN)
             {
                 // if a server received a request. let's accept a client
-                // if (isFdInMap(fd, mapServerFd)) //fd is one of the server's fd
-                // {
-                //     Server* server = mapServerFd[fd];
-                //     acceptClient(fd, *server); //that client is accepted by
-                //     std::cout << "client is accepted" << std::endl;
-                //                     // *mapServerFd[fd] server
-                //     //continue ;
-                // }
-                // else //continue reading operations on connected clients
-                // {    //Request.readRequest(fd); fd will be client's
-                     std::cout << "REQUESTTTTTT" << std::endl;
-                //     //readRequest(fd);
-                    
-                handleIncoming(fd);
-                    
+                if (isFdInMap(fd, mapServerFd)) //fd is one of the server's fd
+                {
+                    Server* server = mapServerFd[fd];
+                    acceptClient(fd, *server); //that client is accepted by
+                    std::cout << "client is accepted" << std::endl;
+                                    // *mapServerFd[fd] server
+                    //continue ;
+                }
+                else //continue reading operations on connected clients
+                {    //Request.readRequest(fd); fd will be client's
+                    std::cout << "REQUESTTTTTT" << std::endl;
+                     //readRequest(fd);
+                    handleIncoming(fd);
+                }
                 //     //fd = -1;
                 //     //pollfds[i].fd = -1;
                 //     //here call (client.server->)removeClientFd()
@@ -248,15 +247,7 @@ int ServerManager::handleIncoming(int fd)
     HttpRequest		Request;
 	HttpResponse	Response;
 
-    if (isFdInMap(fd, mapServerFd)) //fd is one of the server's fd
-    {
-        Server* server = mapServerFd[fd];
-        acceptClient(fd, *server); //that client is accepted by
-        std::cout << "client is accepted" << std::endl;
-                        // *mapServerFd[fd] server
-        //continue ;
-    }
-    else if (Request.readRequest(fd) == true)//continue reading operations on connected clients
+    if (Request.readRequest(fd) == true)//continue reading operations on connected clients
     {    //Request.readRequest(fd); fd will be client's
 
 		Request.setReqServer(servers);
@@ -270,30 +261,7 @@ int ServerManager::handleIncoming(int fd)
 	}
 	// else continue reading
     return 0;
-        //std::cout << "REQUESTTTTTT" << std::endl;
-        //readRequest(fd);
-        
-        //handleIncoming(fd);
-        
-        //fd = -1;
-        //pollfds[i].fd = -1;
-        //here call (client.server->)removeClientFd()
-    }
-
-	// if (Request.readRequest(fd) == true)
-	// {
-	// 	Request.setReqServer(servers);
-	// 	Request.checkLocations();
-	// 	Response.setRequest(&Request);
-	// 	Response.checkMethod();
-
-	// 	std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
-	// 	std::cout << Response.getContent() << DEFAULT << std::endl;
-	// 	// Response.sendResponse();
-	// }
-	// // else continue reading
-    // return 0;
-
+}
 
 
 bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
