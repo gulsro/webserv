@@ -50,7 +50,7 @@ class ServerManager
 
         bool isFdInMap(int fd, std::map<int, Server*>& mapServerFd);
 		
-		bool	readRequest(Client *currClient);
+		bool	readRequest(Client *Client);
 };
     
 bool isFdConnected(int fd, std::vector<int>& connectedClientFds);
