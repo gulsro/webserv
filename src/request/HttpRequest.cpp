@@ -104,7 +104,7 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 			// check file extension name is only ".py"
 			if (isdigit(c) == false && isalpha(c) == false && c != '-' && c != '_')
 			{
-				this->ReqLocation == locationList[i];
+				this->ReqLocation = locationList[i];
 				break;
 			}
 		}
