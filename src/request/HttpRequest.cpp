@@ -6,16 +6,16 @@
 #define MAX_BODY 1000000
 
 HttpRequest::HttpRequest()
-	: method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false)
+	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Default constructor called" << DEFAULT << std::endl; 
 	#endif
 }
 
 HttpRequest::HttpRequest(const HttpRequest &other)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Copy constructor called" << DEFAULT << std::endl; 
 	#endif
 	*this = other;
@@ -23,7 +23,7 @@ HttpRequest::HttpRequest(const HttpRequest &other)
 
 HttpRequest &HttpRequest::operator=(const HttpRequest &other)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Copy assigment operator called" << DEFAULT << std::endl;
 	#endif
 	if (this != &other)
@@ -39,7 +39,7 @@ HttpRequest &HttpRequest::operator=(const HttpRequest &other)
 
 HttpRequest::~HttpRequest()
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Destructor called" << DEFAULT << std::endl; 
 	#endif
 }

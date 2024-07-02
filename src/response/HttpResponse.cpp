@@ -3,14 +3,14 @@
 HttpResponse::HttpResponse()
 	: statusCode(0), body(""), index(""), resource(""), content(""), contentType(""), MIMEtype(""), completed(false)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Default constructor called" << DEFAULT << std::endl; 
 	#endif
 }
 
 HttpResponse::HttpResponse(const HttpResponse &other)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Copy constructor called" << DEFAULT << std::endl; 
 	#endif
 	*this = other;
@@ -18,7 +18,7 @@ HttpResponse::HttpResponse(const HttpResponse &other)
 
 HttpResponse &HttpResponse::operator=(const HttpResponse &other)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Copy assigment operator called" << DEFAULT << std::endl;
 	#endif
 	if (this != &other)
@@ -41,7 +41,7 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other)
 
 HttpResponse::~HttpResponse()
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Destructor called" << DEFAULT << std::endl; 
 	#endif
 }

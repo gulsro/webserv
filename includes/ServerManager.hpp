@@ -22,6 +22,7 @@ class ServerManager
         std::vector<Server*> servers;
         //std::map<int, std::unique_ptr<Server>> mapServerFd;
         std::map<int, Server*> mapServerFd;
+		std::map<int, Client*> mapClientFd;
         // an array of fd's
         // first elem of the pollpds is serverfd, the rest will be client's
         std::vector<struct pollfd> pollfds;
@@ -40,6 +41,7 @@ class ServerManager
         void startSockets();
         void addFdToPollFds(int fd, int events);
         void startPoll();
+		Server* getServer(int serverFd) const;
         int handleIncoming(int fd);
 
         void acceptClient(int serverFd, Server& server);
@@ -47,6 +49,8 @@ class ServerManager
         void printPollFds() const;
 
         bool isFdInMap(int fd, std::map<int, Server*>& mapServerFd);
+		
+		bool	readRequest(Client *currClient);
 };
     
 bool isFdConnected(int fd, std::vector<int>& connectedClientFds);
