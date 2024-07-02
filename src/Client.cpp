@@ -5,6 +5,8 @@ Client::Client(int fd)
 {
     //this->server = server;
     this->clientFd = fd; 
+	this->Request = NULL;
+	this->Response = NULL;
     std::cout << "Client constructor is called" << std::endl;
 }
 

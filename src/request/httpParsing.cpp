@@ -59,8 +59,8 @@ bool	ServerManager::readRequest(Client *Client)
     std::cout << YELLOW << "[FUNCTION] readRequest" << DEFAULT << std::endl;
 	#endif
 
-	char		buffer[BUFFER_SIZE];
-	int			fd = Client->getClientFd();
+	char	buffer[BUFFER_SIZE];
+	int		fd = Client->getClientFd();
 	ssize_t	byteRead = recv(fd, buffer, BUFFER_SIZE, 0);
 
 	if (byteRead == 0)
@@ -77,10 +77,8 @@ bool	ServerManager::readRequest(Client *Client)
 	else
 	{
 		std::string tmp(buffer, static_cast<size_t>(byteRead));
-		std::cout << PINK << "tmp : " << tmp << DEFAULT << std::endl;
 		if (!Client->getRequest()) // Creat a new HttpRequest class in the Client object
 		{
-			// delete Client->getRequest();
 			Client->setRequest(new HttpRequest());
 			Client->getRequest()->setRawRequest(tmp);
 		}
@@ -91,9 +89,7 @@ bool	ServerManager::readRequest(Client *Client)
 			Client->getRequest()->setRawRequest(rawRequest + tmp);
 		}
 		Client->getRequest()->checkRequestSize();
-
 	}
-	std::cout << "rawRequest : " << RED << Client->getRequest()->getRawRequest() << DEFAULT << std::endl; 
 	// Check for complete request
 	std::string rawRequestStr = Client->getRequest()->getRawRequest();
 	if (Client->getRequest()->isReadingRequestFinished(rawRequestStr) == false)

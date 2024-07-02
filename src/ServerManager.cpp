@@ -141,7 +141,7 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     mapClientFd[clientFd] = client;
     //std::cout << "CLIENT FD " << client->getClientFd() << std::endl;
     //server.printConnectedClientFds();
-	mapClientFd[clientFd];
+	mapClientFd[clientFd] = client;
     addFdToPollFds(clientFd, (POLLIN | POLLOUT));
 }
 
