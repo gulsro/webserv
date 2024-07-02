@@ -309,14 +309,40 @@ void	ServerManager::sendResponse(int clientFd)
     std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
 
 	//What's that enum status code???
-	// std::string	content = currClient->getResponse()->createResponse();
-	// int retVal = write(clientFd, content.c_str(), content.size());
-	// if (retVal == -1)
-	// {
-	// 	std::cout << "Here disconnect the client" << std::endl;
-	// }
+	ssize_t bytesSent = send(clientFd, currClient->getResponse()->getContent().c_str(),
+                        currClient->getResponse()->getContent().size(), 0);
+	if (bytesSent == -1 || static_cast<size_t>(bytesSent) != currClient->getResponse()->getContent().size())
+	{
+        rmFdFromPollfd(clientFd);
+        delete mapClientFd[clientFd];
+        mapClientFd[clientFd] = nullptr;
+        throw std::runtime_error("Error: send()");
+	}
+    //close(clientFd);
 	//delete the request, it s done
 }
+
+// void Config::_sendResponse(int sd)
+// {
+// 	Client	*client;
+
+// 	// Check if the client object exists
+// 	if (_sdToClient.find(sd) == _sdToClient.end()) return ;
+
+// 	client = _sdToClient[sd];
+// 	if (client && client->getRequest() && client->getRequest()->isFinished)
+// 	{
+// 		std::string	content = client->createResponse();
+// 		int ret = send(sd, content.c_str(), content.size(), 0);
+// 		if (ret == -1) {
+// 			_rmPollfd(sd);
+// 			delete	_sdToClient[sd];
+// 			_sdToClient[sd] = NULL;
+// 			std::cout << YELLOW << "[Attention]: Client with socket: " << sd << " disconnected(Writing)!\n" << RESET_COLOR;
+// 		}
+// 		client->deleteRequest();
+// 	}
+// }
 
 
 bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
