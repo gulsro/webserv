@@ -9,7 +9,7 @@ NAME = webserv
 ifdef DEBUG
 FLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g -std=c++20
 else ifdef STRUCTOR
-FLAGS	=	-Wall -Wextra -Werror -g -D DEBUG -std=c++20
+FLAGS	=	-Wall -Wextra -Werror -g -D STRUCTOR -std=c++20
 else ifdef FUNC
 FLAGS	=	-Wall -Wextra -Werror -g -D FUNC -std=c++20
 else

@@ -1,7 +1,0 @@
-GET /none.html HTTP/1.1
-Host: localhost:8080
-Connection: close
-Content-Length: 10
-Content-Type: html
-
-It's Eunbi

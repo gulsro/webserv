@@ -1,3 +1,0 @@
-DELETE /delete.txt HTTP/1.1
-Host: localhost:8080
-Connection: close

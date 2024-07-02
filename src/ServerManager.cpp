@@ -141,6 +141,7 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     mapClientFd[clientFd] = client;
     //std::cout << "CLIENT FD " << client->getClientFd() << std::endl;
     //server.printConnectedClientFds();
+	mapClientFd[clientFd];
     addFdToPollFds(clientFd, (POLLIN | POLLOUT));
 }
 
@@ -241,9 +242,21 @@ void ServerManager::startPoll()
 //                 else if (_pollFds[i].revents & POLLOUT)
 //                     sendClientData(i);
 
+Server* ServerManager::getServer(int serverFd) const
+{
+	std::cout << GREEN << "serverFd" << DEFAULT << std::endl;
+    auto it = mapServerFd.find(serverFd);
+    if (it != mapServerFd.end())
+    {
+        return it->second;
+    }
+    throw std::runtime_error("Server not found");
+}
+
 //AT THIS POINT WE DECIDE CGI? IN READREQUEST()?
 int ServerManager::handleIncoming(int clientFd)
 {
+<<<<<<< HEAD
     //readRequest(fd);
     HttpRequest		Request;
 	HttpResponse	Response;
@@ -262,8 +275,39 @@ int ServerManager::handleIncoming(int clientFd)
         Response.setRequest(&Request);
 		Response.checkMethod();
 
+=======
+	#ifdef FUNC
+		std::cout << YELLOW << "[FUNCTION] handleIncoming" << DEFAULT << std::endl;
+	#endif
+    //readRequest(fd);
+	// Server *currServer = this->getServer(fd);
+	Client *currClient;
+
+	currClient = mapClientFd[fd];
+
+	// for (size_t i = 0; i < currServer->clientList.size(); ++i)
+	// {
+	// 	if (currServer->clientList[i]->getClientFd() == fd)
+	// 		currClient = currServer->clientList[i];
+	// }
+    // HttpRequest		Request;
+	// HttpResponse	Response;
+
+    if (this->readRequest(currClient) == true)//continue reading operations on connected clients
+    {    //Request.readRequest(fd); fd will be client's
+
+		currClient->getRequest()->setReqServer(servers);
+		currClient->getRequest()->checkLocations();
+		// creating new HttpResponse
+		currClient->setResponse(new HttpResponse);
+		currClient->getResponse()->setRequest(currClient->getRequest());
+		currClient->getResponse()->checkMethod();
+		// Response.setRequest(&Request);
+		// Response.checkMethod();
+
+>>>>>>> combined
 		std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
-		std::cout << Response.getContent() << DEFAULT << std::endl;
+		std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
 		// Response.sendResponse();
 	}
 	// else continue reading

@@ -6,8 +6,8 @@
 #include <cstring> // strerror()
 #include <unistd.h>
 
-#define BUFFER_SIZE 10 // common page size
-
+// #define BUFFER_SIZE 4096 // common page size
+#define BUFFER_SIZE 10
 
 bool	HttpRequest::isReadingRequestFinished(std::string rawRequest)
 {
@@ -22,8 +22,30 @@ bool	HttpRequest::isReadingRequestFinished(std::string rawRequest)
 		else
 			return true;
 	}
+	else if (this->isChunked == true)
+	{
+		size_t	chunkedBodyEnd = rawRequest.find("\r\n0\r\n\r\n");
+		if (chunkedBodyEnd != std::string::npos)
+			return true;
+		else
+			return false;
+	}
 	else
 		return true;
+}
+
+void	HttpRequest::checkRequestSize()
+{
+	size_t pos;
+	std::string tmp = this->getRawRequest();
+
+	if (tmp.find("Content-Length: ") != std::string::npos)
+	{
+		pos = tmp.find("Content-Length: ");
+		this->setContentLength(stoll(tmp.substr(pos + 16)));
+	}
+	if (tmp.find("Transfer-Encoding: chunked") != std::string::npos)
+		this->setIsChunked(true);
 }
 
 /**
@@ -31,53 +53,53 @@ bool	HttpRequest::isReadingRequestFinished(std::string rawRequest)
  * MSG_PEEK can be used to check if any data is available before attempting a recv call.
  * This helps avoid blocking operations if no data is present.
 */
-bool	HttpRequest::readRequest(int fd)
+bool	ServerManager::readRequest(Client *Client)
 {
-	char				buffer[BUFFER_SIZE];
-	std::string 	stream;
-
     #ifdef FUNC
     std::cout << YELLOW << "[FUNCTION] readRequest" << DEFAULT << std::endl;
 	#endif
-		// size_t	byteRead = recv(fd, buffer, BUFFER_SIZE, 0);
-		//memset(buffer, 0, BUFFER_SIZE);
-		long long byteRead = read(fd, buffer, BUFFER_SIZE);
-        if (byteRead == 0)
+
+	char		buffer[BUFFER_SIZE];
+	int			fd = Client->getClientFd();
+	ssize_t	byteRead = recv(fd, buffer, BUFFER_SIZE, 0);
+
+	if (byteRead == 0)
+	{
+		close(fd);
+		std::cout << "Disconnection with " << fd << std::endl;
+	}
+	else if (byteRead == -1)
+	{
+		close(fd);
+		//delete client object
+		throw ErrorCodeException(STATUS_BAD_REQUEST);
+	}
+	else
+	{
+		std::string tmp(buffer, static_cast<size_t>(byteRead));
+		std::cout << PINK << "tmp : " << tmp << DEFAULT << std::endl;
+		if (!Client->getRequest()) // Creat a new HttpRequest class in the Client object
 		{
-			close(fd);
-			std::cout << "Disconnection with " << fd << std::endl;
-		}
-		else if (byteRead == -1)
-		{
-			close(fd);
-			//delete client object
-			throw ErrorCodeException(STATUS_BAD_REQUEST);
+			// delete Client->getRequest();
+			Client->setRequest(new HttpRequest());
+			Client->getRequest()->setRawRequest(tmp);
 		}
 		else
 		{
-			std::string tmp = buffer;
-			size_t pos;
-			if (tmp.find("Content-Length: ") != std::string::npos)
-			{
-				pos = tmp.find("Content-Length: ");
-				this->contentLength = stoll(tmp.substr(pos + 16));
-			}
-			// if (tmp.find("Transfer-Encoding: chunked") != std::string::npos)
-			// {
-			// 	pos = tmp.find("application/x-www-form-urlendcoded");
-			// 	this->contentLength = stoll(tmp.substr(pos + 37), 0, 16);
-			// }
-			// Append received data to the stream
-			//stream.write(buffer, byteRead);
-			stream.append(buffer, byteRead);
+			// Appending read buffer
+			std::string rawRequest = Client->getRequest()->getRawRequest();
+			Client->getRequest()->setRawRequest(rawRequest + tmp);
 		}
-		// Check for complete request
-		//std::string rawRequest = stream.str();
-		std::string rawRequest = stream;
-		if (isReadingRequestFinished(rawRequest) == false)
-			return false;
-		else
-			return parseHttpRequest(rawRequest);
+		Client->getRequest()->checkRequestSize();
+
+	}
+	std::cout << "rawRequest : " << RED << Client->getRequest()->getRawRequest() << DEFAULT << std::endl; 
+	// Check for complete request
+	std::string rawRequestStr = Client->getRequest()->getRawRequest();
+	if (Client->getRequest()->isReadingRequestFinished(rawRequestStr) == false)
+		return false;
+	else
+		return Client->getRequest()->parseHttpRequest(rawRequestStr);
 }
 
 std::vector<std::string>	splitHeaderByLine(const std::string &rawRequest)
@@ -132,6 +154,24 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 	setRequestedPort();
 	setContentType();
 	#ifdef FUNC
+		std::cout << PURPLE << "Method	:	" << this->method << DEFAULT<< std::endl;
+		std::cout << PURPLE << "URI	:	" << this->uri << DEFAULT<< std::endl;
+		std::cout << PURPLE << "Version	:	" << this->version << DEFAULT<< std::endl;
+	#endif
+	#ifdef FUNC
+		if (!this->queryPairs.empty())
+		{
+			std::cout << "________QUERY________" << std::endl;
+			std::cout << PURPLE << "QUERY_STRING : " << this->queryString << std::endl << std::endl;
+			for (const auto& [key, value] : queryPairs)
+			{
+				std::cout << PURPLE << "key [ " << key << " ]"  << DEFAULT;
+				std::cout << PURPLE << " & value [ " << value << " ]" << DEFAULT << std::endl;
+				std::cout << std::endl;
+			}
+		}
+	#endif
+	#ifdef FUNC
 		auto it = headers.begin();
 		std::cout << GREEN "________HEADERS________" << std::endl;
 		while (it != headers.end())
@@ -144,11 +184,9 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		std::cout << GREEN << "contentType : " << this->contentType << std::endl;
 	#endif
 	// parse body
-	if (this->headers.count("Content-Length"))
+	if (this->contentLength > 0 || isChunked == true)
 	{
-		this->setContentLength(std::stoi(headers.at("Content-Length").value));
 		size_t	bodyStart = rawRequest.find("\r\n\r\n") + 4;
-		// size_t	bodyStart = rawRequest.find("\n\n") + 2;
 		if (bodyStart + this->contentLength > rawRequest.size())
 		{
 			std::cerr << "Incomplete HTTP request body." << std::endl;

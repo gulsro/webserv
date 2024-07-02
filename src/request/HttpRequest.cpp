@@ -6,16 +6,16 @@
 #define MAX_BODY 1000000
 
 HttpRequest::HttpRequest()
-	: method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd("")
+	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Default constructor called" << DEFAULT << std::endl; 
 	#endif
 }
 
 HttpRequest::HttpRequest(const HttpRequest &other)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Copy constructor called" << DEFAULT << std::endl; 
 	#endif
 	*this = other;
@@ -23,7 +23,7 @@ HttpRequest::HttpRequest(const HttpRequest &other)
 
 HttpRequest &HttpRequest::operator=(const HttpRequest &other)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Copy assigment operator called" << DEFAULT << std::endl;
 	#endif
 	if (this != &other)
@@ -39,7 +39,7 @@ HttpRequest &HttpRequest::operator=(const HttpRequest &other)
 
 HttpRequest::~HttpRequest()
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Destructor called" << DEFAULT << std::endl; 
 	#endif
 }
@@ -143,11 +143,6 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	stream >> this->method >> this->uri >> rawVersion;
 	std::istringstream	iss(rawVersion);
 	std::getline(iss, this->version, '\r');
-	#ifdef FUNC
-		std::cout << PURPLE << "Method	:	" << this->method << DEFAULT<< std::endl;
-		std::cout << PURPLE << "URI	:	" << this->uri << DEFAULT<< std::endl;
-		std::cout << PURPLE << "Version	:	" << this->version << DEFAULT<< std::endl;
-	#endif
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
 		throw ErrorCodeException(STATUS_NOT_ALLOWED);
@@ -178,7 +173,7 @@ bool	HttpRequest::parseHeader(const std::string &line)
 	std::vector<std::string> keyValue = splitForKeyValue(line, ':');
 	if (keyValue.size() != 2)
 	{
-		std::cout << YELLOW << "size : " << keyValue.size() << DEFAULT << std::endl;
+		// std::cout << YELLOW << "size : " << keyValue.size() << DEFAULT << std::endl;
 		std::cerr << "Invalid header format" << std::endl;
 		return false;
 	}
@@ -199,6 +194,11 @@ void	HttpRequest::setRequestedPort()
 		this->requestedPort = 0;
 }
 
+void	HttpRequest::setQueryString(std::string str)
+{
+	this->queryString = str;
+}
+
 void	HttpRequest::setQueryPairs()
 {
 	size_t		begin;
@@ -206,7 +206,8 @@ void	HttpRequest::setQueryPairs()
 	std::vector<std::string>	queryPair;
 
 	begin = uri.find('?');
-	std::string queryStr = uri.substr(begin + 1, uri.size());
+	std::string queryStr = uri.substr(begin + 1, uri.size() - (begin + 1));
+	setQueryString(queryStr);
 	queryPair = split(queryStr, '&');
 	for (size_t i = 0; i < queryPair.size(); ++i)
 	{
