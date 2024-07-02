@@ -254,28 +254,8 @@ Server* ServerManager::getServer(int serverFd) const
 }
 
 //AT THIS POINT WE DECIDE CGI? IN READREQUEST()?
-int ServerManager::handleIncoming(int clientFd)
+int ServerManager::handleIncoming(int fd)
 {
-<<<<<<< HEAD
-    //readRequest(fd);
-    HttpRequest		Request;
-	HttpResponse	Response;
-    Client *client;
-
-    client = mapClientFd[clientFd];
-    std::cout << "BANANAAA FD = " << client->getClientFd() << std::endl;
-    if (Request.readRequest(clientFd) == true)//continue reading operations on connected clients
-    {    //Request.readRequest(fd); fd will be client's
-
-        std::cout << "BANANAAAAAA" << std::endl;
-		Request.setReqServer(servers);
-		Request.checkLocations();
-		
-        
-        Response.setRequest(&Request);
-		Response.checkMethod();
-
-=======
 	#ifdef FUNC
 		std::cout << YELLOW << "[FUNCTION] handleIncoming" << DEFAULT << std::endl;
 	#endif
@@ -305,7 +285,6 @@ int ServerManager::handleIncoming(int clientFd)
 		// Response.setRequest(&Request);
 		// Response.checkMethod();
 
->>>>>>> combined
 		std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
 		std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
 		// Response.sendResponse();
@@ -314,30 +293,30 @@ int ServerManager::handleIncoming(int clientFd)
     return 0;
 }
 
-void	ServerManager::sendResponse(int clientFd)
-{
-    HttpResponse	*response;
-    Client *client;
+// void	ServerManager::sendResponse(int clientFd)
+// {
+//     HttpResponse	*response;
+//     Client *client;
 
-    response = mapClientFd[clientFd]
-    //getClient from fd
+//     response = mapClientFd[clientFd]
+//     //getClient from fd
 
-    //from client getResponse
-	//Checking client is still connected??
+//     //from client getResponse
+// 	//Checking client is still connected??
 
-	//checking is clientFd is still connected
-	//also check "if reading request is done" therefor we need a flag ?
-	//if (fd ....)
+// 	//checking is clientFd is still connected
+// 	//also check "if reading request is done" therefor we need a flag ?
+// 	//if (fd ....)
 
-	//What's that enum status code???
-	std::string	content = createResponse();
-	int retVal = write(clientFd, content.c_str(), content.size());
-	if (retVal == -1)
-	{
-		std::cout << "Here disconnect the client" << std::endl;
-	}
-	//delete the request, it s done
-}
+// 	//What's that enum status code???
+// 	std::string	content = createResponse();
+// 	int retVal = write(clientFd, content.c_str(), content.size());
+// 	if (retVal == -1)
+// 	{
+// 		std::cout << "Here disconnect the client" << std::endl;
+// 	}
+// 	//delete the request, it s done
+// }
 
 
 bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
@@ -392,20 +371,6 @@ void	ServerManager::rmFdFromPollfd(int fd)
 		}
 	}
 	//close(fd);
-}
-
-//Dont know if necessary when we have mapServerFd ????
-Server* ServerManager::getServer(int serverFd) const
-{
-    std::cout << "serverFd: " << std::endl;
-    auto it = mapServerFd.find(serverFd);
-    if (it != mapServerFd.end())
-    {
-        return it->second;
-    }
-
-    throw std::runtime_error("Server not found");
-
 }
 
 std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
