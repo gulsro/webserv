@@ -98,6 +98,16 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 			this->ReqLocation = locationList[i];
 			break;
 		}
+		if (size_t pos = path.find(".py") != std::string::npos)
+		{
+			char	c = pos + 3;
+			// check file extension name is only ".py"
+			if (isdigit(c) == false && isalpha(c) == false && c != '-' && c != '_')
+			{
+				this->ReqLocation == locationList[i];
+				break;
+			}
+		}
 	}
 	this->ReqLocation = nullptr;
 }
