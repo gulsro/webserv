@@ -143,6 +143,7 @@ void    HttpResponse::setResource()
 	{
 		this->resource = "." + Server->getRoot() + this->Request->getURI();
 	}
+	std::cout << PINK << "Resource : " << this->resource << DEFAULT << std::endl;
 }
 
 // void	sendResponse(int fd)

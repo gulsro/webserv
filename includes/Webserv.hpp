@@ -18,6 +18,7 @@
 #include "Config.hpp"
 #include "Server.hpp"
 #include "Location.hpp"
+#include "utils.hpp"
 
 #define BOLD "\033[1m"
 #define RES "\033[0m"

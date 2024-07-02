@@ -74,8 +74,6 @@ void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 	for (size_t i = 0; i < serverList.size(); ++i)
 	{
 		int	port = serverList[i]->getPort();
-		// std::cout << "Server Port : " << port << std::endl;
-
 		if (this->requestedPort == port)
 			this->ReqServer = serverList[i];
 		else
@@ -93,16 +91,23 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 	for (size_t i = 0; i < locationList.size(); ++i)
 	{
 		std::string	path = locationList[i]->getPath();
+		size_t pos = this->uri.find(path);
 		if (this->uri == path)
 		{
 			this->ReqLocation = locationList[i];
 			break;
 		}
-		// if uri contains cgi program extension file name. For us, Python.
-		size_t pos = this->uri.find(".py");
-		if (pos != std::string::npos && path == "/*.py ")
+		else if (pos != std::string::npos)
 		{
-			char	c = this->uri[pos + 3];
+			if (this->uri[pos + path.length()] == '/')
+				this->ReqLocation = locationList[i];
+			break;
+		}
+		// if uri contains cgi program extension file name. For us, Python.
+		size_t cgiPos = this->uri.find(".py");
+		if (cgiPos != std::string::npos && path == "/*.py")
+		{
+			char	c = this->uri[cgiPos + 3];
 			// check file extension name is only ".py"
 			if (isdigit(c) == false && isalpha(c) == false && c != '-' && c != '_')
 			{
