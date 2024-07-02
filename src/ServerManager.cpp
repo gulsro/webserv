@@ -270,28 +270,30 @@ int ServerManager::handleIncoming(int clientFd)
     return 0;
 }
 
-// void	ServerManager::sendResponse(int fd)
-// {
-//     HttpResponse	Response;
+void	ServerManager::sendResponse(int clientFd)
+{
+    HttpResponse	*response;
+    Client *client;
 
-//     //getClient from fd
+    response = mapClientFd[clientFd]
+    //getClient from fd
 
-//     //from client getResponse
-// 	//Checking client is still connected??
+    //from client getResponse
+	//Checking client is still connected??
 
-// 	//checking is clientFd is still connected
-// 	//also check "if reading request is done" therefor we need a flag ?
-// 	//if (fd ....)
+	//checking is clientFd is still connected
+	//also check "if reading request is done" therefor we need a flag ?
+	//if (fd ....)
 
-// 	//What's that enum status code???
-// 	std::string	content = createResponse();
-// 	int retVal = write(fd, content.c_str(), content.size());
-// 	if (retVal == -1)
-// 	{
-// 		std::cout << "Here disconnect the client" << std::endl;
-// 	}
-// 	//delete the request, it s done
-// }
+	//What's that enum status code???
+	std::string	content = createResponse();
+	int retVal = write(clientFd, content.c_str(), content.size());
+	if (retVal == -1)
+	{
+		std::cout << "Here disconnect the client" << std::endl;
+	}
+	//delete the request, it s done
+}
 
 
 bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)

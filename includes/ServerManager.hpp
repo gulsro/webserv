@@ -51,7 +51,7 @@ class ServerManager
 
         bool isFdInMap(int fd, std::map<int, Server*>& mapServerFd);
 
-    		void	sendResponse(int fd);
+    		void	sendResponse(int clientFd);
 
 };
     

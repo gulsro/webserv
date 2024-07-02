@@ -13,7 +13,7 @@ private:
     //Server& server;
     int clientFd;
     //HttpRequest& request;
-    //HttpResponse *response;
+    HttpResponse *response;
 
 public:
     Client(int fd);
