@@ -223,7 +223,7 @@ void ServerManager::startPoll()
             {
                 std::cout << "RESPONSEEEEE" << std::endl;
                 pollfds[i].fd = -1;
-				//eunbi's sendResponse(clientFd)
+				sendResponse(fd);
             }
             // Handle events for accepted connections (read/write data)
             // You'll need to iterate over other servers and their connections here
@@ -278,45 +278,45 @@ int ServerManager::handleIncoming(int fd)
 
 		currClient->getRequest()->setReqServer(servers);
 		currClient->getRequest()->checkLocations();
-		// creating new HttpResponse
-		currClient->setResponse(new HttpResponse);
-		currClient->getResponse()->setRequest(currClient->getRequest());
-		currClient->getResponse()->checkMethod();
-		// Response.setRequest(&Request);
-		// Response.checkMethod();
-
-		std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
-		std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
+	
+    	// creating new HttpResponse
 		// Response.sendResponse();
 	}
 	// else continue reading
     return 0;
 }
 
-// void	ServerManager::sendResponse(int clientFd)
-// {
-//     HttpResponse	*response;
-//     Client *client;
+void	ServerManager::sendResponse(int clientFd)
+{
+    Client *currClient;
 
-//     response = mapClientFd[clientFd]
-//     //getClient from fd
+	currClient = mapClientFd[clientFd];
 
-//     //from client getResponse
-// 	//Checking client is still connected??
+    //from client getResponse
+	//Checking client is still connected??
 
-// 	//checking is clientFd is still connected
-// 	//also check "if reading request is done" therefor we need a flag ?
-// 	//if (fd ....)
+	//checking is clientFd is still connected
+	//also check "if reading request is done" therefor we need a flag ?
+	//if (fd ....)
 
-// 	//What's that enum status code???
-// 	std::string	content = createResponse();
-// 	int retVal = write(clientFd, content.c_str(), content.size());
-// 	if (retVal == -1)
-// 	{
-// 		std::cout << "Here disconnect the client" << std::endl;
-// 	}
-// 	//delete the request, it s done
-// }
+    currClient->setResponse(new HttpResponse);
+    currClient->getResponse()->setRequest(currClient->getRequest());
+    currClient->getResponse()->checkMethod();
+    // Response.setRequest(&Request);
+    // Response.checkMethod();
+
+    std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
+    std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
+
+	//What's that enum status code???
+	// std::string	content = currClient->getResponse()->createResponse();
+	// int retVal = write(clientFd, content.c_str(), content.size());
+	// if (retVal == -1)
+	// {
+	// 	std::cout << "Here disconnect the client" << std::endl;
+	// }
+	//delete the request, it s done
+}
 
 
 bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
