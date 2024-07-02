@@ -23,7 +23,7 @@ class ServerManager
         std::vector<Server*> servers;
         //std::map<int, std::unique_ptr<Server>> mapServerFd;
         std::map<int, Server*> mapServerFd;
-        std::map<int, Server*> mapClientFdToServer;
+        std::map<int, Client*> mapClientFd;
         // an array of fd's
         // first elem of the pollpds is serverfd, the rest will be client's
         std::vector<struct pollfd> pollfds;
@@ -43,7 +43,7 @@ class ServerManager
         void addFdToPollFds(int fd, int events);
         void rmFdFromPollfd(int fd);
         void startPoll();
-        int handleIncoming(int fd);
+        int handleIncoming(int clientFd);
 
         void acceptClient(int serverFd, Server& server);
         void printServers() const;

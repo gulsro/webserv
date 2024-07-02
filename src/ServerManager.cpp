@@ -138,7 +138,7 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     server.connectedClientFds.push_back(clientFd);
 
     //TEST THAT ONE
-    mapClientFdToServer[clientFd] = &server;
+    mapClientFd[clientFd] = client;
     //std::cout << "CLIENT FD " << client->getClientFd() << std::endl;
     //server.printConnectedClientFds();
     addFdToPollFds(clientFd, (POLLIN | POLLOUT));
@@ -242,19 +242,24 @@ void ServerManager::startPoll()
 //                     sendClientData(i);
 
 //AT THIS POINT WE DECIDE CGI? IN READREQUEST()?
-int ServerManager::handleIncoming(int fd)
+int ServerManager::handleIncoming(int clientFd)
 {
     //readRequest(fd);
     HttpRequest		Request;
 	HttpResponse	Response;
+    Client *client;
 
-    if (Request.readRequest(fd) == true)//continue reading operations on connected clients
+    client = mapClientFd[clientFd];
+    std::cout << "BANANAAA FD = " << client->getClientFd() << std::endl;
+    if (Request.readRequest(clientFd) == true)//continue reading operations on connected clients
     {    //Request.readRequest(fd); fd will be client's
 
         std::cout << "BANANAAAAAA" << std::endl;
 		Request.setReqServer(servers);
 		Request.checkLocations();
-		Response.setRequest(&Request);
+		
+        
+        Response.setRequest(&Request);
 		Response.checkMethod();
 
 		std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
