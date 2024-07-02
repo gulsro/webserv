@@ -89,16 +89,26 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] setReqLocation" << DEFAULT << std::endl;
 	#endif
-	
-	std::string	uri = this->getURI();
 
 	for (size_t i = 0; i < locationList.size(); ++i)
 	{
 		std::string	path = locationList[i]->getPath();
-		if (uri == path)
+		if (this->uri == path)
 		{
 			this->ReqLocation = locationList[i];
 			break;
+		}
+		// if uri contains cgi program extension file name. For us, Python.
+		size_t pos = this->uri.find(".py");
+		if (pos != std::string::npos && path == "/*.py ")
+		{
+			char	c = this->uri[pos + 3];
+			// check file extension name is only ".py"
+			if (isdigit(c) == false && isalpha(c) == false && c != '-' && c != '_')
+			{
+				this->ReqLocation = locationList[i];
+				break;
+			}
 		}
 	}
 	this->ReqLocation = nullptr;
