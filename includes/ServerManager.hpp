@@ -35,8 +35,11 @@ class ServerManager
 
         //const std::vector<std::unique_ptr<Server>>& getServers() const;
         const std::vector<Server*>& getServers() const;
-	      Server*	getServer(int serverFd) const; 
-        
+	      Server*	getServer(int serverFd) const;
+        //const std::vector<struct pollfd>& getPollfds() const;
+        std::vector<struct pollfd>& getPollfds();
+
+
         void addServer(Server* server);        
         void startServerManager(ServerManager &); // init vServers in a loop
         void startSockets();

@@ -95,7 +95,13 @@ bool	ServerManager::readRequest(Client *Client)
 	if (Client->getRequest()->isReadingRequestFinished(rawRequestStr) == false)
 		return false;
 	else
+	{
+		//GUL ADDED THIS LINE
+		//Client->setClientFdEvent(std::vector<struct pollfd>& pollfds, short events);
+		// i ll update event of client in pollloop
+		Client->setReadyToFlag(WRITE);
 		return Client->getRequest()->parseHttpRequest(rawRequestStr);
+	}
 }
 
 std::vector<std::string>	splitHeaderByLine(const std::string &rawRequest)

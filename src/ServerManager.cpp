@@ -131,18 +131,17 @@ void ServerManager::acceptClient(int serverFd, Server& server)
         throw std::runtime_error("Error: accept()");
     }
     //std::cout << "MAAAAAA" << server << std::endl;
-    Client* client = new Client(clientFd);
+    Client* client = new Client(clientFd, READ);
     //(void)client;
     //std::cout << "MAAAAAA" << server.getPort() << std::endl;
     server.clientList.push_back(client);
     server.connectedClientFds.push_back(clientFd);
-
-    //TEST THAT ONE
     mapClientFd[clientFd] = client;
     //std::cout << "CLIENT FD " << client->getClientFd() << std::endl;
     //server.printConnectedClientFds();
-	mapClientFd[clientFd] = client;
-    addFdToPollFds(clientFd, (POLLIN | POLLOUT));
+	//mapClientFd[clientFd] = client;
+    //addFdToPollFds(clientFd, (POLLIN | POLLOUT));
+    addFdToPollFds(clientFd, (POLLIN));
 }
 
 
@@ -188,7 +187,7 @@ void ServerManager::startPoll()
             //will evaluate to true because the POLLIN bit is set in the
             //revents flags.
 
-            std::cout << "THE FISH IS " << fd << std::endl;
+            //std::cout << "THE FISH IS " << fd << std::endl;
             
             //counter = counter+ 1;
             //std::cout << "counter = " << counter << std::endl;
@@ -204,26 +203,23 @@ void ServerManager::startPoll()
                     //continue ;
                 }
                 else //continue reading operations on connected clients
-                {    //Request.readRequest(fd); fd will be client's
+                {
                     std::cout << "REQUESTTTTTT" << std::endl;
                      //readRequest(fd);
                     handleIncoming(fd);
                 }
-                //     //fd = -1;
-                //     //pollfds[i].fd = -1;
-                //     //here call (client.server->)removeClientFd()
-                // }
-
-                //std::cout << "LALALO" << std::endl;
-                //std::cout << *(mapServerFd[fd]) << std::endl;
             }
 
             // Here check writing operation's klaarheid.
+            //client is ready for WHICH operation FLAG needs to be added!
             else if (revents & POLLOUT)
             {
+                std::cout << "THE POLLOUT IS " << fd << std::endl;
                 std::cout << "RESPONSEEEEE" << std::endl;
-                pollfds[i].fd = -1;
-				sendResponse(fd);
+				if (mapClientFd[fd]->getReadyToFlag() == WRITE)
+                {
+                    sendResponse(fd);
+                    pollfds[i].fd = -1;}
             }
             // Handle events for accepted connections (read/write data)
             // You'll need to iterate over other servers and their connections here
@@ -283,6 +279,11 @@ int ServerManager::handleIncoming(int fd)
 		// Response.sendResponse();
 	}
 	// else continue reading
+    if (currClient->getReadyToFlag() == WRITE)
+    {
+        std::vector<struct pollfd>& pollfds = getPollfds();
+        currClient->setClientFdEvent(pollfds, POLLOUT);
+    }
     return 0;
 }
 
@@ -292,6 +293,8 @@ void	ServerManager::sendResponse(int clientFd)
 
 	currClient = mapClientFd[clientFd];
 
+    if (currClient->getRequest() == NULL)
+        return ;
     //from client getResponse
 	//Checking client is still connected??
 
@@ -322,27 +325,11 @@ void	ServerManager::sendResponse(int clientFd)
 	//delete the request, it s done
 }
 
-// void Config::_sendResponse(int sd)
-// {
-// 	Client	*client;
-
-// 	// Check if the client object exists
-// 	if (_sdToClient.find(sd) == _sdToClient.end()) return ;
-
-// 	client = _sdToClient[sd];
-// 	if (client && client->getRequest() && client->getRequest()->isFinished)
-// 	{
-// 		std::string	content = client->createResponse();
-// 		int ret = send(sd, content.c_str(), content.size(), 0);
-// 		if (ret == -1) {
-// 			_rmPollfd(sd);
-// 			delete	_sdToClient[sd];
-// 			_sdToClient[sd] = NULL;
-// 			std::cout << YELLOW << "[Attention]: Client with socket: " << sd << " disconnected(Writing)!\n" << RESET_COLOR;
-// 		}
-// 		client->deleteRequest();
-// 	}
-// }
+//const std::vector<struct pollfd>& ServerManager::getPollfds() const
+std::vector<struct pollfd>& ServerManager::getPollfds()
+{
+    return this->pollfds;
+}
 
 
 bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
