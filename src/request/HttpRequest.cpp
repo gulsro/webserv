@@ -91,8 +91,7 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 	for (size_t i = 0; i < locationList.size(); ++i)
 	{
 		std::string	path = locationList[i]->getPath();
-		size_t pos = this->uri.find(path);
-		if (this->this->uri == path)
+		if (this->uri == path)
 		{
 			this->ReqLocation = locationList[i];
 			break;

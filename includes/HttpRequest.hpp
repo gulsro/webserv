@@ -66,7 +66,6 @@ class	HttpRequest
 		const	std::string	&getVersion() const { return version; }
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		const	std::string	&getBody() const { return body; }
-		const	int			&getContentLength() const { return contentLength; }
 		const	std::string	&getContentType() const { return contentType; }
 		const	int			&getContentLength() const { return contentLength; }
 		const	int	       	&getRequestedPort() const { return requestedPort; }
