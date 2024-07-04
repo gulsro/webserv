@@ -112,6 +112,8 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 			if (isdigit(c) == false && isalpha(c) == false && c != '-' && c != '_')
 			{
 				this->ReqLocation = locationList[i];
+				Cgi cgi_p(*this, *(locationList[i]), *ReqServer);
+				cgi = &cgi_p;
 				break;
 			}
 		}

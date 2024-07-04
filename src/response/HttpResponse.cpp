@@ -151,11 +151,7 @@ void    HttpResponse::runCgi(){
         content = Request->getCgi()->execCgi();
         if (content[0] == '\0')
             perror("CGI not being executed");//error  need to change
-        else {
-
-            //success 
-            std::cout << content << std::endl;
+        else
             completed = true;
-        }
     }
 }

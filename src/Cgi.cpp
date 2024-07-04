@@ -1,4 +1,4 @@
-#include "../../includes/Cgi.hpp"
+#include "../includes/Cgi.hpp"
 
 #define BUFFER_SIZE 1024
 /*Because you won’t call the CGI directly, use the full path as PATH_INFO.
@@ -38,8 +38,10 @@ Cgi& Cgi::operator=(const Cgi a){
 void Cgi::setCgiFile(){
     cgiFile = nullptr;
     std::size_t found = cgiPass.rfind("/");
+
     if (found != std::string::npos){
         std::string tmp = "./" + cgiPass.substr(found + 1);
+        cgiFile = new char[tmp.size() + 1];
         std::strcpy(cgiFile, tmp.c_str());
     }
 }
@@ -74,6 +76,7 @@ std::string    Cgi::execCgi(){
     int pip[2];
     pid_t pid;
 
+    std::cout << MAG << "CGI executed" << RES << std::endl;
     if (pipe(pip) < 0)
 		perror("pipe failed"); //error
 	pid = fork();
@@ -84,6 +87,7 @@ std::string    Cgi::execCgi(){
         //output of cgi script will be written in pipe
         char *argv[2] = {cgiFile, NULL};
         close(pip[0]); 
+        std::cout << MAG << "child process" << RES << std::endl;
         if (dup2(pip[1], STDOUT_FILENO) < 0) 
             perror("write pipe failed"); //error
         if (execve(cgiPass.c_str(), argv, env) < 0)
@@ -91,17 +95,17 @@ std::string    Cgi::execCgi(){
     }
     int status;
     char buf[BUFFER_SIZE]; // is buffer_size defined in config?
-    std::string body = NULL;
+    std::string body = "";
     ssize_t bytes = 1;
 //close write end and read output from pipe
-//>>>>still not sure about the order of wait and dup2!!!
     close(pip[1]);
     if (waitpid(pid, &status, 0) < 0)
         perror("wait failed"); 
-    if (WIFEXITED(status)) // why do we need WEXITSTATUS == 0?
-        perror("wait exit status failed"); // give error?
+
+    if (WIFEXITED(status) == false &&(WEXITSTATUS(status)!= 0)) 
+        return ("wait exit status failed");
     if (dup2(pip[0], STDIN_FILENO) < 0)
-        perror("read pipe failed"); // error
+        return ("read pipe failed"); // error
     while (bytes > 0){
         std::memset(buf, '\0', BUFFER_SIZE - 1);
         bytes = read(pip[1], buf, BUFFER_SIZE);

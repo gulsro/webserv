@@ -23,7 +23,7 @@ SRC_FILE	=	HttpUtils.cpp  main.cpp Config.cpp Server.cpp Location.cpp \
 				response/errorResponse.cpp \
 				response/HttpResponse.cpp \
 				response/Methods.cpp \
-				cgi/Cgi.cpp\
+				Cgi.cpp\
 
 OBJ_DIR		=	obj/
 OBJ			=	$(addprefix ${OBJ_DIR}, ${SRC_FILE:%.cpp=%.o})

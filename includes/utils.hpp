@@ -85,7 +85,7 @@ class ErrorCodeException : public std::exception
     public:
         ErrorCodeException(enum e_statusCode code) : errorCode(code) 
         {
-            errorResponse = createErrorResponse(code);
+            errorResponse = createErrorResponse(errorCode);
         }
         virtual const char *what() const throw() override
         {
