@@ -1,4 +1,4 @@
-#include "Location.hpp"
+#include "Webserv.hpp"
 
 Location::Location() {}
 
@@ -128,8 +128,9 @@ void Location::setRedirect(std::string& cont, int key){
 }
 
 void Location::setMethods(std::string& cont, int key){
+    //Gul added
     (void)key;
-    // key = 0;
+    key = 0;
     if (cont.find("POST") != std::string::npos)
         methods["POST"] = 1;
     if (cont.find("DELETE") != std::string::npos)

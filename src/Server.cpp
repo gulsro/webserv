@@ -1,13 +1,14 @@
-#include "Server.hpp"
 
-Server::Server() : port(0), serverFd(0), root(""), index(""), maxBodySize(1000000), nbLocation(0)
+#include "Webserv.hpp"
+
+Server::Server() : port(0), root(""), index(""), maxBodySize(0)
 {
     // std::cout << "Server constructor is called" << std::endl;
 }
 
 // Server::Server(int port,
 // 				std::string host,
-// 				std::vector<std::string> serverNames,
+// 				std::vector<std::string> serverNames,map
 // 				std::string root,
 //                 std::string index,
 // 				unsigned long maxBodySize
@@ -51,8 +52,8 @@ Server& Server::operator=(const Server s){
 //     this->serverFd = fd;
 // }
 
-//--------------Getters-------------------
 
+//--------------Getters-------------------
 int Server::getPort() const
 {
     return this->port;
@@ -73,6 +74,89 @@ std::string Server::getRoot() const
     return this->root;
 }
 
+struct sockaddr_in* Server::getSocketAddr() const
+{
+    return const_cast<sockaddr_in*>(&serverAddr);
+}
+
+//std::vector<std::string> getServerNames() const;
+
+// std::vector<int> Server::getConnectedClientFds() const
+// {
+//     return connectedClientFds;
+// }
+
+// std::ostream& operator<<(std::ostream& out, const Server& server)
+// {
+//     out << "port: " << server.getPort();
+//     out << std::endl;
+//     out << "serverFd: " << server.getServerFd();
+//     out << std::endl;
+//     out << "host: " << server.getHost();
+//     out << std::endl;
+//     //out << server.serverNames;
+//     out << "root: " << server.getRoot();
+//     out << std::endl;
+
+//     return out;
+// }
+
+void Server::createSocket()
+{
+    this->serverFd = socket(AF_INET, SOCK_STREAM, 0);
+    if (this->serverFd == -1)
+        throw std::runtime_error("Error: socket()");
+}
+
+void Server::setSocketAddr()
+{
+    std::memset(&serverAddr, 0, sizeof(serverAddr));
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(this->port);
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
+}
+
+void Server::setSocketOption()
+{
+    //This allows me to reuse a socket address
+    //even if it's still in the TIME_WAIT state from a previous connection.
+    //this is helpful when you quickly
+    //restart a server and want to bind to the same port without waiting
+    int optval = 1;
+    if (setsockopt(this->serverFd, SOL_SOCKET, SO_REUSEADDR, &optval,
+                        sizeof(optval)) == -1)
+    {
+        close(this->serverFd);
+        throw std::runtime_error("Error: setsockopt()");
+    }
+}
+
+void Server::bindSocket()
+{
+    if (bind(this->serverFd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
+    {
+        close(this->serverFd);
+        throw std::runtime_error("Error: bind()");
+    }
+}
+
+void Server::listenSocket()
+{
+    if (listen(this->serverFd, 10) == -1)
+    {
+        close(this->serverFd);
+        throw std::runtime_error("Error: listen()");
+    }
+}
+
+void Server::printConnectedClientFds() const
+{
+    for (auto &clientFd: this->connectedClientFds)
+    {
+        std::cout << "Connected clientFd: " << clientFd << std::endl;
+    }
+}
+
 std::string Server::getIndex() const
 {
     return this->index;
@@ -87,10 +171,7 @@ std::vector<Location*> Server::getLocationList() const
 {
     return this->locationList;
 }
-// struct sockaddr_in* Server::getSocketAddr() const
-// {
-//     return const_cast<sockaddr_in*>(&serverAddr);
-// }
+
 
 //--------------Setters-------------------
 //return needs to be an error
@@ -103,7 +184,7 @@ void Server::setPort(std::string& cont, int key){
     size_t colon = cont.find(':');
     if (colon != std::string::npos){
         std::string host = cont.substr(key, colon - key);
-        setHost(host);
+        this->setHost(host);
         this->port = std::stoi(cont.substr(colon + 1, cont.find('\n') - colon + 1));
     }
     else {
@@ -159,10 +240,11 @@ void Server::setServerVar(std::stringstream& iss)
             key = line.find(parameter[i]);
             if(key != std::string::npos)
                 (this->*func[i])(line, key + parameter[i].size());
+            }
         }
-    }
     // std::cout << YEL << *this << RES << std::endl;
 }
+
 
 std::size_t Server::skipLocationPath(std::string cont, std::size_t found){
     while (std::isspace(cont[found]))
@@ -202,6 +284,13 @@ void Server::initLocation(std::string serverCont){
     }
 }
 
+// void Server::removeClientFd(int clientFd)
+// {
+//     this->connectedClientFds.erase(clientFd);
+// }
+
+//std::vector<std::string> getServerNames() const;
+
 std::ostream& operator<<(std::ostream& out, const Server& server)
 {
     out << "port: " << server.getPort()<< std::endl;
@@ -214,41 +303,3 @@ std::ostream& operator<<(std::ostream& out, const Server& server)
     out << std::endl;
     return out;
 }
-
-// void Server::createSocket()
-// {
-//     this->serverFd = socket(AF_INET, SOCK_STREAM, 0);
-//     if (this->serverFd == -1)
-//         throw std::runtime_error("Error: socket()");
-// }
-
-// void Server::setSocketAddr()
-// {
-//     std::memset(&serverAddr, 0, sizeof(serverAddr));
-//     serverAddr.sin_family = AF_INET;
-//     serverAddr.sin_port = htons(this->port);
-//     serverAddr.sin_addr.s_addr = INADDR_ANY;
-// }
-
-// void Server::setSocketOption()
-// {
-
-//     int optval = 1;
-//     if (setsockopt(this->serverFd, SOL_SOCKET, SO_REUSEADDR, &optval,
-//                         sizeof(optval)) == -1)
-//         throw std::runtime_error("Error: setsockopt()");
-// }
-
-// void Server::bindSocket()
-// {
-//     if (bind(this->serverFd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) == -1)
-//         throw std::runtime_error("Error: bind()");
-// }
-
-// void Server::listenSocket()
-// {
-//     if (listen(this->serverFd, 10) == -1)
-//         throw std::runtime_error("Error: listen()");
-// }
-
-// int Server::acceptConnection();

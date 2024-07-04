@@ -6,57 +6,128 @@
 #include <cstring> // strerror()
 #include <unistd.h>
 
-#define BUFFER_SIZE 4096 // common page size
+// #define BUFFER_SIZE 4096 // common page size
+#define BUFFER_SIZE 10
 
+bool	HttpRequest::isReadingRequestFinished(std::string rawRequest)
+{
+	size_t	headerEnd = rawRequest.find("\r\n\r\n");
+
+	if (headerEnd == std::string::npos)
+		return false;
+	if (this->contentLength) // post method
+	{
+		if (rawRequest.size() < (headerEnd + 4) + this->contentLength)
+			return false;
+		else
+			return true;
+	}
+	else if (this->isChunked == true)
+	{
+		size_t	chunkedBodyEnd = rawRequest.find("\r\n0\r\n\r\n");
+		if (chunkedBodyEnd != std::string::npos)
+			return true;
+		else
+			return false;
+	}
+	else
+		return true;
+}
+
+void	HttpRequest::checkRequestSize()
+{
+	size_t pos;
+	std::string tmp = this->getRawRequest();
+
+	if (tmp.find("Content-Length: ") != std::string::npos)
+	{
+		pos = tmp.find("Content-Length: ");
+		this->setContentLength(stoll(tmp.substr(pos + 16)));
+	}
+	if (tmp.find("Transfer-Encoding: chunked") != std::string::npos)
+		this->setIsChunked(true);
+}
 
 /**
  * Non-blocking sockets: When working with non-blocking sockets,
  * MSG_PEEK can be used to check if any data is available before attempting a recv call.
  * This helps avoid blocking operations if no data is present.
 */
-bool	HttpRequest::readRequest(int fd)
+bool	ServerManager::readRequest(Client *Client)
 {
-	char				buffer[BUFFER_SIZE];
-	std::stringstream 	stream;
-
     #ifdef FUNC
     std::cout << YELLOW << "[FUNCTION] readRequest" << DEFAULT << std::endl;
 	#endif
-    
-    // Read data in chunks
-	while (true)
+
+	char	buffer[BUFFER_SIZE];
+	int		fd = Client->getClientFd();
+	ssize_t	byteRead = recv(fd, buffer, BUFFER_SIZE, 0);
+
+	if (byteRead == 0)
 	{
-		// int	byteRead = recv(fd, buffer, BUFFER_SIZE, 0);
-		int byteRead = read(fd, buffer, BUFFER_SIZE);
-        if (byteRead == 0)
-		{
-			//remove poll fd;
-			// std::cerr << "Disconnection with " << fd << std::endl;
-			break;
-		}
-		else if (byteRead == -1)
-		{
-			std::cerr << "Error reading from socket: " << strerror(errno) << std::endl;
-			return false;
-		}
-		// Append received data to the stream
-		stream.write(buffer, byteRead);
-		// Check for complete request
-		std::string rawRequest = stream.str();
-		if (rawRequest.find("\r\n\r\n") != std::string::npos)
-			break;
-
+		close(fd);
+		std::cout << "Disconnection with " << fd << std::endl;
 	}
-	std::string rawRequest = stream.str();
-	stream.str("");
+	else if (byteRead == -1)
+	{
+		close(fd);
+		//delete client object
+		throw ErrorCodeException(STATUS_BAD_REQUEST);
+	}
+	else
+	{
+		std::string tmp(buffer, static_cast<size_t>(byteRead));
+		if (!Client->getRequest()) // Creat a new HttpRequest class in the Client object
+		{
+			Client->setRequest(new HttpRequest());
+			Client->getRequest()->setRawRequest(tmp);
+		}
+		else
+		{
+			// Appending read buffer
+			std::string rawRequest = Client->getRequest()->getRawRequest();
+			Client->getRequest()->setRawRequest(rawRequest + tmp);
+		}
+		Client->getRequest()->checkRequestSize();
+	}
+	// Check for complete request
+	std::string rawRequestStr = Client->getRequest()->getRawRequest();
+	if (Client->getRequest()->isReadingRequestFinished(rawRequestStr) == false)
+		return false;
+	else
+		return Client->getRequest()->parseHttpRequest(rawRequestStr);
+}
 
-	return parseHttpRequest(rawRequest);
+std::vector<std::string>	splitHeaderByLine(const std::string &rawRequest)
+{
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] splitHeaderByLine" << DEFAULT << std::endl;
+	#endif
+
+	std::vector<std::string>	tokens;
+	std::string					line;
+	std::istringstream			iss(rawRequest);
+
+	while (std::getline(iss, line))
+	{
+		size_t	pos	= line.find('\r');
+		size_t	bodyBegin = line.find("\r\n\r\n");
+
+		if (bodyBegin != std::string::npos)
+			continue ;
+		if (pos != std::string::npos && pos != bodyBegin)
+		{
+			std::string str = line.substr(0, pos);
+			tokens.push_back(str);
+		}
+	}
+	return	tokens;
 }
 
 bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 {
 	std::istringstream	stream(rawRequest);
-	std::vector<std::string>	lines = split(rawRequest, '\n');
+	std::vector<std::string>	lines = splitHeaderByLine(rawRequest);
 
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] parseHttpRequest" << DEFAULT << std::endl;
@@ -98,10 +169,10 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 	#endif
 	#ifdef FUNC
 		auto it = headers.begin();
-		std::cout << "________HEADERS________" << std::endl;
+		std::cout << GREEN "________HEADERS________" << std::endl;
 		while (it != headers.end())
 		{
-			std::cout << PURPLE << "[ " << it->first << " ]" << std::endl;
+			std::cout << GREY << "[ " << it->first << " ]" << std::endl;
 			std::cout << PURPLE << it->second.key << " : " << it->second.value << DEFAULT << std::endl;
 			++it; 
 		}
@@ -109,11 +180,9 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		std::cout << GREEN << "contentType : " << this->contentType << std::endl;
 	#endif
 	// parse body
-	if (this->headers.count("Content-Length"))
+	if (this->contentLength > 0 || isChunked == true)
 	{
-		this->setContentLength(std::stoi(headers.at("Content-Length").value));
-		// size_t	bodyStart = rawRequest.find("\r\n\r\n") + 4;
-		size_t	bodyStart = rawRequest.find("\n\n") + 2;
+		size_t	bodyStart = rawRequest.find("\r\n\r\n") + 4;
 		if (bodyStart + this->contentLength > rawRequest.size())
 		{
 			std::cerr << "Incomplete HTTP request body." << std::endl;

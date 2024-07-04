@@ -1,63 +1,65 @@
-NAME		=	webserv
-CC			=	c++
+#COLORS
+RED					:=	\033[0;31m
+GREEN				:=	\033[0;32m
+YELLOW				:=	\033[0;33m
+RESET_COLOR			:=	\033[0m
+
+NAME = webserv
 
 ifdef DEBUG
-CPPFLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g -std=c++20
+FLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g -std=c++20 -Ofast -flto
 else ifdef STRUCTOR
-CPPFLAGS	=	-Wall -Wextra -Werror -g -D DEBUG -std=c++20
+FLAGS	=	-Wall -Wextra -Werror -g -D STRUCTOR -std=c++20 -Ofast -flto
 else ifdef FUNC
-CPPFLAGS	=	-Wall -Wextra -Werror -g -D FUNC -std=c++20
+FLAGS	=	-Wall -Wextra -Werror -g -D FUNC -std=c++20 -Ofast -flto
 else
-CPPFLAGS	=	-Wall -Wextra -Werror -std=c++20
+FLAGS	=	-Wall -Wextra -Werror -std=c++20 -Ofast -flto
 endif
 
-HEADER_DIR	=	includes/
-HEADER_SRC	=	HttpRequest.hpp HttpResponse.hpp utils.hpp Location.hpp Config.hpp Server.hpp Webserv.hpp Cgi.hpp
-HEADERS		=	$(addprefix $(HEADER_DIR), $(HEADER_SRC))
-
-SRC_DIR		=	src/
-SRC_FILE	=	HttpUtils.cpp  main.cpp Config.cpp Server.cpp Location.cpp \
-				request/httpParsing.cpp \
-				request/HttpRequest.cpp \
-				request/multiPart.cpp \
-				response/errorResponse.cpp \
-				response/HttpResponse.cpp \
-				response/Methods.cpp \
-				Cgi.cpp\
-
-OBJ_DIR		=	obj/
-OBJ			=	$(addprefix ${OBJ_DIR}, ${SRC_FILE:%.cpp=%.o})
+FILES =	main.cpp \
+		Server.cpp \
+		ServerManager.cpp \
+		Config.cpp \
+		Client.cpp \
+		Location.cpp \
+		HttpUtils.cpp \
+		request/httpParsing.cpp \
+		request/HttpRequest.cpp \
+		request/multiPart.cpp \
+		response/errorResponse.cpp \
+		response/HttpResponse.cpp \
+		response/Methods.cpp \
+		#Socket.cpp
 
 
-INCLUDES	= -I$(HEADER_DIR)
+HEADER = includes
 
-CYAN_B		=	\033[1;96m
-CYAN		=	\033[0;96m
-GREEN_B		=	\033[1;32m
-DEFAULT		=	\033[0m
+OBJ_DIR = obj
+SRC_DIR = src
 
-all				:	$(NAME)
+SRC = $(addprefix ${SRC_DIR}/, $(FILES))
+OBJ = $(addprefix ${OBJ_DIR}/, ${FILES:%.cpp=%.o})
+RM		= rm -rf
 
-$(NAME)			: $(OBJ) $(OBJF)
-					@$(CC) $(CPPFLAGS) -o $(NAME) $(OBJ)
-					@echo	"$(CYAN_B) - Webserv is compiled - $(DEFAULT)"
+all: $(NAME)
 
-$(OBJ_DIR)%.o	:$(SRC_DIR)%.cpp $(HEADERS) | $(OBJF)
-					@mkdir -p $(@D)
-					@echo	"$(CYAN_B) Compiling... $(DEFAULT)"
-					@$(CC) $(CPPFLAGS) $(INCLUDES) -c $< -o $@
+$(NAME): $(OBJ)
+	@c++ $(FLAGS) -o $(NAME) $(OBJ)
+	@echo "\n${GREEN}Done !${RESET_COLOR}"
 
-$(OBJF)			:
-					@mkdir -p $(OBJ_DIR)
+${OBJ_DIR}/%.o: ${SRC_DIR}/%.cpp
+	@mkdir -p ${@D}
+	@printf "${YELLOW}-> Generate %-38.38s\r${RESET_COLOR}" $@
+	@c++ $(FLAGS) -I $(HEADER) -c $< -o $@
 
-clean			:
-					@rm -rf $(OBJ_DIR)
-					@echo "$(CYAN)- Object files are cleaned - $(DEFAULT)"
+clean:
+	@${RM} -r ${OBJ_DIR}
+	@rm -f $(OBJ)
+	@printf "${RED}Obj is deleted\n${RESET_COLOR}"
+	
+fclean: clean
+	rm -f $(NAME)
 
-fclean			: clean
-					@rm -f $(NAME)
-					@echo "$(CYAN)- Executable files are cleaned - $(DEFAULT)"
-
-re				:	fclean all
+re: fclean all
 
 .PHONY: all clean fclean re

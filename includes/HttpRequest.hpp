@@ -22,6 +22,8 @@ typedef	struct	s_part
 class	HttpRequest
 {
 	protected:
+		std::string	rawRequest; // store an appended string
+
 		std::string	method;
 		std::string	uri;
 		std::string version;
@@ -55,11 +57,13 @@ class	HttpRequest
 		friend class HttpResponse;
 
 		//Getters
+		const	std::string	&getRawRequest() const { return rawRequest; }
 		const	std::string &getMethod() const { return method; }
 		const	std::string &getURI() const { return uri; }
 		const	std::string	&getVersion() const { return version; }
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		const	std::string	&getBody() const { return body; }
+		const	int			&getContentLength() const { return contentLength; }
 		const	std::string	&getContentType() const { return contentType; }
 		const	int			&getContentLength() const { return contentLength; }
 		const	int	       	&getRequestedPort() const { return requestedPort; }
@@ -69,6 +73,7 @@ class	HttpRequest
 		Cgi*		getCgi() const  { return cgi; }
 
 		//Setters
+		void	setRawRequest(std::string buffer) { this->rawRequest = buffer; }
 		void	setContentLength(int len) { this->contentLength = len; }
 		void	setRequestedPort();
         void    setReqServer(const std::vector<Server*> serverList);
@@ -77,12 +82,14 @@ class	HttpRequest
 		void	setBoundary();
 		void	setQueryString(std::string str);
 		void	setQueryPairs();
+		void	setIsChunked(bool value) { this->isChunked = value; }
 		
-		bool	readRequest(int fd);
+		bool	isReadingRequestFinished(std::string rawRequest);
 		bool	parseHttpRequest(const std::string &rawRequest);
 		bool	parseRequestLine(const std::string &line);
 		bool	parseHeader(const std::string &line);
 		const	std::string	getHeaderValue(const std::string &name) const;
+		void	checkRequestSize();
 		void	checkContentType();
 		void	checkRequestValid();
 		void	checkLocations();
@@ -91,6 +98,7 @@ class	HttpRequest
 		void	handleMultiPartForm();
 		void	makeKeyValuePair(int i, const std::string str);
         void    handlePartInfo(const int i, const std::vector<std::string> strs);
+
 
 		std::vector<std::string> splitByBoundary();
 };

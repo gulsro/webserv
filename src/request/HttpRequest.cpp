@@ -6,16 +6,16 @@
 #define MAX_BODY 1000000
 
 HttpRequest::HttpRequest()
-	: method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd("")
+	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Default constructor called" << DEFAULT << std::endl; 
 	#endif
 }
 
 HttpRequest::HttpRequest(const HttpRequest &other)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Copy constructor called" << DEFAULT << std::endl; 
 	#endif
 	*this = other;
@@ -23,7 +23,7 @@ HttpRequest::HttpRequest(const HttpRequest &other)
 
 HttpRequest &HttpRequest::operator=(const HttpRequest &other)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Copy assigment operator called" << DEFAULT << std::endl;
 	#endif
 	if (this != &other)
@@ -39,7 +39,7 @@ HttpRequest &HttpRequest::operator=(const HttpRequest &other)
 
 HttpRequest::~HttpRequest()
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Destructor called" << DEFAULT << std::endl; 
 	#endif
 }
@@ -92,22 +92,16 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 	{
 		std::string	path = locationList[i]->getPath();
 		size_t pos = this->uri.find(path);
-		if (this->uri == path)
+		if (this->this->uri == path)
 		{
 			this->ReqLocation = locationList[i];
 			break;
 		}
-		else if (pos != std::string::npos)
-		{
-			if (this->uri[pos + path.length()] == '/')
-				this->ReqLocation = locationList[i];
-			break;
-		}
 		// if uri contains cgi program extension file name. For us, Python.
-		size_t cgiPos = this->uri.find(".py");
-		if (cgiPos != std::string::npos && path == "/*.py")
+		size_t pos = this->uri.find(".py");
+		if (pos != std::string::npos && path == "/*.py ")
 		{
-			char	c = this->uri[cgiPos + 3];
+			char	c = this->uri[pos + 3];
 			// check file extension name is only ".py"
 			if (isdigit(c) == false && isalpha(c) == false && c != '-' && c != '_')
 			{
@@ -158,6 +152,7 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	std::cout << YELLOW << "[FUNCTION] parseRequestLine" << DEFAULT << std::endl;
 	#endif
 
+	std::cout << GREEN << line << DEFAULT << std::endl;
 	stream >> this->method >> this->uri >> rawVersion;
 	std::istringstream	iss(rawVersion);
 	std::getline(iss, this->version, '\r');
@@ -196,6 +191,7 @@ bool	HttpRequest::parseHeader(const std::string &line)
 	std::vector<std::string> keyValue = splitForKeyValue(line, ':');
 	if (keyValue.size() != 2)
 	{
+		// std::cout << YELLOW << "size : " << keyValue.size() << DEFAULT << std::endl;
 		std::cerr << "Invalid header format" << std::endl;
 		return false;
 	}

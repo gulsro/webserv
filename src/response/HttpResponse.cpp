@@ -3,14 +3,14 @@
 HttpResponse::HttpResponse()
 	: statusCode(0), body(""), index(""), resource(""), content(""), contentType(""), MIMEtype(""), completed(false)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Default constructor called" << DEFAULT << std::endl; 
 	#endif
 }
 
 HttpResponse::HttpResponse(const HttpResponse &other)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Copy constructor called" << DEFAULT << std::endl; 
 	#endif
 	*this = other;
@@ -18,7 +18,7 @@ HttpResponse::HttpResponse(const HttpResponse &other)
 
 HttpResponse &HttpResponse::operator=(const HttpResponse &other)
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Copy assigment operator called" << DEFAULT << std::endl;
 	#endif
 	if (this != &other)
@@ -41,7 +41,7 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other)
 
 HttpResponse::~HttpResponse()
 {
-	#ifdef DEBUG
+	#ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Destructor called" << DEFAULT << std::endl; 
 	#endif
 }
@@ -115,7 +115,7 @@ void    HttpResponse::setResource()
 	if (this->Request->ReqLocation != nullptr)
 	{
 		Location	*Location = this->Request->ReqLocation;
-		// Check redirection S
+		// Check redirection
 		if	(!(Location->getRedirect().empty()))
 		{
 			this->resource = Location->getRedirect();
@@ -127,7 +127,7 @@ void    HttpResponse::setResource()
 			if (Location->getAutoindex() == true)
 			{
 				// Set default index
-				this->resource = "." + Server->getRoot() + Server->getIndex();
+				this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
 			}
 		}
 		else
@@ -141,8 +141,14 @@ void    HttpResponse::setResource()
 	}
 	else // No selected Location
 	{
-		this->resource = "." + Server->getRoot() + this->Request->getURI();
+		if (this->Request->getURI() == "/")
+			this->resource = "." + Server->getRoot() + '/' + Server->getIndex();	
+		else
+			this->resource = "." + Server->getRoot() + this->Request->getURI();
 	}
+	#ifdef FUNC
+		std::cout << YELLOW  << "RESOURCE : " << this->resource << DEFAULT << std::endl;
+	#endif
 }
 
 //Yuka added

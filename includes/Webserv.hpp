@@ -2,9 +2,16 @@
 # define WEBSERV_HPP
 
 #include <string>
+#include <sstream> // std::stringstream
 #include <iostream>
 #include <vector>
+#include <unistd.h>
+#include <sys/socket.h>
+# include <netdb.h> // getaddrinfo()
+#include <sys/types.h> //accept()
 #include <map>
+#include <poll.h> // poll() and struct
+#include <memory> // std::unique_ptr c++11, std::make_unique c++14
 #include <fstream>
 #include <istream>
 #include <filesystem>
@@ -21,6 +28,8 @@
 
 #include "Config.hpp"
 #include "Server.hpp"
+#include "ServerManager.hpp"
+#include "Client.hpp"
 #include "Location.hpp"
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
@@ -37,5 +46,10 @@
 #define MAG "\033[35m"
 #define CYA "\033[36m"
 #define WHI "\033[37m"
+
+
+void readRequest(int clientFd);
+
+
 
 #endif
