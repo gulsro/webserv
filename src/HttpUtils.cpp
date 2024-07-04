@@ -21,12 +21,12 @@ std::vector<std::string> splitForKeyValue(const std::string &str, char delimiter
 	
 	while (std::getline(iss, line))
 	{
-		size_t colonPos = line.find(delimiter);
-		if (colonPos != std::string::npos)
+		size_t delimPos = line.find(delimiter);
+		if (delimPos != std::string::npos)
 		{
-			std::string	key = line.substr(0, colonPos);
+			std::string	key = line.substr(0, delimPos);
 			tokens.push_back(key);
-			std::string	value = line.substr(colonPos + 1);
+			std::string	value = line.substr(delimPos + 1);
 			tokens.push_back(value);
 		}
 	}

@@ -13,6 +13,10 @@
     "cmath": "cpp",
     "codecvt": "cpp",
     "concepts": "cpp",
+<<<<<<< HEAD
+=======
+    "condition_variable": "cpp",
+>>>>>>> origin/config+http
     "cstdarg": "cpp",
     "cstddef": "cpp",
     "cstdint": "cpp",
@@ -23,8 +27,16 @@
     "cwchar": "cpp",
     "cwctype": "cpp",
     "deque": "cpp",
+<<<<<<< HEAD
     "map": "cpp",
     "unordered_map": "cpp",
+=======
+    "list": "cpp",
+    "map": "cpp",
+    "set": "cpp",
+    "unordered_map": "cpp",
+    "unordered_set": "cpp",
+>>>>>>> origin/config+http
     "vector": "cpp",
     "exception": "cpp",
     "algorithm": "cpp",
@@ -36,7 +48,10 @@
     "optional": "cpp",
     "random": "cpp",
     "ratio": "cpp",
+<<<<<<< HEAD
     "regex": "cpp",
+=======
+>>>>>>> origin/config+http
     "string": "cpp",
     "string_view": "cpp",
     "system_error": "cpp",
@@ -49,10 +64,15 @@
     "iostream": "cpp",
     "istream": "cpp",
     "limits": "cpp",
+<<<<<<< HEAD
+=======
+    "mutex": "cpp",
+>>>>>>> origin/config+http
     "new": "cpp",
     "numbers": "cpp",
     "ostream": "cpp",
     "ranges": "cpp",
+<<<<<<< HEAD
     "span": "cpp",
     "sstream": "cpp",
     "stdexcept": "cpp",
@@ -60,6 +80,20 @@
     "cinttypes": "cpp",
     "typeinfo": "cpp"
   },
+=======
+    "shared_mutex": "cpp",
+    "span": "cpp",
+    "sstream": "cpp",
+    "stdexcept": "cpp",
+    "stop_token": "cpp",
+    "streambuf": "cpp",
+    "thread": "cpp",
+    "cinttypes": "cpp",
+    "typeinfo": "cpp",
+    "semaphore": "cpp",
+    "regex": "cpp"
+},
+>>>>>>> origin/config+http
   "C_Cpp_Runner.cCompilerPath": "gcc",
   "C_Cpp_Runner.cppCompilerPath": "g++",
   "C_Cpp_Runner.debuggerPath": "gdb",

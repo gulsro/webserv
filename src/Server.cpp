@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-Server::Server() : port(0), serverFd(0), root(""), index(""), maxBodySize(1000000)
+Server::Server() : port(0), serverFd(0), root(""), index(""), maxBodySize(1000000), nbLocation(0)
 {
     // std::cout << "Server constructor is called" << std::endl;
 }

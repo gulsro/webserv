@@ -3,5 +3,3 @@ Host: localhost:8080
 Connection: close
 Content-Length: 10
 Content-Type: html
-
-It's Eunbi

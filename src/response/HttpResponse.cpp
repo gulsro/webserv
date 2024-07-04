@@ -1,6 +1,7 @@
 #include "HttpResponse.hpp"
 
 HttpResponse::HttpResponse()
+	: statusCode(0), body(""), index(""), resource(""), content(""), contentType(""), MIMEtype(""), completed(false)
 {
 	#ifdef DEBUG
 		std::cout << GREY << "HttpResponse : Default constructor called" << DEFAULT << std::endl; 
@@ -22,7 +23,6 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other)
 	#endif
 	if (this != &other)
 	{
-		this->version = other.version;
 		this->statusCode = other.statusCode;
 		this->body = other.body;
 		this->headers = other.headers;
@@ -132,10 +132,10 @@ void    HttpResponse::setResource()
 		}
 		else
 		{
-			// if (fileExistsInDir(Location->getRoot() + Location->getPath(), Location->getIndex()) == true)
-			// 	this->resource = "." + Location->getRoot() + Location->getPath() + Location->getIndex();
-			// else
-			// 	throw ErrorCodeException(STATUS_FORBIDDEN);
+			if (fileExistsInDir(Location->getRoot() + Location->getPath(), Location->getIndex()) == true)
+				this->resource = "." + Location->getRoot() + Location->getPath() + Location->getIndex();
+			else
+				throw ErrorCodeException(STATUS_FORBIDDEN);
 		}
 		this->resource = "." + Location->getPath() + this->Request->getURI();
 	}
