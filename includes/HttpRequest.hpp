@@ -45,6 +45,9 @@ class	HttpRequest
 		std::string	queryString;
 		std::vector<std::pair<std::string, std::string>>	queryPairs;
 
+		//chunked request
+		bool	isChunked;
+
 		//Yuka added
 		Cgi			*cgi;
 
@@ -69,7 +72,8 @@ class	HttpRequest
 		const	int	       	&getRequestedPort() const { return requestedPort; }
 		const	std::string	&getQueryString() const { return queryString; }
 		const	std::vector<std::pair<std::string, std::string>> &getQueryPairs() const { return queryPairs; }
-		//Yuka added
+		const	bool		&getIsChunked() const { return isChunked; }
+		
 		Cgi*		getCgi() const  { return cgi; }
 
 		//Setters
