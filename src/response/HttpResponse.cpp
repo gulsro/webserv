@@ -153,7 +153,7 @@ void    HttpResponse::setResource()
 
 //Yuka added
 void    HttpResponse::runCgi(){
-    if (Request->getCgi() != NULL){
+    if (Request->getCgi() != nullptr){
         content = Request->getCgi()->execCgi();
         if (content[0] == '\0')
             perror("CGI not being executed");//error  need to change

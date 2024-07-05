@@ -6,7 +6,7 @@
 #define MAX_BODY 1000000
 
 HttpRequest::HttpRequest()
-	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false)
+	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false), cgi(nullptr)
 {
 	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Default constructor called" << DEFAULT << std::endl; 
@@ -98,13 +98,15 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 		}
 		// if uri contains cgi program extension file name. For us, Python.
 		size_t pos = this->uri.find(".py");
-		if (pos != std::string::npos && path == "/*.py ")
+		if (pos != std::string::npos && path == "/*.py")
 		{
+			std::cout << MAG << "CGI extention is detected" << RES << std::endl;
 			char	c = this->uri[pos + 3];
 			// check file extension name is only ".py"
 			if (isdigit(c) == false && isalpha(c) == false && c != '-' && c != '_')
 			{
 				this->ReqLocation = locationList[i];
+				std::cout << MAG << "CGI is instantiated" << RES << std::endl;
 				Cgi cgi_p(*this, *(locationList[i]), *ReqServer);
 				cgi = &cgi_p;
 				break;
