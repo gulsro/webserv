@@ -268,15 +268,18 @@ int ServerManager::handleIncoming(int fd)
 	// }
     // HttpRequest		Request;
 	// HttpResponse	Response;
+    try
+    {
+		if (this->readRequest(currClient) == true)//continue reading operations on connected clients
+		{    //Request.readRequest(fd); fd will be client's
 
-    if (this->readRequest(currClient) == true)//continue reading operations on connected clients
-    {    //Request.readRequest(fd); fd will be client's
-
-		currClient->getRequest()->setReqServer(servers);
-		currClient->getRequest()->checkLocations();
-	
-    	// creating new HttpResponse
-		// Response.sendResponse();
+			currClient->getRequest()->setReqServer(servers);
+			currClient->getRequest()->checkLocations();
+		}
+	}
+	catch (const std::exception& e)
+	{
+        std::cout << e.what() << std::endl;
 	}
 	// else continue reading
     if (currClient->getReadyToFlag() == WRITE)

@@ -69,7 +69,7 @@ void	HttpResponse::createResponse(enum e_statusCode code)
 		this->content = ostream.str(); // a string a copy of ostream
 	}
 	if (this->statusCode >= 400)
-		throw ErrorCodeException(code);
+		createErrorResponse(code);
 	this->completed = true;
 }
 
@@ -135,7 +135,7 @@ void    HttpResponse::setResource()
 			if (fileExistsInDir(Location->getRoot() + Location->getPath(), Location->getIndex()) == true)
 				this->resource = "." + Location->getRoot() + Location->getPath() + Location->getIndex();
 			else
-				throw ErrorCodeException(STATUS_FORBIDDEN);
+				createErrorResponse(STATUS_FORBIDDEN);
 		}
 		this->resource = "." + Location->getPath() + this->Request->getURI();
 	}
