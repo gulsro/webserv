@@ -1,13 +1,12 @@
-#!/bin/bash
-print("Content-Type: text/html")
-printf()
+#!/usr/bin/python3
+print("Content-Type: text/html\r\n\r\n")
 
-# importing cgi module
-import cgi
-form = cgi-FieldStorage()
-# get value of id (querystring)
+print()
+
+from cgi import FieldStorage
+
+form = FieldStorage()
 pageId = form["id"].value
-# print(pageId)
 
 print('''<!DOCTYPE html>
 <html lang="en">
@@ -19,9 +18,9 @@ print('''<!DOCTYPE html>
   <h1>{title}</h1>
   <p>This is a very basic HTML page.</p>
   <ol>
-  	<li><a href="index.py?id=HTML">HTML</a></li>
-	<li><a href="index.py?id=CSS">CSS</a></li>
-	<li><a href="index.py?id=JavaScript">JavaScript</a></li>
+    <li><a href="index.py?id=HTML">HTML</a></li>
+  <li><a href="index.py?id=CSS">CSS</a></li>
+  <li><a href="index.py?id=JavaScript">JavaScript</a></li>
   </ol>
 </body>
 </html>

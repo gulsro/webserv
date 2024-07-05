@@ -40,7 +40,7 @@ void Cgi::setCgiFile(){
     std::size_t found = cgiPass.rfind("/");
 
     if (found != std::string::npos){
-        std::string tmp = "./" + cgiPass.substr(found + 1);
+        std::string tmp = "index.py"; //"./" + cgiPass.substr(found + 1);
         cgiFile = new char[tmp.size() + 1];
         std::strcpy(cgiFile, tmp.c_str());
     }
@@ -53,21 +53,24 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     std::vector<std::string> tmp;
     std::vector<char *> CgiEnv;
 
-    tmp.push_back("GATEWAY_INTERFACE=cgi/1.1");
+    tmp.push_back("GATEWAY_INTERFACE=CGI/1.1");
     tmp.push_back("SERVER_NAME=" + ser.getHost()); //server hostname
     tmp.push_back("SERVER_SOFTWARE=webserv/1.0");
     tmp.push_back("SERVER_PROTOCOL=HTTP/1.1");
     tmp.push_back("SERVER_PORT=" + std::to_string(ser.getPort())); //server port
     tmp.push_back("REQUEST_METHOD=" + req.getMethod()); //request method
-    tmp.push_back("SCRIPT_NAME="+ loc.getCgiPass()); //cgi pass
+    tmp.push_back("PATH_INFO=" + loc.getRoot() + req.getURI()); // <<< not sure about this
+    tmp.push_back("SCRIPT_NAME=/index.py"); //cgi pass
     tmp.push_back("DOCUMENT_ROOT=" + loc.getRoot()); //location getRoot()
     tmp.push_back("QUERY_STRING=" + req.getQueryString()); //getQuery
     if (req.getMethod() == "POST"){
         tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
         tmp.push_back("CONTENT_LENGTH=" + std::to_string(req.getContentLength()));
     }
-    for (std::string s : tmp)
+    for (std::string s : tmp){
+        std::cout << s << std::endl;
         CgiEnv.push_back(&s.front());
+    }
     this->env = CgiEnv.data();
 }
 
@@ -85,13 +88,16 @@ std::string    Cgi::execCgi(){
 	if (pid == 0){
         // close read end and write to pipe 
         //output of cgi script will be written in pipe
-        char *argv[2] = {cgiFile, NULL};
+        std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
+        char **argv = NULL;
+        // char *argv[2] = {cgiFile, NULL};
         close(pip[0]); 
-        std::cout << MAG << "child process: "<< RES << std::endl;
         if (dup2(pip[1], STDOUT_FILENO) < 0) 
             perror("write pipe failed"); //error
-        if (execve(cgiPass.c_str(), argv, env) < 0)
+        if (execve("./html/index.py", argv, env) < 0){
+            write(2, "ERROR\n", 6);
             exit(1);
+        }
     }
     int status;
     char buf[BUFFER_SIZE]; // is buffer_size defined in config?
@@ -108,14 +114,14 @@ std::string    Cgi::execCgi(){
         return ("read pipe failed"); // error
     while (bytes > 0){
         std::memset(buf, '\0', BUFFER_SIZE - 1);
-        bytes = read(pip[1], buf, BUFFER_SIZE);
+        bytes = read(1, buf, BUFFER_SIZE);
         // if (bytes < 0)
-            //no read;
+            // no read;
         printf("%zd bytes read: %s ", bytes, buf);
         body = body + buf;
     }
     printf("\n");
-    close(pip[0]);
+    // close(pip[0]);
     return ("HTTP/1.1 200 OK\r\n" + body);
 }
 
