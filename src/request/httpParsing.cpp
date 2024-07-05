@@ -6,8 +6,7 @@
 #include <cstring> // strerror()
 #include <unistd.h>
 
-// #define BUFFER_SIZE 4096 // common page size
-#define BUFFER_SIZE 10
+#define BUFFER_SIZE 4096 // common page size
 
 bool	HttpRequest::isReadingRequestFinished(std::string rawRequest)
 {

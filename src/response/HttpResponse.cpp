@@ -142,9 +142,9 @@ void    HttpResponse::setResource()
 	else // No selected Location
 	{
 		if (this->Request->getURI() == "/")
-			this->resource = "." + Server->getRoot() + '/' + Server->getIndex();	
+			this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
 		else
-			this->resource = "." + Server->getRoot() + this->Request->getURI();
+			this->resource = "." + this->Request->getURI();
 	}
 	#ifdef FUNC
 		std::cout << YELLOW  << "RESOURCE : " << this->resource << DEFAULT << std::endl;
