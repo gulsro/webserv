@@ -55,8 +55,11 @@ void	HttpResponse::checkResourceType()
 		else if (S_ISREG(buf.st_mode))
 			this->setResourceType(RESOURCE_FILE);
 	}
-	else // stat() error
-		createResponse(STATUS_NOT_FOUND);
+	else
+	{
+		this->content = createErrorResponse(STATUS_NOT_FOUND);
+		this->completed = true;
+	}
 }
 
 void	HttpResponse::checkURI()

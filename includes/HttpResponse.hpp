@@ -52,6 +52,7 @@ class HttpResponse
 		void		setRequest(HttpRequest	*request) { Request = request; }
         void    	setResource();
 		void		setResourceType(enum e_resourceType type) { resourceType = type; }
+		void		setContent(std::string str) { content = str; }
 		void		checkMethod();
 		void		createResponse(enum e_statusCode code);
 		// friend void		HttpRequest::createResponseHelper(enum e_statusCode code) { Response->createResponse(code);} 

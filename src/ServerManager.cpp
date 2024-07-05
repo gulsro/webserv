@@ -260,17 +260,10 @@ int ServerManager::handleIncoming(int fd)
 	Client *currClient;
 
 	currClient = mapClientFd[fd];
-
-	// for (size_t i = 0; i < currServer->clientList.size(); ++i)
-	// {
-	// 	if (currServer->clientList[i]->getClientFd() == fd)
-	// 		currClient = currServer->clientList[i];
-	// }
-    // HttpRequest		Request;
-	// HttpResponse	Response;
     try
     {
-		if (this->readRequest(currClient) == true)//continue reading operations on connected clients
+		currClient->setResponse(new HttpResponse);
+		if (this->readRequest(currClient) == true) //continue reading operations on connected clients
 		{    //Request.readRequest(fd); fd will be client's
 
 			currClient->getRequest()->setReqServer(servers);
@@ -279,7 +272,9 @@ int ServerManager::handleIncoming(int fd)
 	}
 	catch (const std::exception& e)
 	{
-        std::cout << e.what() << std::endl;
+		std::cout << "Catch" << std::endl;
+		currClient->getResponse()->setContent(e.what());
+        // std::cout << e.what() << std::endl;
 	}
 	// else continue reading
     if (currClient->getReadyToFlag() == WRITE)
@@ -305,7 +300,7 @@ void	ServerManager::sendResponse(int clientFd)
 	//also check "if reading request is done" therefor we need a flag ?
 	//if (fd ....)
 
-    currClient->setResponse(new HttpResponse);
+    // currClient->setResponse(new HttpResponse);
     currClient->getResponse()->setRequest(currClient->getRequest());
     currClient->getResponse()->checkMethod();
     // Response.setRequest(&Request);
