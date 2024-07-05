@@ -88,6 +88,7 @@ std::string    Cgi::execCgi(){
         char *argv[2] = {cgiFile, NULL};
         close(pip[0]); 
         std::cout << MAG << "child process" << RES << std::endl;
+        std::cout << "CGI: " << cgiPass << std::endl;
         if (dup2(pip[1], STDOUT_FILENO) < 0) 
             perror("write pipe failed"); //error
         if (execve(cgiPass.c_str(), argv, env) < 0)

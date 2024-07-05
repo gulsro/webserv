@@ -6,7 +6,7 @@
 #define MAX_BODY 1000000
 
 HttpRequest::HttpRequest()
-	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false)
+	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false), cgi(nullptr)
 {
 	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Default constructor called" << DEFAULT << std::endl; 
