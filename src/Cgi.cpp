@@ -14,7 +14,8 @@ from the CGI, EOF will mark the end of the returned data.
 Cgi::Cgi(){}
 
 Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser){
-    cgiPass = loc.getCgiPass().c_str();
+    cgiPass = loc.getCgiPass();
+    std::cout << cgiPass << std::endl;
     setCgiFile();
     setCgiEnv(req, loc, ser);
 }
@@ -88,7 +89,7 @@ std::string    Cgi::execCgi(){
         char *argv[2] = {cgiFile, NULL};
         close(pip[0]); 
         std::cout << MAG << "child process" << RES << std::endl;
-        std::cout << "CGI: " << cgiPass << std::endl;
+        std::cout << "GULLLL CGI: " << cgiPass << std::endl;
         if (dup2(pip[1], STDOUT_FILENO) < 0) 
             perror("write pipe failed"); //error
         if (execve(cgiPass.c_str(), argv, env) < 0)
@@ -110,8 +111,12 @@ std::string    Cgi::execCgi(){
     while (bytes > 0){
         std::memset(buf, '\0', BUFFER_SIZE - 1);
         bytes = read(pip[1], buf, BUFFER_SIZE);
+        // if (bytes < 0)
+            //no read;
+        printf("%zd bytes read: %s ", bytes, buf);
         body = body + buf;
     }
+    printf("\n");
     close(pip[0]);
     return ("HTTP/1.1 200 OK\r\n" + body);
 }
