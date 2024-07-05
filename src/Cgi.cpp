@@ -15,7 +15,6 @@ Cgi::Cgi(){}
 
 Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser){
     cgiPass = loc.getCgiPass();
-    std::cout << cgiPass << std::endl;
     setCgiFile();
     setCgiEnv(req, loc, ser);
 }
@@ -77,7 +76,7 @@ std::string    Cgi::execCgi(){
     int pip[2];
     pid_t pid;
 
-    std::cout << MAG << "CGI executed" << RES << std::endl;
+    std::cout << MAG << "CGI executed"<< RES << std::endl;
     if (pipe(pip) < 0)
 		perror("pipe failed"); //error
 	pid = fork();
@@ -88,7 +87,7 @@ std::string    Cgi::execCgi(){
         //output of cgi script will be written in pipe
         char *argv[2] = {cgiFile, NULL};
         close(pip[0]); 
-        std::cout << MAG << "child process: " << RES << std::endl;
+        std::cout << MAG << "child process: "<< RES << std::endl;
         if (dup2(pip[1], STDOUT_FILENO) < 0) 
             perror("write pipe failed"); //error
         if (execve(cgiPass.c_str(), argv, env) < 0)
