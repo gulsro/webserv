@@ -131,15 +131,17 @@ void ServerManager::acceptClient(int serverFd, Server& server)
         throw std::runtime_error("Error: accept()");
     }
     //std::cout << "MAAAAAA" << server << std::endl;
-    Client* client = new Client(clientFd);
+    Client* client = new Client(clientFd, READ);
     //(void)client;
     //std::cout << "MAAAAAA" << server.getPort() << std::endl;
     server.clientList.push_back(client);
     server.connectedClientFds.push_back(clientFd);
+    mapClientFd[clientFd] = client;
     //std::cout << "CLIENT FD " << client->getClientFd() << std::endl;
     //server.printConnectedClientFds();
-	mapClientFd[clientFd] = client;
-    addFdToPollFds(clientFd, (POLLIN | POLLOUT));
+	//mapClientFd[clientFd] = client;
+    //addFdToPollFds(clientFd, (POLLIN | POLLOUT));
+    addFdToPollFds(clientFd, (POLLIN));
 }
 
 
@@ -185,7 +187,7 @@ void ServerManager::startPoll()
             //will evaluate to true because the POLLIN bit is set in the
             //revents flags.
 
-            std::cout << "THE FISH IS " << fd << std::endl;
+            //std::cout << "THE FISH IS " << fd << std::endl;
             
             //counter = counter+ 1;
             //std::cout << "counter = " << counter << std::endl;
@@ -201,34 +203,29 @@ void ServerManager::startPoll()
                     //continue ;
                 }
                 else //continue reading operations on connected clients
-                {    //Request.readRequest(fd); fd will be client's
+                {
                     std::cout << "REQUESTTTTTT" << std::endl;
                      //readRequest(fd);
                     handleIncoming(fd);
                 }
-                //     //fd = -1;
-                //     //pollfds[i].fd = -1;
-                //     //here call (client.server->)removeClientFd()
-                // }
-
-                //std::cout << "LALALO" << std::endl;
-                //std::cout << *(mapServerFd[fd]) << std::endl;
             }
 
             // Here check writing operation's klaarheid.
+            //client is ready for WHICH operation FLAG needs to be added!
             else if (revents & POLLOUT)
             {
+                std::cout << "THE POLLOUT IS " << fd << std::endl;
                 std::cout << "RESPONSEEEEE" << std::endl;
-                pollfds[i].fd = -1;
-				//eunbi's sendResponse(clientFd)
+				if (mapClientFd[fd]->getReadyToFlag() == WRITE)
+                {
+                    sendResponse(fd);
+                    pollfds[i].fd = -1;}
             }
             // Handle events for accepted connections (read/write data)
             // You'll need to iterate over other servers and their connections here
             // ...
         }
     }
-
-    //std::unique_ptr<Server>	getServer(std::string host) const; 
 }
 
 // if (_pollFds[i].revents & POLLIN)
@@ -277,19 +274,61 @@ int ServerManager::handleIncoming(int fd)
 
 		currClient->getRequest()->setReqServer(servers);
 		currClient->getRequest()->checkLocations();
-		// creating new HttpResponse
-		currClient->setResponse(new HttpResponse);
-		currClient->getResponse()->setRequest(currClient->getRequest());
-		currClient->getResponse()->checkMethod();
-		// Response.setRequest(&Request);
-		// Response.checkMethod();
-
-		std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
-		std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
+	
+    	// creating new HttpResponse
 		// Response.sendResponse();
 	}
 	// else continue reading
+    if (currClient->getReadyToFlag() == WRITE)
+    {
+        std::vector<struct pollfd>& pollfds = getPollfds();
+        currClient->setClientFdEvent(pollfds, POLLOUT);
+    }
     return 0;
+}
+
+void	ServerManager::sendResponse(int clientFd)
+{
+    Client *currClient;
+
+	currClient = mapClientFd[clientFd];
+
+    if (currClient->getRequest() == NULL)
+        return ;
+    //from client getResponse
+	//Checking client is still connected??
+
+	//checking is clientFd is still connected
+	//also check "if reading request is done" therefor we need a flag ?
+	//if (fd ....)
+
+    currClient->setResponse(new HttpResponse);
+    currClient->getResponse()->setRequest(currClient->getRequest());
+    currClient->getResponse()->checkMethod();
+    // Response.setRequest(&Request);
+    // Response.checkMethod();
+
+    std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
+    std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
+
+	//What's that enum status code???
+	ssize_t bytesSent = send(clientFd, currClient->getResponse()->getContent().c_str(),
+                        currClient->getResponse()->getContent().size(), 0);
+	if (bytesSent == -1 || static_cast<size_t>(bytesSent) != currClient->getResponse()->getContent().size())
+	{
+        rmFdFromPollfd(clientFd);
+        delete mapClientFd[clientFd];
+        mapClientFd[clientFd] = nullptr;
+        throw std::runtime_error("Error: send()");
+	}
+    //close(clientFd);
+	//delete the request, it s done
+}
+
+//const std::vector<struct pollfd>& ServerManager::getPollfds() const
+std::vector<struct pollfd>& ServerManager::getPollfds()
+{
+    return this->pollfds;
 }
 
 
@@ -333,6 +372,19 @@ bool isFdConnected(int fd, std::vector<int>& connectedClientFds)
 //     auto it = std::find(vector.begin(), vector.end(),
 //                    valueToBeDeleted);
 
+void	ServerManager::rmFdFromPollfd(int fd)
+{
+	for (std::vector<struct pollfd>::iterator it = pollfds.begin();
+		it != pollfds.end(); it++)
+	{
+		if (it -> fd == fd)
+		{
+			pollfds.erase(it);
+			break ;
+		}
+	}
+	//close(fd);
+}
 
 std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
 {

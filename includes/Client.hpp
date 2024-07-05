@@ -7,24 +7,35 @@ class Server;
 class HttpRequest;
 class HttpResponse;
 
+enum e_readyTo
+{
+	READ,
+	WRITE
+};
+
 class Client
 {
 private:
     //Server& server;
     int clientFd;
+	int readyTo;
 	HttpRequest	*Request;
 	HttpResponse	*Response;
 //         Response&
 
 public:
-    Client(int fd);
+    Client(int fd, int readyTo);
     ~Client();
 
     int 		getClientFd();
 	HttpRequest		*getRequest() const { return Request; }
 	HttpResponse	*getResponse() const { return Response; }
+	int getReadyToFlag() const;
+
 	void	setRequest(HttpRequest	*request) { Request = request; }
 	void	setResponse(HttpResponse	*response) { Response = response; }	
+	void setReadyToFlag(int readyTo);
+	void	setClientFdEvent(std::vector<struct pollfd>& pollfds, short events);
 };
 
 std::ostream& operator<<(std::ostream& out, const Client& client);
