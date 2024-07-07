@@ -1,6 +1,7 @@
 #include "utils.hpp"
 #include "HttpResponse.hpp"
 
+
 std::string	createErrorResponse(int code)
 {
     #ifdef FUNC
@@ -9,8 +10,6 @@ std::string	createErrorResponse(int code)
 		std::ostringstream	ostream;
 
 		ostream << "HTTP/1.1 " << code << " " << returnStatusMessage(code) << "\r\n";
-		ostream << "Content-Length: 0\r\n";
- 		ostream << "\r\n";
 		if (code >= 400 && code <= 501)
 		{
 			std::string	filename = "./error_pages/" + std::to_string(code) + ".html";
@@ -19,9 +18,18 @@ std::string	createErrorResponse(int code)
 			{
 				std::ostringstream fileContent;
 				fileContent << file.rdbuf();
+				file.seekg(0, std::ios::end);
+
+				ostream << "Content-Length: " << fileContent.str().length() << "\r\n";
+				ostream << "\r\n";
 				ostream << fileContent.str();
 				file.close();
 			}
+		}
+		else
+		{
+			ostream << "Content-Length: 0\r\n";
+ 			ostream << "\r\n";
 		}
 		return ostream.str();
 }
