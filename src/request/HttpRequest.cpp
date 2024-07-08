@@ -127,7 +127,7 @@ void	HttpRequest::setBoundary()
 	}
 }
 
-void	HttpRequest::checkUriValid()
+void	HttpRequest::checkUriValidation()
 {
 	if (this->uri.size() > 2048)
 	{
@@ -151,10 +151,10 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	std::cout << YELLOW << "[FUNCTION] parseRequestLine" << DEFAULT << std::endl;
 	#endif
 
-	std::cout << GREEN << line << DEFAULT << std::endl;
 	stream >> this->method >> this->uri >> rawVersion;
 	std::istringstream	iss(rawVersion);
 	std::getline(iss, this->version, '\r');
+	checkUriValidation();
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
 		throw ErrorCodeException(STATUS_NOT_ALLOWED);
