@@ -26,7 +26,7 @@ public:
     char* getCgiFile() const {return cgiFile; };
     char** getEnv() const {return env; };
 
-    void   setCgiFile();
+    void   setCgiFile(std::string s);
     void setCgiEnv(HttpRequest& req, Location& loc, Server& ser);
     std::string    execCgi();
 };

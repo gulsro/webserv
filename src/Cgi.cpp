@@ -15,7 +15,8 @@ Cgi::Cgi(){}
 
 Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser){
     cgiPass = loc.getCgiPass();
-    setCgiFile();
+    std::cout << loc.getRoot()+req.getURI() << std::endl;
+    setCgiFile(loc.getRoot()+req.getURI());
     setCgiEnv(req, loc, ser);
 }
 
@@ -35,15 +36,17 @@ Cgi& Cgi::operator=(const Cgi a){
     return (*this);
 }
 
-void Cgi::setCgiFile(){
-    cgiFile = nullptr;
-    std::size_t found = cgiPass.rfind("/");
-
-    if (found != std::string::npos){
-        std::string tmp = "index.py"; //"./" + cgiPass.substr(found + 1);
-        cgiFile = new char[tmp.size() + 1];
-        std::strcpy(cgiFile, tmp.c_str());
-    }
+// check if this is valid for bth GET and POST
+void Cgi::setCgiFile(std::string s){
+    cgiFile = new char[s.size() + 1];
+    std::strcpy(cgiFile, s.c_str());
+    // std::size_t found = s.rfind("/");
+    // if (found != std::string::npos){
+    //     std::string tmp = s.substr(found + 1);
+    //     cgiFile = new char[tmp.size() + 1];
+    //     std::strcpy(cgiFile, tmp.c_str());
+    // }
+    std::cout << "cgiFile is " << cgiFile << std::endl;
 }
 
 
@@ -71,7 +74,13 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
         std::cout << s << std::endl;
         CgiEnv.push_back(&s.front());
     }
-    this->env = CgiEnv.data();
+    this->env = new char*[tmp.size()];
+    int i = 0;
+    for (std::vector<std::string>::iterator t = tmp.begin(); t != tmp.end(); t++){
+        this->env[i] = new char[(*t).size() + 1];
+        strcpy(this->env[i], (*t).c_str());
+        i++;
+    }
 }
 
 //return http response msg or '\0' in case of internal error
@@ -89,12 +98,14 @@ std::string    Cgi::execCgi(){
         // close read end and write to pipe 
         //output of cgi script will be written in pipe
         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
-        char **argv = NULL;
-        // char *argv[2] = {cgiFile, NULL};
+        // char **argv = NULL;
+        char *argv[2] = {cgiFile, NULL};
+        // char *env2[] = {NULL};
         close(pip[0]); 
         if (dup2(pip[1], STDOUT_FILENO) < 0) 
             perror("write pipe failed"); //error
-        if (execve("./html/index.py", argv, env) < 0){
+        if (execve(cgiFile, argv, env) < 0){
+            perror("child");
             write(2, "ERROR\n", 6);
             exit(1);
         }
