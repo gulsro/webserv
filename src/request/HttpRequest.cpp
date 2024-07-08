@@ -107,8 +107,7 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 			{
 				this->ReqLocation = locationList[i];
 				std::cout << MAG << "CGI is instantiated" << RES << std::endl;
-				Cgi cgi_p(*this, *(locationList[i]), *ReqServer);
-				cgi = &cgi_p;
+				cgi = new Cgi(*this, *(locationList[i]), *ReqServer);
 				break;
 			}
 		}
