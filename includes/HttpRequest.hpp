@@ -93,6 +93,7 @@ class	HttpRequest
 		void	checkUriValid();
 		void	checkAllowedMethods();
 		void	handleMultiPartForm();
+		void	handleChunkedBody(const size_t bodyStart, const std::string rawRequest);
 		void	makeKeyValuePair(int i, const std::string str);
         void    handlePartInfo(const int i, const std::vector<std::string> strs);
 

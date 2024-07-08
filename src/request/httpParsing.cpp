@@ -188,6 +188,8 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 	if (this->contentLength > 0 || isChunked == true)
 	{
 		size_t	bodyStart = rawRequest.find("\r\n\r\n") + 4;
+		if (isChunked == true)
+			handleChunkedBody(bodyStart, rawRequest);
 		if (bodyStart + this->contentLength > rawRequest.size())
 		{
 			std::cerr << "Incomplete HTTP request body." << std::endl;
@@ -229,4 +231,32 @@ void	HttpRequest::checkLocations()
 	// GET is always allowed depending on our own config file
 	if (this->getMethod() != "GET" && this->ReqLocation != nullptr)
 		checkAllowedMethods();
+}
+
+void	HttpRequest::handleChunkedBody(const size_t bodyStart, const std::string rawRequest)
+{
+	#ifdef FUNC
+		std::cout << YELLOW << "[FUNCTION] handleChunkedBody" << DEFAULT << std::endl;
+	#endif
+	std::string		chunkedData = rawRequest.substr(bodyStart);
+	size_t 			begin = 0;
+	unsigned int	chunkSize = 1;
+	std::string 	pureData;
+	size_t			pos;
+
+	while (1)
+	{
+		pos = rawRequest.find("\r\n"); // Finding Hex number chunk size.
+		std::stringstream 	ss(chunkedData.substr(begin, pos));
+		ss >> std::hex >> chunkSize;
+		if (chunkSize == 0)
+			break ;
+		pureData = chunkedData.substr(pos + 2, chunkSize); // Extract pure data
+		this->body.append(pureData);
+		begin = (pos + 2) + (pureData.length() + 2); // (hex number + CRLF) + (Data length + CRLF)
+		std::string tmp = chunkedData.substr(begin);
+		chunkedData = tmp;
+		begin = 0; // reset begin
+	}
+	this->contentLength = pureData.length();
 }
