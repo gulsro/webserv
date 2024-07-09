@@ -36,16 +36,17 @@ Cgi& Cgi::operator=(const Cgi a){
     return (*this);
 }
 
-// check if this is valid for bth GET and POST
 void Cgi::setCgiFile(std::string s){
-    cgiFile = new char[s.size() + 1];
-    std::strcpy(cgiFile, s.c_str());
-    // std::size_t found = s.rfind("/");
-    // if (found != std::string::npos){
-    //     std::string tmp = s.substr(found + 1);
-    //     cgiFile = new char[tmp.size() + 1];
-    //     std::strcpy(cgiFile, tmp.c_str());
-    // }
+    std::size_t found = s.rfind("?");
+    if (found != std::string::npos){
+        std::string tmp = s.substr(0, found);
+        cgiFile = new char[tmp.size() + 1];
+        std::strcpy(cgiFile, tmp.c_str());
+    }
+    else {
+        cgiFile = new char[s.size() + 1];
+        std::strcpy(cgiFile, s.c_str());
+    }
     std::cout << "cgiFile is " << cgiFile << std::endl;
 }
 
@@ -81,6 +82,7 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
         strcpy(this->env[i], (*t).c_str());
         i++;
     }
+    this->env[i] = NULL;
 }
 
 //return http response msg or '\0' in case of internal error
