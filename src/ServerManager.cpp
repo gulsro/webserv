@@ -78,6 +78,17 @@ void ServerManager::startServerManager(ServerManager &serverManager)
     }
 }
 
+
+// set the file descriptor to non-blocking mode
+int ServerManager::setNonBlocking(int fd)
+{
+    int flags = fcntl(fd, F_GETFL, 0);
+    if (flags == -1) {
+        return -1;
+    }
+    return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+}
+
 void ServerManager::startSockets()
 {
     //make a loop here, start socket for each server in servers;
@@ -219,7 +230,8 @@ void ServerManager::startPoll()
 				if (mapClientFd[fd]->getReadyToFlag() == WRITE)
                 {
                     sendResponse(fd);
-                    pollfds[i].fd = -1;}
+                    //pollfds[i].fd = -1;
+                    }
             }
             // Handle events for accepted connections (read/write data)
             // You'll need to iterate over other servers and their connections here
@@ -319,7 +331,10 @@ void	ServerManager::sendResponse(int clientFd)
         mapClientFd[clientFd] = nullptr;
         throw std::runtime_error("Error: send()");
 	}
-    //close(clientFd);
+    rmFdFromPollfd(clientFd);
+    delete mapClientFd[clientFd];
+    mapClientFd[clientFd] = nullptr;
+    close(clientFd);
 	//delete the request, it s done
 }
 

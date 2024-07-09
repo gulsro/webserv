@@ -11,6 +11,7 @@
 #include <sys/types.h> //accept()
 #include <map>
 #include <poll.h> // poll() and struct
+#include <fcntl.h>
 #include <memory> // std::unique_ptr c++11, std::make_unique c++14
 #include <fstream>
 #include <istream>
