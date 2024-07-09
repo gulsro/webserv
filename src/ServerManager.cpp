@@ -78,6 +78,9 @@ void ServerManager::startServerManager(ServerManager &serverManager)
     }
 }
 
+//The only correct way to set one of the file status flags is:
+// first to fetch the current flags with F_GETFL,
+//logi- cally OR in the new flag, and then set the flags w F_SETFL.
 
 // set the file descriptor to non-blocking mode
 int ServerManager::setNonBlocking(int fd)
@@ -97,6 +100,7 @@ void ServerManager::startSockets()
     for (auto &server: servers)
     {
         server->createSocket();
+        setNonBlocking(server->getServerFd());
         server->setSocketAddr();
         server->setSocketOption();
         server->bindSocket();
@@ -142,6 +146,7 @@ void ServerManager::acceptClient(int serverFd, Server& server)
         throw std::runtime_error("Error: accept()");
     }
     //std::cout << "MAAAAAA" << server << std::endl;
+    setNonBlocking(clientFd);
     Client* client = new Client(clientFd, READ);
     //(void)client;
     //std::cout << "MAAAAAA" << server.getPort() << std::endl;
