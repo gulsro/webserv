@@ -36,18 +36,31 @@ Cgi& Cgi::operator=(const Cgi a){
     return (*this);
 }
 
-// check if this is valid for bth GET and POST
-void Cgi::setCgiFile(std::string s){
+// // check if this is valid for bth GET and POST
+// void Cgi::setCgiFile(std::string s){
+//     cgiFile = new char[s.size() + 1];
+//     std::strcpy(cgiFile, s.c_str());
+//     // std::size_t found = s.rfind("/");
+//     // if (found != std::string::npos){
+//     //     std::string tmp = s.substr(found + 1);
+//     //     cgiFile = new char[tmp.size() + 1];
+//     //     std::strcpy(cgiFile, tmp.c_str());
+//     // }
+//     std::cout << "cgiFile is " << cgiFile << std::endl;
+// }
+
+// check if this is valid for both GET and POST
+//GUL CHANGED THIS FUNCTION
+void Cgi::setCgiFile(std::string s) {
+    // finding the position of the '?' character in the url
+    std::size_t query_pos = s.find('?');
+        if (query_pos != std::string::npos) {
+        s = s.substr(0, query_pos);
+    }
     cgiFile = new char[s.size() + 1];
     std::strcpy(cgiFile, s.c_str());
-    // std::size_t found = s.rfind("/");
-    // if (found != std::string::npos){
-    //     std::string tmp = s.substr(found + 1);
-    //     cgiFile = new char[tmp.size() + 1];
-    //     std::strcpy(cgiFile, tmp.c_str());
-    // }
-    std::cout << "cgiFile is " << cgiFile << std::endl;
-}
+    }
+
 
 
 
