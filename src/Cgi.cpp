@@ -98,9 +98,9 @@ std::string    Cgi::execCgi(){
         // close read end and write to pipe 
         //output of cgi script will be written in pipe
         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
-        // char **argv = NULL;
-        char *argv[2] = {cgiFile, NULL};
-        // char *env2[] = {NULL};
+        char *pass = new char[cgiPass.size() + 1];
+        std::strcpy(pass, cgiPass.c_str());
+        char *argv[3] = {pass, cgiFile, NULL};
         close(pip[0]); 
         if (dup2(pip[1], STDOUT_FILENO) < 0) 
             perror("write pipe failed"); //error
@@ -118,21 +118,19 @@ std::string    Cgi::execCgi(){
     close(pip[1]);
     if (waitpid(pid, &status, 0) < 0)
         perror("wait failed"); 
-
     if (WIFEXITED(status) == false &&(WEXITSTATUS(status)!= 0)) 
         return ("wait exit status failed");
     if (dup2(pip[0], STDIN_FILENO) < 0)
         return ("read pipe failed"); // error
     while (bytes > 0){
         std::memset(buf, '\0', BUFFER_SIZE - 1);
-        bytes = read(1, buf, BUFFER_SIZE);
+        bytes = read(0, buf, BUFFER_SIZE);
         // if (bytes < 0)
             // no read;
-        printf("%zd bytes read: %s ", bytes, buf);
         body = body + buf;
     }
     printf("\n");
-    // close(pip[0]);
+    close(pip[0]);
     return ("HTTP/1.1 200 OK\r\n" + body);
 }
 
