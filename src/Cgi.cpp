@@ -81,6 +81,7 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
         strcpy(this->env[i], (*t).c_str());
         i++;
     }
+    this->env[i] = NULL;
 }
 
 //return http response msg or '\0' in case of internal error
@@ -99,18 +100,13 @@ std::string    Cgi::execCgi(){
         //output of cgi script will be written in pipe
         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
         // char **argv = NULL;
-        //char *argv[2] = {cgiFile, NULL};
+        char *argv[2] = {cgiFile, NULL};
         
-        //GUL ADDED THESE 2 LINES:
-        char python_path[] = "/usr/bin/python3";
-        char *argv[3] = {python_path, cgiFile.find_last_of('/') + 1, NULL};
         // char *env2[] = {NULL};
         close(pip[0]); 
         if (dup2(pip[1], STDOUT_FILENO) < 0) 
             perror("write pipe failed"); //error
-        //if (execve(cgiFile, argv, env) < 0){
-        //GUL ADDED THIS LINE:
-        if (execve(argv[0], argv, env) < 0){
+        if (execve(cgiFile, argv, env) < 0){
             perror("child");
             write(2, "ERRORMAAA\n", 6);
             exit(1);
