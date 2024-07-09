@@ -7,7 +7,7 @@
 from cgi import FieldStorage
 
 form = FieldStorage()
-pageId = form.getvalue("id)
+pageId = form.getvalue("id")
 
 print('''<!DOCTYPE html>
 <html lang="en">
