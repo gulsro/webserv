@@ -300,6 +300,7 @@ void	ServerManager::sendResponse(int clientFd)
 
     // currClient->setResponse(new HttpResponse);
     currClient->getResponse()->setRequest(currClient->getRequest());
+    currClient->getResponse()->runCgi();
     currClient->getResponse()->checkMethod();
     // Response.setRequest(&Request);
     // Response.checkMethod();

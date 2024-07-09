@@ -19,17 +19,22 @@
 #include <iterator>
 #include <cctype>
 #include <cstring>
+#include <memory>
 #include <functional>
-
+#include <poll.h>
+#include <sys/types.h> 
+#include <unistd.h>
+#include <sys/wait.h>
 
 #include "Config.hpp"
 #include "Server.hpp"
 #include "ServerManager.hpp"
 #include "Client.hpp"
 #include "Location.hpp"
-#include "utils.hpp"
 #include "HttpRequest.hpp"
 #include "HttpResponse.hpp"
+#include "Cgi.hpp"
+#include "utils.hpp"
 
 
 #define BOLD "\033[1m"

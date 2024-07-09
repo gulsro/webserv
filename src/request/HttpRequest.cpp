@@ -6,7 +6,7 @@
 #define MAX_BODY 1000000
 
 HttpRequest::HttpRequest()
-	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false)
+	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false), cgi(nullptr)
 {
 	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Default constructor called" << DEFAULT << std::endl; 
@@ -74,8 +74,6 @@ void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 	for (size_t i = 0; i < serverList.size(); ++i)
 	{
 		int	port = serverList[i]->getPort();
-		// std::cout << "Server Port : " << port << std::endl;
-
 		if (this->requestedPort == port)
 			this->ReqServer = serverList[i];
 		else
@@ -100,13 +98,16 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 		}
 		// if uri contains cgi program extension file name. For us, Python.
 		size_t pos = this->uri.find(".py");
-		if (pos != std::string::npos && path == "/*.py ")
+		if (pos != std::string::npos && path == "/*.py")
 		{
+			std::cout << MAG << "CGI extention is detected" << RES << std::endl;
 			char	c = this->uri[pos + 3];
 			// check file extension name is only ".py"
 			if (isdigit(c) == false && isalpha(c) == false && c != '-' && c != '_')
 			{
 				this->ReqLocation = locationList[i];
+				std::cout << MAG << "CGI is instantiated" << RES << std::endl;
+				cgi = new Cgi(*this, *(locationList[i]), *ReqServer);
 				break;
 			}
 		}
@@ -155,6 +156,11 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	std::istringstream	iss(rawVersion);
 	std::getline(iss, this->version, '\r');
 	checkUriValidation();
+	// check query string in URI
+	if (this->uri.find('?') != std::string::npos)
+	{
+		this->setQueryPairs();
+	}
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
 		throw ErrorCodeException(STATUS_NOT_ALLOWED);
