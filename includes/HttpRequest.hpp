@@ -4,11 +4,12 @@
 #include "utils.hpp"
 #include "HttpResponse.hpp"
 #include "Location.hpp"
+#include "Cgi.hpp"
 
 class	HttpResponse;
 class	Location;
 class	Server;
-
+class	Cgi;
 
 typedef	struct	s_part
 {
@@ -47,6 +48,9 @@ class	HttpRequest
 		//chunked request
 		bool	isChunked;
 
+		//Yuka added
+		Cgi			*cgi;
+
 	public:
 		HttpRequest();
 		HttpRequest(const HttpRequest &response);
@@ -62,12 +66,14 @@ class	HttpRequest
 		const	std::string	&getVersion() const { return version; }
 		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		const	std::string	&getBody() const { return body; }
-		const	int			&getContentLength() const { return contentLength; }
 		const	std::string	&getContentType() const { return contentType; }
-		const	int	       	&getRequestedPort() const { return requestedPort; } 
+		const	int			&getContentLength() const { return contentLength; }
+		const	int	       	&getRequestedPort() const { return requestedPort; }
 		const	std::string	&getQueryString() const { return queryString; }
 		const	std::vector<std::pair<std::string, std::string>> &getQueryPairs() const { return queryPairs; }
 		const	bool		&getIsChunked() const { return isChunked; }
+		
+		Cgi*		getCgi() const  { return cgi; }
 
 		//Setters
 		void	setRawRequest(std::string buffer) { this->rawRequest = buffer; }

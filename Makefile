@@ -23,6 +23,7 @@ FILES =	main.cpp \
 		Client.cpp \
 		Location.cpp \
 		HttpUtils.cpp \
+		Cgi.cpp \
 		request/httpParsing.cpp \
 		request/HttpRequest.cpp \
 		request/multiPart.cpp \

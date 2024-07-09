@@ -83,7 +83,8 @@ void Location::setPath(std::string& cont, int key){
         cont = "/" + cont;
         key++;
     }
-    this->path = cont.substr(0, key);
+	std::string tmp = cont.substr(0, key); 
+    this->path = trim(tmp, ' ');
 }
 
 void Location::setRoot(std::string& cont, int key){
