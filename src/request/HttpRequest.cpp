@@ -113,6 +113,10 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 		}
 	}
 	this->ReqLocation = nullptr;
+	if (this->ReqLocation == nullptr)
+		std::cout << "NULL Location" <<std::endl;
+	else
+		std::cout << "Selected location" << this->ReqLocation->getPath() << std::endl; 
 }
 
 void	HttpRequest::setBoundary()
@@ -130,16 +134,9 @@ void	HttpRequest::setBoundary()
 
 void	HttpRequest::checkUriValidation()
 {
-	if (this->uri.size() > 2048)
+	if (this->uri.length() > 2048)
 	{
 		throw ErrorCodeException(STATUS_URI_TOO_LONG);
-	}
-	for (size_t i = 0; i < this->uri.size(); i++)
-	{
-		if (!isdigit(this->uri[i]) && !isalpha(this->uri[i]) && !isInvalidChar(this->uri[i]))
-		{
-			throw ErrorCodeException(STATUS_BAD_REQUEST);
-		}
 	}
 }
 

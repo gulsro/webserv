@@ -108,7 +108,7 @@ std::string    Cgi::execCgi(){
             perror("write pipe failed"); //error
         if (execve(cgiFile, argv, env) < 0){
             perror("child");
-            write(2, "ERROR\n", 6);
+            // write(2, "ERROR\n", 6);
             exit(1);
         }
     }

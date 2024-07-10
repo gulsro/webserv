@@ -51,6 +51,7 @@ class HttpResponse
 		HttpRequest			*getRequest() const { return Request; }
 		const	std::string	getResource() const { return resource + index; }
 		const	std::string	&getContent() { return content; }
+		const	bool		&getCompleted() { return completed; }
 
 		//Setter
 		void		setRequest(HttpRequest	*request) { Request = request; }
@@ -59,7 +60,8 @@ class HttpResponse
 		void		setContent(std::string str) { content = str; }
 		void		checkMethod();
 		void		createResponse(enum e_statusCode code);
-		// friend void		HttpRequest::createResponseHelper(enum e_statusCode code) { Response->createResponse(code);} 
+		void		setCompleted(bool value) { completed = value; }
+	
 		void		createResponse_File(std::string filename);
 		std::string	getMIMEtype() const;
 		void		checkURI();

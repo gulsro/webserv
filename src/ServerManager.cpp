@@ -273,6 +273,7 @@ int ServerManager::handleIncoming(int fd)
 	catch (const std::exception& e)
 	{
 		currClient->getResponse()->setContent(e.what());
+		currClient->getResponse()->setCompleted(true);
 	}
 	// else continue reading
     if (currClient->getReadyToFlag() == WRITE)
