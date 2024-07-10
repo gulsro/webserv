@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <iterator>
 #include <cctype>
+#include <csignal>
 #include <cstring>
 #include <memory>
 #include <functional>
@@ -50,7 +51,6 @@
 
 
 void readRequest(int clientFd);
-
 
 
 #endif
