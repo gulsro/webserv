@@ -24,6 +24,7 @@ FILES =	main.cpp \
 		Location.cpp \
 		HttpUtils.cpp \
 		Cgi.cpp \
+		print.cpp \
 		request/httpParsing.cpp \
 		request/HttpRequest.cpp \
 		request/multiPart.cpp \

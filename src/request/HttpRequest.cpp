@@ -3,8 +3,6 @@
 #include "utils.hpp"
 #include <cstring>
 
-#define MAX_BODY 1000000
-
 HttpRequest::HttpRequest()
 	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false), cgi(nullptr)
 {
@@ -62,7 +60,7 @@ void	HttpRequest::checkRequestValid()
 	#endif
 	if (this->method == "POST" && this->headers.at("Content-Type").value.empty())
 		throw ErrorCodeException(STATUS_NOT_IMPLEMENTED);
-	if (this->body.size() > MAX_BODY)
+	if (this->body.size() > this->ReqLocation->getMaxBodySize())
 		throw ErrorCodeException(STATUS_TOO_LARGE);
 }
 
@@ -113,10 +111,6 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 		}
 	}
 	this->ReqLocation = nullptr;
-	if (this->ReqLocation == nullptr)
-		std::cout << "NULL Location" <<std::endl;
-	else
-		std::cout << "Selected location" << this->ReqLocation->getPath() << std::endl; 
 }
 
 void	HttpRequest::setBoundary()
@@ -135,8 +129,12 @@ void	HttpRequest::setBoundary()
 void	HttpRequest::checkUriValidation()
 {
 	if (this->uri.length() > 2048)
-	{
 		throw ErrorCodeException(STATUS_URI_TOO_LONG);
+	for (size_t i = 0; i < this->uri.length(); ++i)
+	{
+		char c = this->uri[i];
+		if (std::isdigit(c) == false && std::isalpha(c) == false && isInvalidCharForURI(c) == true)
+			throw ErrorCodeException(STATUS_BAD_REQUEST);
 	}
 }
 

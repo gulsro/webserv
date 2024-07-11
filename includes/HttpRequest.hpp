@@ -109,3 +109,5 @@ class	HttpRequest
 
 		std::vector<std::string> splitByBoundary();
 };
+
+void	printParsedRequest(HttpRequest *Request);

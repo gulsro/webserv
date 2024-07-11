@@ -33,7 +33,3 @@ std::string	createErrorResponse(int code)
 		}
 		return ostream.str();
 }
-// const char*	HttpResponse::ErrorCodeException::what() const throw()
-// {
-// 	return createErrorResponse(errorCode); 
-// }

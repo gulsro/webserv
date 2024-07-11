@@ -74,7 +74,7 @@ std::string trim(const std::string &str, const char c);
 std::string	returnStatusMessage(int statusCode);
 std::string	createErrorResponse(int code);
 std::vector<std::string> splitForKeyValue(const std::string &str, char delimiter);
-bool	isInvalidChar(const	char c);
+bool	isInvalidCharForURI(const	char c);
 bool	fileExistsInDir(const std::string dir, const std::string filename);
 
 class ErrorCodeException : public std::exception
