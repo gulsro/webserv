@@ -1,11 +1,6 @@
 #pragma once
 
-#include <iostream>
-#include <string>
-#include <map>
-#include <vector>
-#include <sstream>
-#include <fstream>
+#include "Webserv.hpp"
 
 # define GREEN "\033[0;92m"
 # define YELLOW "\e[38;5;208m"

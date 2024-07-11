@@ -1,8 +1,6 @@
+#include "Webserv.hpp"
 #include "utils.hpp"
-#include "HttpRequest.hpp"
-#include "HttpResponse.hpp"
 #include <sys/stat.h> // stat()
-#include <filesystem> // filesystem
 
 
 const std::string	HttpRequest::getHeaderValue(const std::string &key) const

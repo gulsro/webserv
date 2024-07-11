@@ -7,7 +7,7 @@
 #include <vector>
 #include <unistd.h>
 #include <sys/socket.h>
-# include <netdb.h> // getaddrinfo()
+#include <netdb.h> // getaddrinfo()
 #include <sys/types.h> //accept()
 #include <map>
 #include <poll.h> // poll() and struct
@@ -19,11 +19,7 @@
 #include <iterator>
 #include <cctype>
 #include <cstring>
-#include <memory>
 #include <functional>
-#include <poll.h>
-#include <sys/types.h> 
-#include <unistd.h>
 #include <sys/wait.h>
 
 #include "Config.hpp"
