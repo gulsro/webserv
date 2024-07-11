@@ -55,7 +55,6 @@ void Cgi::setCgiFile(std::string s){
 // parse in tmp and copy it to char* env
 void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     std::vector<std::string> tmp;
-    std::vector<char *> CgiEnv;
 
     tmp.push_back("GATEWAY_INTERFACE=CGI/1.1");
     tmp.push_back("SERVER_NAME=" + ser.getHost()); //server hostname
@@ -63,17 +62,13 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     tmp.push_back("SERVER_PROTOCOL=HTTP/1.1");
     tmp.push_back("SERVER_PORT=" + std::to_string(ser.getPort())); //server port
     tmp.push_back("REQUEST_METHOD=" + req.getMethod()); //request method
-    tmp.push_back("PATH_INFO=" + loc.getRoot() + req.getURI()); // <<< not sure about this
-    tmp.push_back("SCRIPT_NAME=/index.py"); //cgi pass
+    tmp.push_back("PATH_INFO=" + loc.getRoot() + req.getURI()); // full path to the cgi file
+    tmp.push_back("SCRIPT_NAME=" + req.getURI()); //file name witout the path
     tmp.push_back("DOCUMENT_ROOT=" + loc.getRoot()); //location getRoot()
     tmp.push_back("QUERY_STRING=" + req.getQueryString()); //getQuery
     if (req.getMethod() == "POST"){
         tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
         tmp.push_back("CONTENT_LENGTH=" + std::to_string(req.getContentLength()));
-    }
-    for (std::string s : tmp){
-        std::cout << s << std::endl;
-        CgiEnv.push_back(&s.front());
     }
     this->env = new char*[tmp.size() + 1];
     int i = 0;
