@@ -124,3 +124,4 @@ bool	fileExistsInDir(const std::string dir, const std::string filename)
 
 	return file.is_open();
 }
+

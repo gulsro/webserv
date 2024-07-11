@@ -1,7 +1,6 @@
 #include "utils.hpp"
 #include "HttpResponse.hpp"
 
-
 std::string	createErrorResponse(int code)
 {
     #ifdef FUNC

@@ -6,6 +6,7 @@
 #include "Location.hpp"
 #include "Cgi.hpp"
 
+
 class	HttpResponse;
 class	Location;
 class	Server;

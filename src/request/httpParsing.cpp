@@ -1,5 +1,10 @@
-#include "Webserv.hpp"
+#include "HttpRequest.hpp"
+#include "HttpResponse.hpp"
 
+#include <sys/types.h> // recv()
+#include <sys/socket.h> // recv()
+#include <cstring> // strerror()
+#include <unistd.h>
 
 #define BUFFER_SIZE 4096 // common page size
 
