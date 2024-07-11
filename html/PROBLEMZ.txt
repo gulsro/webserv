@@ -1,0 +1,10 @@
+1- localhost:8080/shopping_list.py 
+    when i post a shopping item
+
+#FIXED - when i create the file and gave it write permisison
+
+2- localhost:8080/shopping_list.py 
+    i could post shopping item, it was not visible in text though
+    then change to
+    localhost:8080/index.py 
+    CRASHEDDD

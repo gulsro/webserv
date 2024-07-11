@@ -5,7 +5,7 @@ import os
 
 
 # to store shopping list items
-SHOPPING_LIST_FILE = "/shopping_list.txt"
+SHOPPING_LIST_FILE = "./html/shopping_list.txt"
 
 print("Content-Type: text/html\r\n\r\n")
 print()
@@ -25,13 +25,21 @@ def add_item_to_shopping_list(item):
 
 request_method = os.environ.get("REQUEST_METHOD", "GET")
 
+#print(f"Debug: Request method - {request_method}")
+
+
 # init an empty list for shopping items
 shopping_list = read_shopping_list()
 new_item = ""
 
 if request_method == "POST":
     form = cgi.FieldStorage()
-    new_item = form.getvalue("item", "").strip()
+    #print(f"Debug: Form data received - {form}")
+
+    new_item = form.getvalue("item")
+    #print(f"Debug: New item raw value - {new_item}")
+
+    #print(f"New item: {new_item}")
     if new_item:
         add_item_to_shopping_list(new_item)
         shopping_list.append(new_item)
