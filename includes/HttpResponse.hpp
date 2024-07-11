@@ -71,6 +71,7 @@ class HttpResponse
 		void		checkResourceType();
         bool        checkAllowedMethod();
 		bool		checkIndexFileExists(const std::string path, const std::string filename);
+		bool		checkResourcePermission(const std::string path);
 		void		methodGet();
 		void		methodPost();
 		void		methodDelete();

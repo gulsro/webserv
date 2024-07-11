@@ -315,14 +315,17 @@ void	ServerManager::sendResponse(int clientFd)
 	//checking is clientFd is still connected
 	//also check "if reading request is done" therefor we need a flag ?
 	//if (fd ....)
-
-    // currClient->setResponse(new HttpResponse);
-    currClient->getResponse()->setRequest(currClient->getRequest());
-    currClient->getResponse()->runCgi();
-    currClient->getResponse()->checkMethod();
-    // Response.setRequest(&Request);
-    // Response.checkMethod();
-
+    try
+    {
+        currClient->getResponse()->setRequest(currClient->getRequest());
+        currClient->getResponse()->runCgi();
+        currClient->getResponse()->checkMethod();
+    }
+    catch(const std::exception& e)
+    {
+        currClient->getResponse()->setContent(e.what());
+		currClient->getResponse()->setCompleted(true);
+    }
     std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
     std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
 
@@ -369,26 +372,6 @@ bool isFdConnected(int fd, std::vector<int>& connectedClientFds)
     else
         return false;
 }
-
-// void readRequest(int clientFd)
-// {
-//     //Response response(clientFd);
-// 	//response.handle_request();
-//   const char* response = "HTTP/1.1 200 OK\r\nContent-Length: 7\r\n\r\nKOLONYA";
-
-//   // Send the response to the client
-//   if (write(clientFd, response, strlen(response)) == -1) {
-//     perror("write");
-//     // Consider closing the client socket (optional)
-//   }
-
-//     if (close(clientFd) == -1)
-//         exit(1);
-// }
-
-// int valueToBeDeleted = 3;
-//     auto it = std::find(vector.begin(), vector.end(),
-//                    valueToBeDeleted);
 
 void	ServerManager::rmFdFromPollfd(int fd)
 {
