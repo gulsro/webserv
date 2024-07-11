@@ -141,7 +141,7 @@ std::string    Cgi::execCgi(){
     ssize_t bytes = 1;
 //close write end and read output from pipe
     close(r_pip[0]);
-    write(r_pip[1], getPostBody(), getContentLen());
+    // write(r_pip[1], getPostBody(), getContentLen());
     close(r_pip[1]);
     close(w_pip[1]);
     if (waitpid(pid, &status, 0) < 0)
