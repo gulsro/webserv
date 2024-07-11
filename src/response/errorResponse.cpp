@@ -1,7 +1,6 @@
 #include "utils.hpp"
 #include "HttpResponse.hpp"
 
-
 std::string	createErrorResponse(int code)
 {
     #ifdef FUNC
@@ -33,7 +32,3 @@ std::string	createErrorResponse(int code)
 		}
 		return ostream.str();
 }
-// const char*	HttpResponse::ErrorCodeException::what() const throw()
-// {
-// 	return createErrorResponse(errorCode); 
-// }

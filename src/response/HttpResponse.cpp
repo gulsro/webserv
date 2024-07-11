@@ -92,7 +92,8 @@ void	HttpResponse::createResponse_File(std::string filename)
 
 			ostream << "HTTP/1.1 200 OK\r\n";
 			ostream << "Content-Length: " << fileContent.str().length() << "\r\n";
-			ostream << "Content-Type: " << getMIMEtype() << "\r\n";
+			setMIMEtype(filename);
+			ostream << "Content-Type: " << this->getMIMEtype() << "\r\n";
 			ostream << "\r\n";
 			// print body part
 			ostream << fileContent.str();

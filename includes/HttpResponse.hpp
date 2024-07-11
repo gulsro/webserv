@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include <unordered_map>
 #include "utils.hpp"
 #include <cstdlib> // remove(), std::system()
@@ -51,17 +52,21 @@ class HttpResponse
 		HttpRequest			*getRequest() const { return Request; }
 		const	std::string	getResource() const { return resource + index; }
 		const	std::string	&getContent() { return content; }
+		const	bool		&getCompleted() { return completed; }
+		const	std::string	getMIMEtype() const { return MIMEtype; }
 
 		//Setter
 		void		setRequest(HttpRequest	*request) { Request = request; }
         void    	setResource();
 		void		setResourceType(enum e_resourceType type) { resourceType = type; }
 		void		setContent(std::string str) { content = str; }
-		void		checkMethod();
+		void		setCompleted(bool value) { completed = value; }
+		void		setMIMEtype(const std::string &filename);
+		
 		void		createResponse(enum e_statusCode code);
-		// friend void		HttpRequest::createResponseHelper(enum e_statusCode code) { Response->createResponse(code);} 
 		void		createResponse_File(std::string filename);
-		std::string	getMIMEtype() const;
+	
+		void		checkMethod();
 		void		checkURI();
 		void		checkResourceType();
         bool        checkAllowedMethod();
@@ -72,7 +77,6 @@ class HttpResponse
 		void		deleteFile();
 		void		deleteDir();
         void        postFile();
-        // void        postFile();
 
 		void		runCgi();
 };

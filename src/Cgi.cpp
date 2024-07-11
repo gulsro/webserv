@@ -89,10 +89,10 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     }
     this->env = new char*[tmp.size() + 1];
     int i = 0;
-    for (std::vector<std::string>::iterator t = tmp.begin(); t != tmp.end(); t++){
+    for (std::vector<std::string>::iterator t = tmp.begin(); t != tmp.end(); ++t){
         this->env[i] = new char[(*t).size() + 1];
         strcpy(this->env[i], (*t).c_str());
-        i++;
+        ++i;
     }
     this->env[tmp.size()] = NULL;
 }
@@ -120,7 +120,7 @@ std::string    Cgi::execCgi(){
             perror("write pipe failed"); //error
         if (execve(cgiFile, argv, env) < 0){
             perror("child");
-            write(2, "ERRORMAAA\n", 6);
+            // write(2, "ERROR\n", 6);
             exit(1);
         }
     }

@@ -3,8 +3,6 @@
 #include "utils.hpp"
 #include <cstring>
 
-#define MAX_BODY 1000000
-
 HttpRequest::HttpRequest()
 	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false), cgi(nullptr)
 {
@@ -62,7 +60,7 @@ void	HttpRequest::checkRequestValid()
 	#endif
 	if (this->method == "POST" && this->headers.at("Content-Type").value.empty())
 		throw ErrorCodeException(STATUS_NOT_IMPLEMENTED);
-	if (this->body.size() > MAX_BODY)
+	if (this->body.size() > this->ReqLocation->getMaxBodySize())
 		throw ErrorCodeException(STATUS_TOO_LARGE);
 }
 
@@ -128,18 +126,15 @@ void	HttpRequest::setBoundary()
 	}
 }
 
-void	HttpRequest::checkUriValid()
+void	HttpRequest::checkUriValidation()
 {
-	if (this->uri.size() > 2048)
-	{
+	if (this->uri.length() > 2048)
 		throw ErrorCodeException(STATUS_URI_TOO_LONG);
-	}
-	for (size_t i = 0; i < this->uri.size(); i++)
+	for (size_t i = 0; i < this->uri.length(); ++i)
 	{
-		if (!isdigit(this->uri[i]) && !isalpha(this->uri[i]) && !isInvalidChar(this->uri[i]))
-		{
+		char c = this->uri[i];
+		if (std::isdigit(c) == false && std::isalpha(c) == false && isInvalidCharForURI(c) == true)
 			throw ErrorCodeException(STATUS_BAD_REQUEST);
-		}
 	}
 }
 
@@ -152,10 +147,10 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	std::cout << YELLOW << "[FUNCTION] parseRequestLine" << DEFAULT << std::endl;
 	#endif
 
-	std::cout << GREEN << line << DEFAULT << std::endl;
 	stream >> this->method >> this->uri >> rawVersion;
 	std::istringstream	iss(rawVersion);
 	std::getline(iss, this->version, '\r');
+	checkUriValidation();
 	// check query string in URI
 	if (this->uri.find('?') != std::string::npos)
 	{

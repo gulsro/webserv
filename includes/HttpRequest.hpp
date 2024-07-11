@@ -6,6 +6,7 @@
 #include "Location.hpp"
 #include "Cgi.hpp"
 
+
 class	HttpResponse;
 class	Location;
 class	Server;
@@ -74,6 +75,7 @@ class	HttpRequest
 		const	bool		&getIsChunked() const { return isChunked; }
 		
 		Cgi*		getCgi() const  { return cgi; }
+		const	std::string	getHeaderValue(const std::string &name) const;
 
 		//Setters
 		void	setRawRequest(std::string buffer) { this->rawRequest = buffer; }
@@ -91,13 +93,15 @@ class	HttpRequest
 		bool	parseHttpRequest(const std::string &rawRequest);
 		bool	parseRequestLine(const std::string &line);
 		bool	parseHeader(const std::string &line);
-		const	std::string	getHeaderValue(const std::string &name) const;
+
+		//Checkers
 		void	checkRequestSize();
 		void	checkContentType();
 		void	checkRequestValid();
 		void	checkLocations();
-		void	checkUriValid();
+		void	checkUriValidation();
 		void	checkAllowedMethods();
+	
 		void	handleMultiPartForm();
 		void	handleChunkedBody(const size_t bodyStart, const std::string rawRequest);
 		void	makeKeyValuePair(int i, const std::string str);
@@ -106,3 +110,5 @@ class	HttpRequest
 
 		std::vector<std::string> splitByBoundary();
 };
+
+void	printParsedRequest(HttpRequest *Request);
