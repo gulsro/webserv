@@ -75,12 +75,12 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
         std::cout << s << std::endl;
         CgiEnv.push_back(&s.front());
     }
-    this->env = new char*[tmp.size()];
+    this->env = new char*[tmp.size() + 1];
     int i = 0;
-    for (std::vector<std::string>::iterator t = tmp.begin(); t != tmp.end(); t++){
+    for (std::vector<std::string>::iterator t = tmp.begin(); t != tmp.end(); ++t){
         this->env[i] = new char[(*t).size() + 1];
         strcpy(this->env[i], (*t).c_str());
-        i++;
+        ++i;
     }
     this->env[i] = NULL;
 }
