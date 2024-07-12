@@ -142,7 +142,8 @@ void Server::bindSocket()
 
 void Server::listenSocket()
 {
-    if (listen(this->serverFd, 10) == -1)
+    // Numbee of the client connections that the kernel will queue for this listening socket
+    if (listen(this->serverFd, 400) == -1)
     {
         close(this->serverFd);
         throw std::runtime_error("Error: listen()");

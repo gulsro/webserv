@@ -275,7 +275,7 @@ int ServerManager::handleIncoming(int fd)
     //readRequest(fd);
 	// Server *currServer = this->getServer(fd);
 	Client *currClient;
-    
+
 	currClient = mapClientFd[fd];
     try
     {
@@ -289,8 +289,12 @@ int ServerManager::handleIncoming(int fd)
 	}
 	catch (const std::exception& e)
 	{
-		currClient->getResponse()->setContent(e.what());
-		currClient->getResponse()->setCompleted(true);
+        if (currClient)
+        {
+            currClient->getResponse()->setContent(e.what());
+            currClient->getResponse()->setCompleted(true);
+        }
+        return 0;
 	}
 	// else continue reading
     if (currClient->getReadyToFlag() == WRITE)
