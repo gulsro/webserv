@@ -122,7 +122,7 @@ void	HttpRequest::setBoundary()
 	if (pos != std::string::npos)
 	{
 		std::string boundary = str.substr(pos + 9);
-		this->boundaryBegin = "--" + boundary + '\n';
+		this->boundaryBegin = "--" + boundary + "\r\n";
 		this->boundaryEnd = "--" + boundary + "--";
 	}
 }
