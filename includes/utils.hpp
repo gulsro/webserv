@@ -76,6 +76,7 @@ std::string	createErrorResponse(int code);
 std::vector<std::string> splitForKeyValue(const std::string &str, char delimiter);
 bool	isInvalidCharForURI(const	char c);
 bool	fileExistsInDir(const std::string dir, const std::string filename);
+bool	fileExists(const std::string path);
 
 class ErrorCodeException : public std::exception
 {

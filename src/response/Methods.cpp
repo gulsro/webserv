@@ -260,6 +260,8 @@ void	HttpResponse::checkMethod()
 	std::string	method = Request->getMethod();
 
 	checkResourceType();
+	if (fileExists(this->resource) == false)
+		throw ErrorCodeException(STATUS_NOT_FOUND);
 	if (checkResourcePermission(this->resource) == false)
 		throw ErrorCodeException(STATUS_FORBIDDEN);
 	if (method == "GET" || (method == "POST" && Request->contentLength == 0 ))

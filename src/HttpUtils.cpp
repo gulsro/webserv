@@ -1,5 +1,6 @@
 #include "utils.hpp"
 #include <regex>
+#include <unistd.h>
 
 std::string trim(const std::string &str, const char c)
 {
@@ -125,3 +126,9 @@ bool	fileExistsInDir(const std::string dir, const std::string filename)
 	return file.is_open();
 }
 
+bool	fileExists(const std::string path)
+{
+	if (access(path.c_str(), F_OK) == 0)
+		return true;
+	return false;
+}
