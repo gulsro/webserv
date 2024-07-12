@@ -72,7 +72,6 @@ void Cgi::setPostBody(HttpRequest& req) {
     std::strcpy(postBody, s.c_str());
 }
 
-
 void Cgi::setContentLen(HttpRequest& req) {
     contentLen = req.getContentLength();
 }
@@ -92,7 +91,7 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     tmp.push_back("DOCUMENT_ROOT=" + loc.getRoot()); //location getRoot()
     tmp.push_back("QUERY_STRING=" + req.getQueryString()); //getQuery
     if (req.getMethod() == "POST"){
-        tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
+        // tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
         tmp.push_back("CONTENT_LENGTH=" + std::to_string(req.getContentLength()));
     }
     this->env = new char*[tmp.size() + 1];

@@ -17,13 +17,22 @@ void	HttpRequest::makeKeyValuePair(int n, const std::string str)
 			std::string tmp = splittedStr[i].substr(0, tmpPos);
 			splittedStr[i] = tmp;
 		}
+		if (splittedStr[i].find("filename=") != std::string::npos)
+		{
+			this->body = splittedStr[i];
+			break;
+		}
 		std::vector<std::string> keyValue = splitForKeyValue(splittedStr[i], '=');
 		std::string key = trim(keyValue[0], ' ');
 		std::string value = trim(keyValue[1], '"');
 		this->parts[n].pairs.push_back(std::make_pair(key, value));
 		if (key == "filename")
+		{
 			this->parts[n].partFilename = value;
+			this->body = key + "=" + value;
+		}
 	}
+	std::cout << "keyValue body : " << this->body << std::endl;
 }
 
 void	HttpRequest::handlePartInfo(const int n, const std::string partInfo)
