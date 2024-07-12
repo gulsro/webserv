@@ -64,8 +64,12 @@ bool	ServerManager::readRequest(Client *Client)
 
 	if (byteRead == 0)
 	{
-		close(fd);
-		std::cout << "Disconnection with " << fd << std::endl;
+		rmFdFromPollfd(fd);
+    	//delete mapClientFd[fd];
+    	mapClientFd[fd] = nullptr;
+    	close(fd);
+		//std::cout << "Disconnection with " << fd << std::endl;
+		throw std::runtime_error("revc()");
 	}
 	else if (byteRead == -1)
 	{
