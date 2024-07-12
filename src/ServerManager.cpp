@@ -275,7 +275,7 @@ int ServerManager::handleIncoming(int fd)
     //readRequest(fd);
 	// Server *currServer = this->getServer(fd);
 	Client *currClient;
-
+    
 	currClient = mapClientFd[fd];
     try
     {
