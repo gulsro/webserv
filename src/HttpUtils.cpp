@@ -46,7 +46,6 @@ std::vector<std::string> split(const std::string &str, char delimiter)
 	return tokens;
 }
 
-
 std::string	returnStatusMessage(int statusCode)
 {
 	#ifdef FUNC
@@ -90,7 +89,7 @@ std::string	returnStatusMessage(int statusCode)
 		case 413:
 			return ("Content Too Large");
 		case 414:
-			return ("URI TOO LONG");
+			return ("URI Too Long");
 		case 418:
 			return ("I'm a teapot");
 		case 500:
@@ -106,7 +105,7 @@ std::string	returnStatusMessage(int statusCode)
 	}
 }
 
-bool	isInvalidChar(const	char c)
+bool	isInvalidCharForURI(const char c)
 {
 	std::string	specialChar = "._~:/?#[]@!$&'()*+,;=%";
 
@@ -125,3 +124,4 @@ bool	fileExistsInDir(const std::string dir, const std::string filename)
 
 	return file.is_open();
 }
+

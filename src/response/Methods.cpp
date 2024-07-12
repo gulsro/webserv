@@ -4,7 +4,6 @@
 #include <sys/stat.h> // stat()
 #include <filesystem> // filesystem
 
-
 const std::string	HttpRequest::getHeaderValue(const std::string &key) const
 {
     #ifdef FUNC
@@ -18,22 +17,91 @@ const std::string	HttpRequest::getHeaderValue(const std::string &key) const
 		return "";
 }
 
-std::string	HttpResponse::getMIMEtype() const
+void	HttpResponse::setMIMEtype(const std::string &filename)
 {
-    #ifdef FUNC
-	    std::cout << YELLOW << "[FUNCTION] getMIMEtype" << DEFAULT << std::endl;
+	#ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] setMIMEtype" << DEFAULT << std::endl;
 	#endif
 
+	std::unordered_map<std::string, std::string> mimeTypes = 
+	{
+		{".html", "text/html"},
+		{".htm", "text/html"},
+		{".css", "text/css"},
+		{".js", "text/javascript"},
+		{".json", "application/json"},
+		{".png", "image/png"},
+		{".jpg", "image/jpeg"},
+		{".jpeg", "image/jpeg"},
+		{".gif", "image/gif"}
+	};
+	// if  Content-Type exists in the request Header
 	std::string contentType = Request->getHeaderValue("Content-Type");
-
-	if (contentType.empty())
-		return "";
-
-	size_t	semicolonPos = contentType.find(';');
-	if (semicolonPos != std::string::npos)
-		return contentType.substr(0, semicolonPos);
+	if (!contentType.empty())
+	{
+		size_t	semicolonPos = contentType.find(';');
+		if (semicolonPos != std::string::npos)
+		this->MIMEtype = contentType.substr(0, semicolonPos);
+	}
 	else
-		return contentType;
+	{
+		size_t pos = filename.find_last_of('.');
+		std::string fileExtension = "";
+
+		if (pos == std::string::npos)
+			this->MIMEtype = "application/octet-stream"; // Default for unknown type
+		else
+			fileExtension = filename.substr(pos);
+		auto	it = mimeTypes.find(fileExtension);
+		if (it != mimeTypes.end())
+			this->MIMEtype = it->second;
+		else
+			this->MIMEtype = "application/octet-stream"; // Default for unknown type
+	}
+}
+
+bool	HttpResponse::checkResourcePermission(const std::string path)
+{
+	#ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] checkResourcePermission" << DEFAULT << std::endl;
+	#endif
+
+	const char	*file;
+	if (this->Request->cgi != nullptr)
+		file = this->Request->cgi->getCgiFile();
+	else
+	 	file = path.c_str();
+	std::string	method = this->Request->getMethod();
+	bool		readable = false, writable = false, executable = false;  
+	
+	if (access(file, R_OK) == 0)
+		readable = true;
+	if (access(file, W_OK) == 0)
+		writable = true;
+	if (access(file, X_OK) == 0)
+		executable = true;
+
+	if (this->Request->cgi != nullptr)
+	{
+		if (executable == true)
+			return true;
+	}
+	if (method == "GET")
+	{
+		if (readable == true)
+			return true;
+	}
+	else if (method == "POST" )
+	{
+		if (readable == true && writable == true)
+			return true;
+	}
+	else if (method == "DELETE")
+	{
+		if (writable == true)
+			return true;
+	}
+	return false;
 }
 
 void	HttpResponse::checkResourceType()
@@ -96,9 +164,7 @@ void	HttpResponse::methodGet()
 	{
 		checkURI();
 		if (completed == false)
-		{
 			createResponse_File(getResource());
-		}
 	}
 }
 
@@ -193,7 +259,9 @@ void	HttpResponse::checkMethod()
 	#endif
 	std::string	method = Request->getMethod();
 
-	this->checkResourceType();
+	checkResourceType();
+	if (checkResourcePermission(this->resource) == false)
+		throw ErrorCodeException(STATUS_FORBIDDEN);
 	if (method == "GET" || (method == "POST" && Request->contentLength == 0 ))
 		methodGet();
 	else if (method == "POST")

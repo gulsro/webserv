@@ -6,10 +6,10 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include <unordered_map>
 
 # define GREEN "\033[0;92m"
 # define YELLOW "\e[38;5;208m"
-// # define RED "\033[1;91m"
 # define GREY "\033[0;90m"
 # define PURPLE	"\033[38;2;200;160;255m"
 # define BLUE "\033[38;5;38m"
@@ -74,7 +74,7 @@ std::string trim(const std::string &str, const char c);
 std::string	returnStatusMessage(int statusCode);
 std::string	createErrorResponse(int code);
 std::vector<std::string> splitForKeyValue(const std::string &str, char delimiter);
-bool	isInvalidChar(const	char c);
+bool	isInvalidCharForURI(const	char c);
 bool	fileExistsInDir(const std::string dir, const std::string filename);
 
 class ErrorCodeException : public std::exception

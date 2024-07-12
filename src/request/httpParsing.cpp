@@ -154,36 +154,6 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 	}
 	setRequestedPort();
 	setContentType();
-	#ifdef FUNC
-		std::cout << PURPLE << "Method	:	" << this->method << DEFAULT<< std::endl;
-		std::cout << PURPLE << "URI	:	" << this->uri << DEFAULT<< std::endl;
-		std::cout << PURPLE << "Version	:	" << this->version << DEFAULT<< std::endl;
-	#endif
-	#ifdef FUNC
-		if (!this->queryPairs.empty())
-		{
-			std::cout << "________QUERY________" << std::endl;
-			std::cout << PURPLE << "QUERY_STRING : " << this->queryString << std::endl << std::endl;
-			for (const auto& [key, value] : queryPairs)
-			{
-				std::cout << PURPLE << "key [ " << key << " ]"  << DEFAULT;
-				std::cout << PURPLE << " & value [ " << value << " ]" << DEFAULT << std::endl;
-				std::cout << std::endl;
-			}
-		}
-	#endif
-	#ifdef FUNC
-		auto it = headers.begin();
-		std::cout << GREEN "________HEADERS________" << std::endl;
-		while (it != headers.end())
-		{
-			std::cout << GREY << "[ " << it->first << " ]" << std::endl;
-			std::cout << PURPLE << it->second.key << " : " << it->second.value << DEFAULT << std::endl;
-			++it; 
-		}
-		std::cout << GREEN << "requestedPort : " << this->requestedPort << std::endl;
-		std::cout << GREEN << "contentType : " << this->contentType << std::endl;
-	#endif
 	// parse body
 	if (this->contentLength > 0 || isChunked == true)
 	{
@@ -196,13 +166,11 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 			return false;
 		}
 		this->body = rawRequest.substr(bodyStart, this->contentLength);
-		#ifdef FUNC
-			std::cout << YELLOW << "[FUNCTION] parsing body" << DEFAULT << std::endl;
-			std::cout << PURPLE << "contentLength	: " << contentLength << DEFAULT << std::endl;
-			std::cout << PURPLE << "body	: " << this->body << DEFAULT << std::endl;
-		#endif	
 	}
 	checkContentType();
+	#ifdef FUNC
+		printParsedRequest(this);
+	#endif	
 	return true;
 }
 

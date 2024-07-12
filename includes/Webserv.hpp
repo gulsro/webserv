@@ -7,7 +7,7 @@
 #include <vector>
 #include <unistd.h>
 #include <sys/socket.h>
-# include <netdb.h> // getaddrinfo()
+#include <netdb.h> // getaddrinfo()
 #include <sys/types.h> //accept()
 #include <map>
 #include <poll.h> // poll() and struct
@@ -21,11 +21,7 @@
 #include <cctype>
 #include <csignal>
 #include <cstring>
-#include <memory>
 #include <functional>
-#include <poll.h>
-#include <sys/types.h> 
-#include <unistd.h>
 #include <sys/wait.h>
 
 #include "Config.hpp"
@@ -38,7 +34,6 @@
 #include "Cgi.hpp"
 #include "utils.hpp"
 
-
 #define BOLD "\033[1m"
 #define RES "\033[0m"
 #define RED "\033[31m"
@@ -49,8 +44,6 @@
 #define CYA "\033[36m"
 #define WHI "\033[37m"
 
-
 void readRequest(int clientFd);
-
 
 #endif
