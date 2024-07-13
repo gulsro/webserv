@@ -74,7 +74,6 @@ bool	ServerManager::readRequest(Client *Client)
 	else if (byteRead == -1)
 	{
 		close(fd);
-		//delete client object
 		throw ErrorCodeException(STATUS_BAD_REQUEST);
 	}
 	else
@@ -135,19 +134,16 @@ std::vector<std::string>	splitHeaderByLine(const std::string &rawRequest)
 
 bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 {
-	std::istringstream	stream(rawRequest);
-	std::vector<std::string>	lines = splitHeaderByLine(rawRequest);
-
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] parseHttpRequest" << DEFAULT << std::endl;
 	#endif
+	std::istringstream	stream(rawRequest);
+	std::vector<std::string>	lines = splitHeaderByLine(rawRequest);
+	// delete client fd?
 	if (lines.empty())
-		std::cerr << "Invalid HTTP request format." << std::endl;
+		throw std::runtime_error("Invalid HTTP request format.");
 	if (!parseRequestLine(lines[0]))
-	{
-		std::cerr << "Invalid HTTP request line." << std::endl;
-		return false;
-	}
+		throw std::runtime_error("Invalid HTTP request line.");
 	//parse headers
 	for (size_t i = 1; i < lines.size(); ++i)
 	{
@@ -156,6 +152,8 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		if (!parseHeader(lines[i]))
 			return false;
 	}
+	if (this->method == "POST" && this->contentLength == 0)
+		throw ErrorCodeException(STATUS_LENGTH_REQUIRED);
 	setRequestedPort();
 	setContentType();
 	// parse body
@@ -165,10 +163,7 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		if (isChunked == true)
 			handleChunkedBody(bodyStart, rawRequest);
 		if (bodyStart + this->contentLength > rawRequest.size())
-		{
-			std::cerr << "Incomplete HTTP request body." << std::endl;
-			return false;
-		}
+			throw std::runtime_error("Incomplete HTTP request body.");
 		this->body = rawRequest.substr(bodyStart, this->contentLength);
 	}
 	checkContentType();

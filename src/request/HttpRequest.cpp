@@ -200,9 +200,7 @@ bool	HttpRequest::parseHeader(const std::string &line)
 	std::vector<std::string> keyValue = splitForKeyValue(line, ':');
 	if (keyValue.size() != 2)
 	{
-		// std::cout << YELLOW << "size : " << keyValue.size() << DEFAULT << std::endl;
-		std::cerr << "Invalid header format" << std::endl;
-		return false;
+		throw std::runtime_error("Invalid header format.");
 	}
 	std::string	key = trim(keyValue[0], ' ');
 	std::string value = trim(keyValue[1], ' ');
