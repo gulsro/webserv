@@ -22,7 +22,7 @@ enum	e_statusCode
 	STATUS_CREATED = 201,		// The request resulted in a new resource being created on the server. (Location should be contained in the response.)
 	STATUS_NO_CONTENT = 204,	// successfully processed the request but there is n content to send back.
 	
-	// STATUS_MOVED = 301,			// The requested resource has been permanently moved to a new location. (New URL should be contained in the Location header.)
+	STATUS_MOVED = 301,			// The requested resource has been permanently moved to a new location. (New URL should be contained in the Location header.)
 	STATUS_FOUND = 302,			// The requested resource has been temporarily moved.
 
 	STATUS_BAD_REQUEST = 400, 	// Invalid syntax request
@@ -31,7 +31,6 @@ enum	e_statusCode
 	STATUS_NOT_ALLOWED = 405, 	// Not allowed method
 	STATUS_REQUSET_TIMEOUT = 408, // Requset timeout
 	STATUS_CONFLICT = 409, 		// The request could not be completed due to a conflict with the current state of the resource.
-	STATUS_GONE = 410,
 	STATUS_LENGTH_REQUIRED = 411, // Missing Content-Length header
 	STATUS_TOO_LARGE = 413, 	// The request entity is too large to handle.
 	STATUS_URI_TOO_LONG = 414,
