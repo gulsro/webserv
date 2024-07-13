@@ -1,5 +1,6 @@
 #include "utils.hpp"
 #include <regex>
+#include <unistd.h>
 
 std::string trim(const std::string &str, const char c)
 {
@@ -62,16 +63,10 @@ std::string	returnStatusMessage(int statusCode)
 			return ("Created");
 		case 204:
 			return ("No Content");
-		case 205:
-			return ("Reset Content");
-		case 301:
-			return ("Moved Permanently"); // redirection
 		case 302:
-			return ("Found"); // redirection
+			return ("Found"); // redirection temporary 
 		case 400:
 			return ("Bad Request");
-		case 401:
-			return ("Unauthorized");
 		case 403:
 			return ("Forbidden");
 		case 404:
@@ -82,8 +77,6 @@ std::string	returnStatusMessage(int statusCode)
 			return ("Reguest Timeout");
 		case 409:
 			return ("Conflict");
-		case 410:
-			return ("Gone"); // Requsted uri has been intentionally removed or unlikely to return.
 		case 411:
 			return ("Length Required"); // missing "Content-Length" header
 		case 413:
@@ -94,8 +87,6 @@ std::string	returnStatusMessage(int statusCode)
 			return ("I'm a teapot");
 		case 500:
 			return ("Internal Server Error");
-		case 503:
-			return ("Sevice Unavailable");
 		case 504:
 			return ("Gateway Timeout");
 		case 505:
@@ -125,3 +116,9 @@ bool	fileExistsInDir(const std::string dir, const std::string filename)
 	return file.is_open();
 }
 
+bool	fileExists(const std::string path)
+{
+	if (access(path.c_str(), F_OK) == 0)
+		return true;
+	return false;
+}

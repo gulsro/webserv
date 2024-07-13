@@ -10,6 +10,7 @@ print("Content-Type: text/html\r\n\r\n")
 print()
 
 form = cgi.FieldStorage()
+print(form)
 
 # if "id " not in form:
 #     pageId = "BANANA"

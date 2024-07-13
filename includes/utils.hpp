@@ -22,16 +22,16 @@ enum	e_statusCode
 	STATUS_CREATED = 201,		// The request resulted in a new resource being created on the server. (Location should be contained in the response.)
 	STATUS_NO_CONTENT = 204,	// successfully processed the request but there is n content to send back.
 	
-	STATUS_MOVED = 301,			// The requested resource has been permanently moved to a new location. (New URL should be contained in the Location header.)
+	// STATUS_MOVED = 301,			// The requested resource has been permanently moved to a new location. (New URL should be contained in the Location header.)
 	STATUS_FOUND = 302,			// The requested resource has been temporarily moved.
 
 	STATUS_BAD_REQUEST = 400, 	// Invalid syntax request
-	STATUS_UNAUTHORIZED = 401,
 	STATUS_FORBIDDEN = 403, 	// No permission to access the requested resource.
 	STATUS_NOT_FOUND = 404, 	// The requested resource couldn't be found on the server.(Non-existent page)
 	STATUS_NOT_ALLOWED = 405, 	// Not allowed method
 	STATUS_REQUSET_TIMEOUT = 408, // Requset timeout
 	STATUS_CONFLICT = 409, 		// The request could not be completed due to a conflict with the current state of the resource.
+	STATUS_GONE = 410,
 	STATUS_LENGTH_REQUIRED = 411, // Missing Content-Length header
 	STATUS_TOO_LARGE = 413, 	// The request entity is too large to handle.
 	STATUS_URI_TOO_LONG = 414,
@@ -76,6 +76,7 @@ std::string	createErrorResponse(int code);
 std::vector<std::string> splitForKeyValue(const std::string &str, char delimiter);
 bool	isInvalidCharForURI(const	char c);
 bool	fileExistsInDir(const std::string dir, const std::string filename);
+bool	fileExists(const std::string path);
 
 class ErrorCodeException : public std::exception
 {

@@ -80,6 +80,18 @@ void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 	this->ReqServer = serverList[0]; // Default server
 }
 
+std::string returnFileExtension(const std::string path)
+{
+	std::string fileExtension;
+	size_t pos = path.find('.');
+
+	if (pos != std::string::npos)
+	{
+		fileExtension = path.substr(pos);
+	}
+	return fileExtension;
+}
+
 void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 {
 	#ifdef FUNC
@@ -100,7 +112,8 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 		if (pos != std::string::npos && path == "/*.py")
 		{
 			std::cout << MAG << "CGI extention is detected" << RES << std::endl;
-			char	c = this->uri[pos + 3];
+			std::string fileExtension = returnFileExtension(path);
+			char	c = this->uri[pos + fileExtension.length()];
 			// check file extension name is only ".py"
 			if (isdigit(c) == false && isalpha(c) == false && c != '-' && c != '_')
 			{
@@ -187,9 +200,7 @@ bool	HttpRequest::parseHeader(const std::string &line)
 	std::vector<std::string> keyValue = splitForKeyValue(line, ':');
 	if (keyValue.size() != 2)
 	{
-		// std::cout << YELLOW << "size : " << keyValue.size() << DEFAULT << std::endl;
-		std::cerr << "Invalid header format" << std::endl;
-		return false;
+		throw std::runtime_error("Invalid header format.");
 	}
 	std::string	key = trim(keyValue[0], ' ');
 	std::string value = trim(keyValue[1], ' ');
