@@ -84,8 +84,7 @@ void	HttpRequest::handleMultiPartForm()
 	std::vector<std::string>	splittedBody;
 
 	setBoundary();
-	splittedBody = splitByBoundary(); 
-	this->body = splittedBody[0];
+	splittedBody = splitByBoundary();
 	for (size_t i = 0; i < splittedBody.size(); ++i)
 	{
 		std::istringstream	iss(splittedBody[i]);

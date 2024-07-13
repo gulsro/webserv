@@ -3,6 +3,7 @@
 import cgi, os
 
 form = cgi.FieldStorage()
+print(form)
 
 # Get filename here
 fileitem = form['filename']

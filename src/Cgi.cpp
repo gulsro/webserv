@@ -19,10 +19,11 @@ Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser) : postBody(NULL), content
     std::cout << loc.getRoot()+req.getURI() << std::endl;
     setCgiFile("."+loc.getRoot()+req.getURI());
     setCgiEnv(req, loc, ser);
-    if (req.getMethod() == "POST"){
+    // if (req.getMethod() == "POST"){
+		std::cout << "____Set post body _____" << std::endl;
         setPostBody(req);
         setContentLen(req);
-    }
+    // }
 }
 
 Cgi::~Cgi(){}
@@ -142,6 +143,7 @@ std::string    Cgi::execCgi(){
     close(r_pip[0]);
     if (write(r_pip[1], getPostBody(), getContentLen()) < 0)
 		return NULL;
+	std::cout << RED << "getPostbody" << getPostBody() << DEFAULT << std::endl;
     close(r_pip[1]);
     close(w_pip[1]);
     if (waitpid(pid, &status, 0) < 0)
