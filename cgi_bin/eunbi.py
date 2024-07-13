@@ -3,13 +3,10 @@
 import cgi
 import os
 import cgitb
-cgitb.enable()  
 
-<<<<<<< HEAD
-UPLOAD_DIR = "./html"
-=======
-UPLOAD_DIR = "../html/uploads"
->>>>>>> f38e56c302dd954e48edb89dcbe227d91649e8de
+cgitb.enable()
+
+UPLOAD_DIR = "../html/upload"
 
 print("Content-Type: text/html\r\n\r\n")
 
@@ -18,30 +15,19 @@ if not os.path.exists(UPLOAD_DIR):
 
 def handle_post_request():
     form = cgi.FieldStorage()
-<<<<<<< HEAD
     fileitem = form["file"]
 
-    # getvalue() retrieves the contents of the file as a string
-    #fileitem = form.getvalue("file")
-    print(fileitem)
-
-    if fileitem.filename:
-        file_name = os.path.basename(fileitem.filename)
-        file_path = os.path.join(UPLOAD_DIR, file_name)
-=======
-    fileitem = form.getvalue("file")
-
-    if fileitem:
-        fn = os.path.basename(fileitem)
+    if fileitem.file:
+        fn = os.path.basename(fileitem.filename)
         file_path = os.path.join(UPLOAD_DIR, fn)
->>>>>>> f38e56c302dd954e48edb89dcbe227d91649e8de
-
+        # write the file to the server
         with open(file_path, 'wb') as f:
             f.write(fileitem.file.read())
 
-        return f"File '{file_name}' uploaded successfully!"
+        return f"File '{fileitem.filename}' uploaded successfully {file_path}!"
     else:
-        return f"No file was uploaded."
+        return f"No file was uploaded. {form}"
+
 
 request_method = os.environ.get("REQUEST_METHOD", "GET")
 upload_message = ""
@@ -58,7 +44,7 @@ print(f"""
 </head>
 <body>
   <h1>File Upload</h1>
-  <form enctype="multipart/form-data" action="moneybird.py" method="post">
+  <form enctype="multipart/form-data" action="eunbi.py" method="post">
     <label for="file">Upload File:</label>
     <input type="file" id="file" name="file">
     <br><br>

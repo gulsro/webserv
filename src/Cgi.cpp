@@ -121,6 +121,8 @@ std::string    Cgi::execCgi(){
         // close read end and write to pipe 
         //output of cgi script will be written in pipe
         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
+		if (access(cgiFile,X_OK) != 0)
+			throw ErrorCodeException(STATUS_FORBIDDEN);
         char *pass = new char[cgiPass.size() + 1];
         std::strcpy(pass, cgiPass.c_str());
         char *argv[3] = {pass, cgiFile, NULL};
