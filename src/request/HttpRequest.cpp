@@ -47,7 +47,7 @@ void	HttpRequest::checkContentType()
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] checkContentType" << DEFAULT << std::endl;
 	#endif
-	if (this->contentType == "multipart/form-data")
+	if (this->contentType.find("multipart/form-data") != std::string::npos)
 		handleMultiPartForm();
 	// else if (this->contentType == "application/x-www-form-urlencoded")
 	// 	handleEncoding();
@@ -183,12 +183,12 @@ void HttpRequest::setContentType()
 	{
 		std::string value = headers.at("Content-Type").value;
 
-		size_t pos = value.find(';');
-		if (pos != std::string::npos)
-		{
-			this->contentType = value.substr(0, pos);
-		}
-		else
+		// size_t pos = value.find(';');
+		// if (pos != std::string::npos)
+		// {
+		// 	this->contentType = value.substr(0, pos);
+		// }
+		// else
 			this->contentType = value;
 	}
 	else

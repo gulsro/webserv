@@ -91,7 +91,7 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     tmp.push_back("DOCUMENT_ROOT=" + loc.getRoot()); //location getRoot()
     tmp.push_back("QUERY_STRING=" + req.getQueryString()); //getQuery
     if (req.getMethod() == "POST"){
-        // tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
+        tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
         tmp.push_back("CONTENT_LENGTH=" + std::to_string(req.getContentLength()));
     }
     this->env = new char*[tmp.size() + 1];
@@ -140,7 +140,8 @@ std::string    Cgi::execCgi(){
     ssize_t bytes = 1;
 //close write end and read output from pipe
     close(r_pip[0]);
-    // write(r_pip[1], getPostBody(), getContentLen());
+    if (write(r_pip[1], getPostBody(), getContentLen()) < 0)
+		return NULL;
     close(r_pip[1]);
     close(w_pip[1]);
     if (waitpid(pid, &status, 0) < 0)
