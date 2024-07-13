@@ -16,6 +16,7 @@ if not os.path.exists(UPLOAD_DIR):
 def handle_post_request():
     form = cgi.FieldStorage()
     fileitem = form["file"]
+
     if fileitem.file:
         fn = os.path.basename(fileitem.name)
         file_path = os.path.join(UPLOAD_DIR, fn)

@@ -66,26 +66,15 @@ bool	HttpResponse::checkResourcePermission(const std::string path)
 	    std::cout << YELLOW << "[FUNCTION] checkResourcePermission" << DEFAULT << std::endl;
 	#endif
 
-	const char	*file;
-	if (this->Request->cgi != nullptr)
-		file = this->Request->cgi->getCgiFile();
-	else
-	 	file = path.c_str();
+	const char	*file = path.c_str();
 	std::string	method = this->Request->getMethod();
-	bool		readable = false, writable = false, executable = false;  
+	bool		readable = false, writable = false;  
 	
 	if (access(file, R_OK) == 0)
 		readable = true;
 	if (access(file, W_OK) == 0)
 		writable = true;
-	if (access(file, X_OK) == 0)
-		executable = true;
 
-	if (this->Request->cgi != nullptr)
-	{
-		if (executable == true)
-			return true;
-	}
 	if (method == "GET")
 	{
 		if (readable == true)
