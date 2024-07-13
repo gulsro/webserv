@@ -18,13 +18,13 @@ def handle_post_request():
     fileitem = form["file"]
 
     if fileitem.file:
-        fn = os.path.basename(fileitem.name)
+        fn = os.path.basename(fileitem.filename)
         file_path = os.path.join(UPLOAD_DIR, fn)
         # write the file to the server
         with open(file_path, 'wb') as f:
             f.write(fileitem.file.read())
 
-        return f"File '{fileitem.name}' uploaded successfully {file_path}!"
+        return f"File '{fileitem.filename}' uploaded successfully {file_path}!"
     else:
         return f"No file was uploaded. {form}"
 
@@ -44,7 +44,7 @@ print(f"""
 </head>
 <body>
   <h1>File Upload</h1>
-  <form enctype="multipart/form-data" action="moneybird.py" method="post">
+  <form enctype="multipart/form-data" action="eunbi.py" method="post">
     <label for="file">Upload File:</label>
     <input type="file" id="file" name="file">
     <br><br>
