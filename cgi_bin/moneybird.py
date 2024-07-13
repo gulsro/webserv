@@ -5,11 +5,7 @@ import os
 import cgitb
 cgitb.enable()  
 
-<<<<<<< HEAD
 UPLOAD_DIR = "./html"
-=======
-UPLOAD_DIR = "../html/uploads"
->>>>>>> f38e56c302dd954e48edb89dcbe227d91649e8de
 
 print("Content-Type: text/html\r\n\r\n")
 
@@ -18,7 +14,6 @@ if not os.path.exists(UPLOAD_DIR):
 
 def handle_post_request():
     form = cgi.FieldStorage()
-<<<<<<< HEAD
     fileitem = form["file"]
 
     # getvalue() retrieves the contents of the file as a string
@@ -28,13 +23,6 @@ def handle_post_request():
     if fileitem.filename:
         file_name = os.path.basename(fileitem.filename)
         file_path = os.path.join(UPLOAD_DIR, file_name)
-=======
-    fileitem = form.getvalue("file")
-
-    if fileitem:
-        fn = os.path.basename(fileitem)
-        file_path = os.path.join(UPLOAD_DIR, fn)
->>>>>>> f38e56c302dd954e48edb89dcbe227d91649e8de
 
         with open(file_path, 'wb') as f:
             f.write(fileitem.file.read())
