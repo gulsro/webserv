@@ -1,6 +1,6 @@
 #include "Webserv.hpp"
 
-extern volatile sig_atomic_t gSignal = 0;
+extern volatile sig_atomic_t gSignal;
 
 ServerManager::ServerManager(const Config& config) {
   // Loop and copy raw pointers (not recommended)
