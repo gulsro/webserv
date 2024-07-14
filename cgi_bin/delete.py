@@ -65,8 +65,8 @@ html_content += ('''
   <br>
   <script>
     function deleteFile(fileName) {
-		fetch('/html/upload/' + fileName, { method: 'DELETE' });
-		// location.reload();
+		fetch('/delete.py?fileName=' + fileName, { method: 'DELETE' });
+		location.reload();
 	}
   </script>
   <h2>Files</h2>
