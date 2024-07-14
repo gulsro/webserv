@@ -60,7 +60,7 @@ html_content = (f"""
 """)
 
 # Printing response message
-print(f"HTTP 1.1 {status_code}", end="\r\n")
+print(f"HTTP/1.1 {status_code}", end="\r\n")
 print("Content-Type: text/html", end="\r\n"), 
 print(f"Content-Lenght: {len(html_content)}", end="\r\n")
 if (file_created == True):

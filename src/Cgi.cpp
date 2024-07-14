@@ -163,5 +163,4 @@ std::string    Cgi::execCgi(){
     printf("\n");
     close(w_pip[0]);
     return (body);
-	// return (body);
 }
