@@ -1,16 +1,14 @@
 #!/usr/bin/python3
 
-
 import cgi, cgitb, urllib
 #cgi.parse_qs is deprecated
 import os
 
 # header for the response
-print("Content-Type: text/html\r\n\r\n")
-print()
+status_code = "200 OK"
 
 form = cgi.FieldStorage()
-print(form)
+# print(form)
 
 # if "id " not in form:
 #     pageId = "BANANA"
@@ -18,12 +16,12 @@ print(form)
 query_string = os.environ.get("QUERY_STRING", "")
 parameters = urllib.parse.parse_qs(query_string)
 pageId = parameters.get("id", [""])[0]
-
+title=pageId
 
 #pageId = form.getvalue("id")
 
 
-print('''<!DOCTYPE html>
+html_content = (f'''<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -39,9 +37,13 @@ print('''<!DOCTYPE html>
   </ol>
 </body>
 </html>
-'''.format(title=pageId))
+''')
 
-
+print(f"HTTP/1.1 {status_code}", end="\r\n")
+print("Content-Type: text/html", end="\r\n"), 
+print(f"Content-Length: {len(html_content)}", end="\r\n")
+print("", end="\r\n")
+print(html_content)
 
 #Most often, CGI scripts live in the server’s special cgi-bin directory.
 # The HTTP server places all sorts of information about the request
