@@ -9,6 +9,25 @@ class HttpRequest;
 class HttpResponse;
 class Location;
 
+class SafeString {
+public:
+  SafeString(const std::string& str) : data_(new char[str.size() + 1]), length_(str.size()) {
+    std::copy(str.begin(), str.end(), data_.get());
+    data_[length_] = '\0'; // Ensure null termination
+  }
+
+//   ~SafeString() {
+//     delete[] data_;
+//   }
+
+  const char* getData() const { return data_.get(); }
+  size_t getLength() const { return length_; }
+
+private:
+  std::unique_ptr<char[]> data_;
+  size_t length_;
+};
+
 class Cgi
 {
 private:

@@ -182,10 +182,7 @@ void	HttpResponse::methodPost()
 	    std::cout << YELLOW << "[FUNCTION] methodPost" << DEFAULT << std::endl;
 	#endif
 	if (this->completed == true)
-	{
-		std::cout << "POST" << std::endl;
 		return ;
-	}
 	std::string	location = this->resource;
     bool		dirExists = std::filesystem::exists(location);
 
