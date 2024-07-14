@@ -1,5 +1,7 @@
 #include "Webserv.hpp"
 
+extern volatile sig_atomic_t gSignal = 0;
+
 ServerManager::ServerManager(const Config& config) {
   // Loop and copy raw pointers (not recommended)
   for (Server* server : config.serverList) {
@@ -171,7 +173,7 @@ void ServerManager::startPoll()
     // not a raw array. However, the data() method provides a way
     //to access the raw memory where the vector elements (the pollfd structures)
     //are stored, essentially treating it like an array.
-    while (1)
+    while (!gSignal)
     {
         this->printPollFds();
         int num_readyFds = poll(pollfds.data(), pollfds.size(), -1);  // Wait indefinitely

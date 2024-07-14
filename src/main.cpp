@@ -8,6 +8,7 @@ int main(int ac, char **av)
         std::cout << "too many argument" << std::endl;
         return 1;
     }
+    setup_signal_handler();
     try{
         Config config;
         // Declare a unique_ptr without initializing
