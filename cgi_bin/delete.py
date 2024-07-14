@@ -3,6 +3,7 @@
 import cgi
 import os
 import cgitb
+import urllib
 cgitb.enable()
 
 status_code = "200 OK"
@@ -10,9 +11,16 @@ UPLOAD_DIR = "./html/upload"
 
 request_method = os.environ.get("REQUEST_METHOD", "")
 
+
 if (request_method == "DELETE"):
-	# delete file
-	form = cgi.FieldStorage()
+	query_string = os.environ.get("QUERY_STRING", "")
+	parameters = urllib.parse.parse_qs(query_string)
+	fileToDelete = parameters.get("fileName", [""])[0]
+	filePathToDelete = UPLOAD_DIR + "/" + fileToDelete
+	if (os.path.exists(filePathToDelete)):
+		os.remove(filePathToDelete);
+	else:
+		status_code = "400 BAD REQUEST"
 
 from os import walk
 
@@ -44,19 +52,32 @@ html_content = ('''
 	.button:hover {
 		background-color: #99f077;
 	}
+	.delete_button{
+		margin : 5px;
+	}
+
 	</style>
 </head>
+''')
+html_content += ('''
 <body>
 	<a href='/' class="button"> Back to main page </a> <br>
-    <label for="file">Delete file:</label>
-    <input type="text" id="file" name="file">
-    <input type="submit" class="button" value="Delete">
   <br>
+  <script>
+    function deleteFile(fileName) {
+		fetch('/delete.py?fileName=' + fileName, { method: 'DELETE' });
+		location.reload();
+	}
+  </script>
   <h2>Files</h2>
   <ul>
 ''')
 for file in f:
-	html_content += f"    <li>{file}</li>"
+	html_content += f'''    <li>{file}
+	<button
+		onclick="deleteFile('{file}')">
+		Delete
+	</button></li>'''
 
 html_content += ('''</body>
 	</html>
