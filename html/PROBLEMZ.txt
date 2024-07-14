@@ -1,2 +1,0 @@
-1-  requesting invalid file ->  http://localhost:8080/shoppig_list.py
-        permission error 403

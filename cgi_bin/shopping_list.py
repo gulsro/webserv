@@ -3,12 +3,10 @@
 import cgi, cgitb
 import os
 
-
 # to store shopping list items
 SHOPPING_LIST_FILE = "./html/shopping_list.txt"
 
-print("Content-Type: text/html\r\n\r\n")
-print()
+status_code = "200 OK"
 
 # read the shopping list from the file
 def read_shopping_list():
@@ -44,7 +42,7 @@ if request_method == "POST":
         add_item_to_shopping_list(new_item)
         shopping_list.append(new_item)
 
-print('''<!DOCTYPE html>
+html_content = ('''<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -62,9 +60,16 @@ print('''<!DOCTYPE html>
 ''')
 
 for item in shopping_list:
-    print(f"    <li>{item}</li>")
+    html_content += f"    <li>{item}</li>"
 
-print('''  </ul>
+html_content += '''  </ul>
 </body>
 </html>
-''')
+'''
+
+# Printing response message
+print(f"HTTP/1.1 {status_code}", end="\r\n")
+print("Content-Type: text/html", end="\r\n"), 
+print(f"Content-Lenght: {len(html_content)}", end="\r\n")
+print("", end="\r\n")
+print(html_content)
