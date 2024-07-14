@@ -1,20 +1,69 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
-import cgi, os
+import cgi
+import os
+import cgitb
+cgitb.enable()  
 
-form = cgi.FieldStorage()
-print(form)
+# created files will be added into ./html/upload directory
+UPLOAD_DIR = "./html/upload"
+message = ""
+upload_message = ""
+file_created = False;
+status_code = "200 OK"
 
-# Get filename here
-fileitem = form['filename']
+if not os.path.exists(UPLOAD_DIR):
+	os.makedirs(UPLOAD_DIR)
 
-# Test if the file was uploaded
-if fileitem.filename:
-   open(os.getcwd() + '/cgi-bin/tmp/' + os.path.basename(fileitem.filename), 'wb').write(fileitem.file.read())
-   message = 'The file "' + os.path.basename(fileitem.filename) + '" was uploaded to ' + os.getcwd() + '/cgi-bin/tmp'
-else:
-   message = 'Uploading Failed'
+request_method = os.environ.get("REQUEST_METHOD", "")
 
-print("Content-Type: text/html;charset=utf-8")
-print ("Content-type:text/html\r\n")
-print("<H1> " + message + " </H1>")
+if request_method == "POST":
+	form = cgi.FieldStorage()
+	fileitem = form["file"]
+
+	if fileitem.filename:
+		file_name = os.path.basename(fileitem.filename)
+		file_path = os.path.join(UPLOAD_DIR, file_name)
+
+		if os.path.exists(file_path):
+			upload_message = f"{file_name} with same name alreay present on server."
+			status_code = "409 Conflict"
+		else:
+			upload_message = "test"
+			with open(file_path, 'wb') as f:
+				f.write(fileitem.file.read())
+			upload_message = "File" + f" {file_name} uploaded successfully!"
+			status_code = "201 Created"
+			file_created = True;
+	else:
+		upload_message = "No file was uploaded."
+		status_code = "400 Bad Request"
+
+html_content = (f"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload File</title>
+</head>
+<body>
+  <h1>File Upload</h1>
+  <form enctype="multipart/form-data" action="moneybird.py" method="post">
+    <label for="file">Upload File:</label>
+    <input type="file" id="file" name="file">
+    <br><br>
+    <input type="submit" value="Upload">
+  </form>
+  <h2>{upload_message}</h2>
+</body>
+</html>
+""")
+
+# Printing response message
+print(f"HTTP/1.1 {status_code}", end="\r\n")
+print("Content-Type: text/html", end="\r\n"), 
+print(f"Content-Lenght: {len(html_content)}", end="\r\n")
+if (file_created == True):
+	print (f"Location: {file_path}", end="\r\n")
+print("", end="\r\n")
+print(html_content)
