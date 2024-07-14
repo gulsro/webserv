@@ -145,7 +145,6 @@ std::string    Cgi::execCgi(){
     close(r_pip[0]);
     if (write(r_pip[1], getPostBody(), getContentLen()) < 0)
 		return NULL;
-	std::cout << RED << "getPostbody" << getPostBody() << DEFAULT << std::endl;
     close(r_pip[1]);
     close(w_pip[1]);
     if (waitpid(pid, &status, 0) < 0)
@@ -163,5 +162,6 @@ std::string    Cgi::execCgi(){
     }
     printf("\n");
     close(w_pip[0]);
-    return ("HTTP/1.1 200 OK\r\n" + body);
+    return (body);
+	// return (body);
 }

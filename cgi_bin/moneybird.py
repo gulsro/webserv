@@ -5,51 +5,41 @@ import os
 import cgitb
 cgitb.enable()  
 
-<<<<<<< HEAD
-UPLOAD_DIR = "./html"
-=======
-UPLOAD_DIR = "../html/uploads"
->>>>>>> f38e56c302dd954e48edb89dcbe227d91649e8de
-
-print("Content-Type: text/html\r\n\r\n")
+# created files will be added into ./html/upload directory
+UPLOAD_DIR = "./html/upload"
+message = ""
+upload_message = ""
+file_created = False;
+status_code = "200 OK"
 
 if not os.path.exists(UPLOAD_DIR):
-    os.makedirs(UPLOAD_DIR)
+	os.makedirs(UPLOAD_DIR)
 
-def handle_post_request():
-    form = cgi.FieldStorage()
-<<<<<<< HEAD
-    fileitem = form["file"]
-
-    # getvalue() retrieves the contents of the file as a string
-    #fileitem = form.getvalue("file")
-    print(fileitem)
-
-    if fileitem.filename:
-        file_name = os.path.basename(fileitem.filename)
-        file_path = os.path.join(UPLOAD_DIR, file_name)
-=======
-    fileitem = form.getvalue("file")
-
-    if fileitem:
-        fn = os.path.basename(fileitem)
-        file_path = os.path.join(UPLOAD_DIR, fn)
->>>>>>> f38e56c302dd954e48edb89dcbe227d91649e8de
-
-        with open(file_path, 'wb') as f:
-            f.write(fileitem.file.read())
-
-        return f"File '{file_name}' uploaded successfully!"
-    else:
-        return f"No file was uploaded."
-
-request_method = os.environ.get("REQUEST_METHOD", "GET")
-upload_message = ""
+request_method = os.environ.get("REQUEST_METHOD", "")
 
 if request_method == "POST":
-    upload_message = handle_post_request()
+	form = cgi.FieldStorage()
+	fileitem = form["file"]
 
-print(f"""
+	if fileitem.filename:
+		file_name = os.path.basename(fileitem.filename)
+		file_path = os.path.join(UPLOAD_DIR, file_name)
+
+		if os.path.exists(file_path):
+			upload_message = f"{file_name} with same name alreay present on server."
+			status_code = "409 Conflict"
+		else:
+			upload_message = "test"
+			with open(file_path, 'wb') as f:
+				f.write(fileitem.file.read())
+			upload_message = "File" + f" {file_name} uploaded successfully!"
+			status_code = "201 Created"
+			file_created = True;
+	else:
+		upload_message = "No file was uploaded."
+		status_code = "400 Bad Request"
+
+html_content = (f"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,3 +58,12 @@ print(f"""
 </body>
 </html>
 """)
+
+# Printing response message
+print(f"HTTP 1.1 {status_code}", end="\r\n")
+print("Content-Type: text/html", end="\r\n"), 
+print(f"Content-Lenght: {len(html_content)}", end="\r\n")
+if (file_created == True):
+	print (f"Location: {file_path}", end="\r\n")
+print("", end="\r\n")
+print(html_content)
