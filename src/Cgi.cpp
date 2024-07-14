@@ -65,21 +65,20 @@ void Cgi::setCgiFile(std::string s) {
     std::strcpy(cgiFile, s.c_str());
 }
 
-void  printSafeString(const SafeString& str) 
-{
-	std::ostream_iterator<char> out(std::cout);
-	std::copy(str.getData(), str.getData() + str.getLength(), out);
-	std::cout << std::endl;
-}
+	void  printSafeString(const SafeString& str) 
+	{
+		std::ostream_iterator<char> out(std::cout);
+		std::copy(str.getData(), str.getData() + str.getLength(), out);
+		std::cout << std::endl;
+	}
+	char*  getSafeString(const SafeString& str)
+	{
+		size_t strLen = str.getLength() + 1;
+		char * charPtr = new char[strLen];
+		std::copy(str.getData(), str.getData() + strLen, charPtr);
 
-char*  getSafeString(const SafeString& str)
-{
-	size_t strLen = str.getLength() + 1;
-	char * charPtr = new char[strLen];
-	std::copy(str.getData(), str.getData() + strLen, charPtr);
-
-	return charPtr;
-}
+		return charPtr;
+	}
 
 void Cgi::setPostBody(HttpRequest& req){
 	std::string s = req.getBody();

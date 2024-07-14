@@ -9,23 +9,21 @@ class HttpRequest;
 class HttpResponse;
 class Location;
 
-class SafeString {
-public:
-  SafeString(const std::string& str) : data_(new char[str.size() + 1]), length_(str.size()) {
-    std::copy(str.begin(), str.end(), data_.get());
-    data_[length_] = '\0'; // Ensure null termination
-  }
-
-//   ~SafeString() {
-//     delete[] data_;
-//   }
-
-  const char* getData() const { return data_.get(); }
-  size_t getLength() const { return length_; }
-
+class SafeString
+{
 private:
-  std::unique_ptr<char[]> data_;
-  size_t length_;
+	std::unique_ptr<char[]> data;
+	size_t length;
+
+public:
+	SafeString(const std::string& str) : data(new char[str.size() + 1]), length(str.size()) 
+	{
+		std::copy(str.begin(), str.end(), data.get());
+		data[length] = '\0'; // Ensure null termination
+	}
+	~SafeString() { delete[] data.get(); }
+	const char* getData() const { return data.get(); }
+	size_t getLength() const { return length; }
 };
 
 class Cgi
@@ -56,5 +54,6 @@ public:
     void    setCgiEnv(HttpRequest& req, Location& loc, Server& ser);
     std::string    execCgi();
 };
+
 
 #endif
