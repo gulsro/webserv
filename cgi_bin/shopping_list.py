@@ -47,14 +47,34 @@ html_content = ('''<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <title>Shopping List</title>
+  <style>
+	body {
+	    font-family: sans-serif;
+        margin: 20px;
+		margin-bottom: 1em;
+	}
+	.button {
+		padding: 10px;
+		background-color: #f0da77;
+		color: black;
+		border: none;
+		cursor: pointer;
+		margin-top: 5em;
+	}
+	.button:hover {
+		background-color: #99f077;
+	}
+  </style>	
 </head>
 <body>
+   <a href='/' class="button"> Back to main page </a> <br>
   <h1>Shopping list from your Mama</h1>
   <form action="shopping_list.py" method="post">
     <label for="item">Add Item:</label>
     <input type="text" id="item" name="item">
-    <input type="submit" value="Add">
+    <input type="submit" class="button" value="Add">
   </form>
+  <br>
   <h2>Items</h2>
   <ul>
 ''')
