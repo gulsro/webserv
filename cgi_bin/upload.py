@@ -39,14 +39,36 @@ if request_method == "POST":
 		upload_message = "No file was uploaded."
 		status_code = "400 Bad Request"
 
-html_content = (f"""
+html_content = ("""
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Upload File</title>
+	<style>
+	body {
+	    font-family: sans-serif;
+        margin: 20px;
+		margin-bottom: 1em;
+	}
+	.button {
+		padding: 10px;
+		background-color: #f0da77;
+		color: black;
+		border: none;
+		cursor: pointer;
+		margin-top: 5em;
+	}
+	.button:hover {
+		background-color: #99f077;
+	}
+	</style>	
 </head>
+""")
+
+html_content += (f"""
 <body>
+	<a href='/' class="button"> Back to main page </a> <br>
   <h1>File Upload</h1>
   <form enctype="multipart/form-data" action="upload.py" method="post">
     <label for="file">Upload File:</label>
