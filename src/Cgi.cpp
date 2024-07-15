@@ -13,21 +13,23 @@ from the CGI, EOF will mark the end of the returned data.
 
 Cgi::Cgi(){}
 
-Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser) : postBody(NULL), contentLen(0)
+Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser) : pass(NULL), postBody(NULL), contentLen(0)
 {
     cgiPass = loc.getCgiPass();
     std::cout << loc.getRoot()+req.getURI() << std::endl;
     setCgiFile("."+loc.getRoot()+req.getURI());
     setCgiEnv(req, loc, ser);
-    // if (req.getMethod() == "POST"){
-        setPostBody(req);
-        setContentLen(req);
-    // }
+    setPostBody(req);
+    setContentLen(req);
 }
 
 Cgi::~Cgi(){
+    #ifdef STRUCTOR
+		std::cout << GREY << "Cgi : Default destructor called" << DEFAULT << std::endl; 
+	#endif
     delete[] this->cgiFile;
     delete[] this->env;
+    delete[] this->pass;
 }
 
 Cgi::Cgi(Cgi& a){
@@ -144,7 +146,7 @@ std::vector<char>    Cgi::execCgi(){
         // signal(SIGTERM, SIG_DFL);
 		if (access(cgiFile,X_OK) != 0)
 			throw ErrorCodeException(STATUS_FORBIDDEN);
-        char *pass = new char[cgiPass.size() + 1]; // will it cause a leak?
+        pass = new char[cgiPass.size() + 1]; // will it cause a leak?
         std::strcpy(pass, cgiPass.c_str());
         char *argv[3] = {pass, cgiFile, NULL};
         close(w_pip[0]); 
@@ -177,10 +179,9 @@ std::vector<char>    Cgi::execCgi(){
     while (bytes > 0){
         std::memset(buf, '\0', BUFFER_SIZE - 1);
         bytes = read(0, buf, BUFFER_SIZE);
-        // std::cout << YELLOW << bytes << DEFAULT << std::endl;
         // if (bytes < 0)
             // no read;
-            body.insert(body.end(), buf, buf + bytes);
+        body.insert(body.end(), buf, buf + bytes);
     }
     printf("\n");
     close(w_pip[0]);

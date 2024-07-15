@@ -37,9 +37,10 @@ HttpRequest &HttpRequest::operator=(const HttpRequest &other)
 
 HttpRequest::~HttpRequest()
 {
-	#ifdef STRUCTOR
+	// #ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Destructor called" << DEFAULT << std::endl; 
-	#endif
+	// #endif
+	//delete[] cgi; this is not working
 }
 
 void	HttpRequest::checkContentType()
@@ -118,8 +119,9 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 		{
 			std::cout << MAG << "CGI extention is detected" << RES << std::endl;
 			std::string fileExtension = returnFileExtension(path);
+			char	c = this->uri[pos + fileExtension.length()];
 			// check file extension name is only ".py"
-			if (fileExtension == ".py")
+			if (isdigit(c) == false && isalpha(c) == false && c != '-' && c != '_')
 			{
 				this->ReqLocation = locationList[i];
 				std::cout << MAG << "CGI is instantiated" << RES << std::endl;

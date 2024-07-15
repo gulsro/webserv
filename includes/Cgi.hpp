@@ -21,7 +21,13 @@ public:
 		std::copy(str.begin(), str.end(), data);
 		data[length] = '\0'; // Ensure null termination
 	}
-	~SafeString() { }
+	~SafeString() 
+    { 
+        delete[] data;
+        #ifdef STRUCTOR
+		    std::cout << GREY << "Safestring : Destructor called" << DEFAULT << std::endl; 
+	    #endif
+    }
     // ~SafeString() {}
 	const char* getData() const { return data; }
 	size_t getLength() const { return length; }
@@ -33,6 +39,7 @@ private:
     std::string cgiPass;
     char *cgiFile;
     char **env;
+    char *pass;
     char *postBody;
     int contentLen;
     

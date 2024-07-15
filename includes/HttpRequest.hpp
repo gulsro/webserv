@@ -88,6 +88,7 @@ class	HttpRequest
 		void	setQueryString(std::string str);
 		void	setQueryPairs();
 		void	setIsChunked(bool value) { this->isChunked = value; }
+
 		
 		bool	isReadingRequestFinished(std::string rawRequest);
 		bool	parseHttpRequest(const std::string &rawRequest);
