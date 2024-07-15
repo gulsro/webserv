@@ -156,7 +156,8 @@ void    HttpResponse::setResource()
 void    HttpResponse::runCgi(){
     if (Request->getCgi() != nullptr){
 		std::cout << YEL << Request->getCgi()->getCgiFile() << RES << std::endl;
-        content = Request->getCgi()->execCgi();
+		std::vector<char> cgiReturnedBody = Request->getCgi()->execCgi();
+        content = std::string(cgiReturnedBody.begin(), cgiReturnedBody.end());
         if (content[0] == '\0')
             perror("CGI not being executed");//error need to change
         else

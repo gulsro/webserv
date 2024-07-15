@@ -53,7 +53,7 @@ public:
     void    setPostBody(HttpRequest& req);
     void    setContentLen(HttpRequest& req);
     void    setCgiEnv(HttpRequest& req, Location& loc, Server& ser);
-    std::string    execCgi();
+    std::vector<char>    execCgi();
 };
 
 

@@ -125,7 +125,7 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
 }
 
 //return http response msg or '\0' in case of internal error
-std::string    Cgi::execCgi(){
+std::vector<char>    Cgi::execCgi(){
     int w_pip[2];
     int r_pip[2];
     pid_t pid;
@@ -160,12 +160,12 @@ std::string    Cgi::execCgi(){
     }
     int status;
     char buf[BUFFER_SIZE]; // is buffer_size defined in config?
-    std::string body = "";
+    std::vector<char> body;
     ssize_t bytes = 1;
 //close write end and read output from pipe
     close(r_pip[0]);
     if (write(r_pip[1], this->postBody, getContentLen()) < 0)
-		return NULL;
+		throw std::runtime_error ("Write to r_pip failed" );
     close(r_pip[1]);
     close(w_pip[1]);
     if (waitpid(pid, &status, 0) < 0)
@@ -177,11 +177,10 @@ std::string    Cgi::execCgi(){
     while (bytes > 0){
         std::memset(buf, '\0', BUFFER_SIZE - 1);
         bytes = read(0, buf, BUFFER_SIZE);
-        std::cout << YELLOW << bytes << DEFAULT << std::endl;
-        std::cout << YELLOW << "buf: " << buf << DEFAULT << std::endl;
+        // std::cout << YELLOW << bytes << DEFAULT << std::endl;
         // if (bytes < 0)
             // no read;
-        body += buf;
+            body.insert(body.end(), buf, buf + bytes);
     }
     printf("\n");
     close(w_pip[0]);
