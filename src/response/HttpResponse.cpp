@@ -48,6 +48,11 @@ HttpResponse::~HttpResponse()
 
 void	HttpResponse::createResponse(enum e_statusCode code)
 {
+	this->createResponse(code, "");
+}
+
+void	HttpResponse::createResponse(enum e_statusCode code, const std::string content)
+{
     #ifdef FUNC
 	    std::cout << YELLOW << "[FUNCTION] createResponse" << DEFAULT << std::endl;
 	#endif
@@ -64,8 +69,16 @@ void	HttpResponse::createResponse(enum e_statusCode code)
 		{
 			ostream << "Location: " << this->resource + "/" << "\r\n";
 		}
-		ostream << "Content-Length: 0\r\n";
- 		ostream << "\r\n";
+ 		if (!content.empty())
+		{
+			ostream << "Content-Length: " << content.length() << "\r\n";
+			ostream << "Content-Type: text/html\r\n";
+		}
+		else
+			ostream << "Content-Length: 0\r\n";
+		ostream << "\r\n";
+		if (!content.empty())
+			ostream << content;
 		this->content = ostream.str(); // a string a copy of ostream
 	}
 	if (this->statusCode >= 400)

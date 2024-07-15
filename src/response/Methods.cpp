@@ -146,6 +146,36 @@ void	HttpResponse::checkURI()
 	}
 }
 
+void	HttpResponse::printDirectoryListing(const std::string &path)
+{
+	if (std::filesystem::exists(path) == true)
+	{
+		std::string contnet = "";
+		std::ostringstream oss;
+
+		oss << "<!DOCTYPE html>\n<html lang=\"en\">\n";
+		oss << "<head>\n<meta charset=\"UTF-8\">\n";
+		oss << "<title>Directory Listing</title>\n";
+		oss << "</head>\n";
+		oss << "<body>\n";
+		oss << "<ul>\n";
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{
+			if (entry.is_regular_file())
+				oss << "<li>" << entry.path() << "</li>";
+		}
+		oss << "</ul>\n";
+		oss << "</body></html>";
+		content = oss.str();
+		createResponse(STATUS_SUCCESS, content);
+	}
+	else
+	{
+		createErrorResponse(STATUS_NOT_FOUND);
+		this->completed = true;
+	}
+}
+
 void	HttpResponse::methodGet()
 {
     #ifdef FUNC
@@ -163,7 +193,14 @@ void	HttpResponse::methodGet()
 	{
 		checkURI();
 		if (completed == false)
-			printDefaultPage();
+		{
+			if  (this->Request->ReqLocation && this->Request->ReqLocation->getAutoindex() == true)
+			{
+				printDirectoryListing(this->resource);
+			}
+			else
+				printDefaultPage();
+		}
 	}
 }
 
@@ -181,7 +218,7 @@ void    HttpResponse::postFile()
         {
             file << Request->parts[i].data;
             file.close();
-            createResponse(STATUS_CREATED);
+           createResponse(STATUS_CREATED);
         }
     }
 }
@@ -241,7 +278,7 @@ void	HttpResponse::methodDelete()
 		return ;
 	if (this->resourceType == RESOURCE_FILE)	
 		deleteFile();
-	else
+	else // Resource is a directory
 	{
 		checkURI();
 		if (this->completed == false)
