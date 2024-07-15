@@ -113,7 +113,8 @@ void    HttpResponse::setResource()
 	    std::cout << YELLOW << "[FUNCTION] setResource" << DEFAULT << std::endl;
 	#endif
 	Server	*Server = this->Request->ReqServer;
-	if (this->Request->ReqLocation != nullptr)
+
+	if (this->Request->ReqLocation)
 	{
 		Location	*Location = this->Request->ReqLocation;
 		// Check redirection
@@ -122,23 +123,7 @@ void    HttpResponse::setResource()
 			this->resource = Location->getRedirect();
 			createResponse(STATUS_FOUND);
 		}
-		// Check index
-		if (Location->getIndex().empty())
-		{
-			if (Location->getAutoindex() == true)
-			{
-				// Set default index
-				this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
-			}
-		}
-		else
-		{
-			if (fileExistsInDir(Location->getRoot() + Location->getPath(), Location->getIndex()) == true)
-				this->resource = "." + Location->getRoot() + Location->getPath() + Location->getIndex();
-			else
-				createErrorResponse(STATUS_FORBIDDEN);
-		}
-		this->resource = "." + Location->getPath() + this->Request->getURI();
+		this->resource = "." + this->Request->getURI();
 	}
 	else // No selected Location
 	{

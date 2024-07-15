@@ -97,7 +97,7 @@ std::string returnFileExtension(const std::string path)
 	return fileExtension;
 }
 
-void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
+void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 {
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] setReqLocation" << DEFAULT << std::endl;
@@ -105,27 +105,26 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 
 	for (size_t i = 0; i < locationList.size(); ++i)
 	{
-		//std::cout << "iiiiiiii= " << i << std::endl;
-		std::string	path = locationList[i]->getPath();
-		if (this->uri == path)
-		{
-			this->ReqLocation = locationList[i];
-			break;
-		}
 		// if uri contains cgi program extension file name. For us, Python.
 		size_t pos = this->uri.find(".py");
-		if (pos != std::string::npos && path == "/*.py")
+		if (pos != std::string::npos && locationList[i]->getPath() == "/*.py")
 		{
 			std::cout << MAG << "CGI extention is detected" << RES << std::endl;
-			std::string fileExtension = returnFileExtension(path);
+			std::string fileExtension = returnFileExtension(locationList[i]->getPath());
 			// check file extension name is only ".py"
 			if (fileExtension == ".py")
 			{
-				this->ReqLocation = locationList[i];
+				setReqLocation(locationList[i]);
 				std::cout << MAG << "CGI is instantiated" << RES << std::endl;
 				cgi = new Cgi(*this, *(locationList[i]), *ReqServer);
-				break;
+				return ;
 			}
+		}
+		std::string	path =  this->ReqServer->getRoot() + locationList[i]->getPath();
+		if (this->uri == path)
+		{
+			setReqLocation(locationList[i]);
+			return ;
 		}
 	}
 	this->ReqLocation = nullptr;

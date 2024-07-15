@@ -103,8 +103,8 @@ void	HttpResponse::checkResourceType()
 	
 	if (this->completed == true)
 		return	;
-    setResource();
 	path = this->resource;
+	std::cout << "RESOURCE:::" << path << std::endl;
 	if (stat(path.c_str(), &buf) == 0)
 	{
 		if (S_ISDIR(buf.st_mode))
@@ -153,7 +153,7 @@ void	HttpResponse::methodGet()
 	{
 		checkURI();
 		if (completed == false)
-			createResponse_File(getResource());
+			this->resource = this->Request->ReqServer->getRoot() + "/" + this->Request->ReqServer->getIndex();
 	}
 }
 
@@ -247,8 +247,9 @@ void	HttpResponse::checkMethod()
 	#endif
 	std::string	method = Request->getMethod();
 
+	setResource();
 	checkResourceType();
-	if (fileExists(this->resource) == false && this->Request->cgi == nullptr)
+	if (this->resourceType == RESOURCE_FILE && fileExists(this->resource) == false && this->Request->cgi == nullptr)
 		throw ErrorCodeException(STATUS_NOT_FOUND);
 	if (checkResourcePermission(this->resource) == false && this->Request->cgi == nullptr)
 		throw ErrorCodeException(STATUS_FORBIDDEN);
