@@ -22,6 +22,7 @@ public:
 		data[length] = '\0'; // Ensure null termination
 	}
 	//~SafeString() { delete[] data.get(); }
+    ~SafeString() {}
 	const char* getData() const { return data.get(); }
 	size_t getLength() const { return length; }
 };

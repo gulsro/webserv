@@ -65,7 +65,7 @@ bool	ServerManager::readRequest(Client *Client)
 	if (byteRead == 0)
 	{
 		rmFdFromPollfd(fd);
-    	//delete mapClientFd[fd];
+    	delete mapClientFd[fd];
     	mapClientFd[fd] = nullptr;
     	close(fd);
 		//std::cout << "Disconnection with " << fd << std::endl;
