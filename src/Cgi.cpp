@@ -132,14 +132,16 @@ std::string    Cgi::execCgi(){
 
     std::cout << MAG << "CGI executed"<< RES << std::endl;
     if (pipe(w_pip) < 0 || pipe(r_pip) < 0)
-		perror("pipe failed"); //error
+		throw std::runtime_error("pipe failed"); //error
 	pid = fork();
 	if (pid < 0)
-		perror("fork failed"); //error
+		throw std::runtime_error("fork failed"); //error
 	if (pid == 0){
         // close read end and write to pipe 
         //output of cgi script will be written in pipe
         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
+        // signal(SIGINT, SIG_DFL);
+        // signal(SIGTERM, SIG_DFL);
 		if (access(cgiFile,X_OK) != 0)
 			throw ErrorCodeException(STATUS_FORBIDDEN);
         char *pass = new char[cgiPass.size() + 1]; // will it cause a leak?
@@ -147,12 +149,12 @@ std::string    Cgi::execCgi(){
         char *argv[3] = {pass, cgiFile, NULL};
         close(w_pip[0]); 
         if (dup2(w_pip[1], STDOUT_FILENO) < 0)
-            perror("Write write pipe failed"); //error
+            throw std::runtime_error("Write write pipe failed"); //error
         close(r_pip[1]);
         if (dup2(r_pip[0], STDIN_FILENO) < 0)
-            perror("Read read pipe failed"); //error
+            throw std::runtime_error("Read read pipe failed"); //error
         if (execve(cgiFile, argv, env) < 0){
-            perror("child");
+            throw std::runtime_error("child");
             exit(1);
         }
     }
@@ -167,17 +169,17 @@ std::string    Cgi::execCgi(){
     close(r_pip[1]);
     close(w_pip[1]);
     if (waitpid(pid, &status, 0) < 0)
-        perror("wait failed"); 
+        throw std::runtime_error("wait failed"); 
     if (WIFEXITED(status) == false &&(WEXITSTATUS(status)!= 0)) 
-        return ("wait exit status failed");
+        throw std::runtime_error ("wait exit status failed");
     if (dup2(w_pip[0], STDIN_FILENO) < 0)
-        return ("Write read pipe failed"); // error
+        throw std::runtime_error ("Write read pipe failed"); // error
     while (bytes > 0){
         std::memset(buf, '\0', BUFFER_SIZE - 1);
         bytes = read(0, buf, BUFFER_SIZE);
         // if (bytes < 0)
             // no read;
-        body = body + buf;
+        body += buf;
     }
     printf("\n");
     close(w_pip[0]);

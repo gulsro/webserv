@@ -167,7 +167,7 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		this->body = rawRequest.substr(bodyStart, this->contentLength);
 	}
 	checkContentType();
-	checkRequestValid();
+	// checkRequestValid();
 	#ifdef FUNC
 		printParsedRequest(this);
 	#endif	

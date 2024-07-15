@@ -222,7 +222,7 @@ void Server::setIndex(std::string& cont, int key){
 
 
 void Server::setMaxBodySize(std::string& cont, int key){
-    if (getMaxBodySize())
+    if (getMaxBodySize() != 0)
         return ;
     while(std::isspace(cont[key]))
         key++;

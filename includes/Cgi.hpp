@@ -12,18 +12,18 @@ class Location;
 class SafeString
 {
 private:
-	std::unique_ptr<char[]> data;
+	char* data;
 	size_t length;
 
 public:
 	SafeString(const std::string& str) : data(new char[str.size() + 1]), length(str.size()) 
 	{
-		std::copy(str.begin(), str.end(), data.get());
+		std::copy(str.begin(), str.end(), data);
 		data[length] = '\0'; // Ensure null termination
 	}
-	//~SafeString() { delete[] data.get(); }
-    ~SafeString() {}
-	const char* getData() const { return data.get(); }
+	~SafeString() { }
+    // ~SafeString() {}
+	const char* getData() const { return data; }
 	size_t getLength() const { return length; }
 };
 

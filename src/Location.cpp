@@ -96,7 +96,7 @@ void Location::setRoot(std::string& cont, int key){
 }
 
 void Location::setMaxBodySize(std::string& cont, int key){
-    if (getMaxBodySize() != 0)
+    if (getMaxBodySize())
         return ;
     while(std::isspace(cont[key]))
         key++;
@@ -184,7 +184,7 @@ void Location::checkLocationVar(std::string serverCont){
         std::stringstream iss(serverCont);
         setLocationVar(iss);
     }
-    if (maxBodySize == 0)
+    if (!maxBodySize)
         this->maxBodySize = (*server).getMaxBodySize();
     if (serverCont.find("autoindex") != std::string::npos && autoindex == false)
         autoindex = true;

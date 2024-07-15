@@ -8,6 +8,8 @@ NAME = webserv
 
 ifdef DEBUG
 FLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g -std=c++20 -Ofast -flto
+else ifdef LEAK
+FLAGS	=	-Wall -Wextra -Werror -fsanitize=leak -g -std=c++20 -Ofast -flto
 else ifdef STRUCTOR
 FLAGS	=	-Wall -Wextra -Werror -g -D STRUCTOR -std=c++20 -Ofast -flto
 else ifdef FUNC
