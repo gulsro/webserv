@@ -157,6 +157,48 @@ void	HttpRequest::checkUriValidation()
 	}
 }
 
+int hexdigiToInt(char hex)
+{
+    if (hex >= '0' && hex <= '9')
+        return hex - '0';
+    else if (hex >= 'a' && hex <= 'f')
+        return hex - 'a' + 10;
+    else if (hex >= 'A' && hex <= 'F')
+        return hex - 'A' + 10;
+    else
+        return -1;
+}
+std::string decodeUri(const std::string& encoded)
+{	
+	std::string decoded;
+	decoded.reserve(encoded.size());
+
+    for (size_t i = 0; i < encoded.size(); ++i)
+	{
+        char c = encoded[i];
+        if (c == '%') {
+            if (i + 2 >= encoded.size())
+			{
+                // Invalid encoding
+                break;
+            }
+            char hex1 = encoded[i + 1];
+            char hex2 = encoded[i + 2];
+            if (!isxdigit(hex1) || !isxdigit(hex2))
+			{
+                // Invalid encoding
+                break;
+            }
+            int value = (hexdigiToInt(hex1) << 4) + hexdigiToInt(hex2);
+            decoded += static_cast<char>(value);
+            i += 2;
+        } else
+            decoded += c;
+    }
+
+    return decoded;
+}
+
 bool	HttpRequest::parseRequestLine(const std::string &line)
 {
 	std::istringstream stream(line);
@@ -172,9 +214,9 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	checkUriValidation();
 	// check query string in URI
 	if (this->uri.find('?') != std::string::npos)
-	{
 		this->setQueryPairs();
-	}
+	if (this->uri.find('%') != std::string::npos)
+		this->uri = decodeUri(this->uri);
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
 		throw ErrorCodeException(STATUS_NOT_ALLOWED);
