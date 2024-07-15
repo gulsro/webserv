@@ -18,6 +18,8 @@ ServerManager::ServerManager(const Config& config) {
 ServerManager::~ServerManager()
 {
     std::cout << "ServerManager destructor is called" << std::endl;
+    // for (auto server: this->servers)
+    //     delete server;
 }
 
 void ServerManager::printServers() const
@@ -341,14 +343,18 @@ void	ServerManager::sendResponse(int clientFd)
 	if (bytesSent == -1 || static_cast<size_t>(bytesSent) != currClient->getResponse()->getContent().size())
 	{
         rmFdFromPollfd(clientFd);
+        delete currClient->getRequest();
         delete mapClientFd[clientFd];
         mapClientFd[clientFd] = nullptr;
         throw std::runtime_error("Error: send()");
 	}
     rmFdFromPollfd(clientFd);
+    delete currClient->getRequest();
+    delete currClient->getResponse();
     delete mapClientFd[clientFd];
     mapClientFd[clientFd] = nullptr;
     close(clientFd);
+    
 	//delete the request, it s done
 }
 
