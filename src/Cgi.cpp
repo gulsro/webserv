@@ -25,7 +25,10 @@ Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser) : postBody(NULL), content
     // }
 }
 
-Cgi::~Cgi(){}
+Cgi::~Cgi(){
+    delete[] this->cgiFile;
+    delete[] this->env;
+}
 
 Cgi::Cgi(Cgi& a){
     operator=(a);
@@ -103,7 +106,7 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     tmp.push_back("SERVER_PROTOCOL=HTTP/1.1");
     tmp.push_back("SERVER_PORT=" + std::to_string(ser.getPort())); //server port
     tmp.push_back("REQUEST_METHOD=" + req.getMethod()); //request method
-    tmp.push_back("PATH_INFO=" + loc.getRoot() + req.getURI()); // <<< not sure about this
+    tmp.push_back("PATH_INFO=" + loc.getRoot() + req.getURI()); // <<< full path to the cgi file
     tmp.push_back("SCRIPT_NAME=/index.py"); //cgi pass
     tmp.push_back("DOCUMENT_ROOT=" + loc.getRoot()); //location getRoot()
     tmp.push_back("QUERY_STRING=" + req.getQueryString()); //getQuery
@@ -122,59 +125,62 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
 }
 
 //return http response msg or '\0' in case of internal error
-std::string    Cgi::execCgi(){
+std::vector<char>    Cgi::execCgi(){
     int w_pip[2];
     int r_pip[2];
     pid_t pid;
 
     std::cout << MAG << "CGI executed"<< RES << std::endl;
     if (pipe(w_pip) < 0 || pipe(r_pip) < 0)
-		perror("pipe failed"); //error
+		throw std::runtime_error("pipe failed"); //error
 	pid = fork();
 	if (pid < 0)
-		perror("fork failed"); //error
+		throw std::runtime_error("fork failed"); //error
 	if (pid == 0){
         // close read end and write to pipe 
         //output of cgi script will be written in pipe
         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
+        // signal(SIGINT, SIG_DFL);
+        // signal(SIGTERM, SIG_DFL);
 		if (access(cgiFile,X_OK) != 0)
 			throw ErrorCodeException(STATUS_FORBIDDEN);
-        char *pass = new char[cgiPass.size() + 1];
+        char *pass = new char[cgiPass.size() + 1]; // will it cause a leak?
         std::strcpy(pass, cgiPass.c_str());
         char *argv[3] = {pass, cgiFile, NULL};
         close(w_pip[0]); 
         if (dup2(w_pip[1], STDOUT_FILENO) < 0)
-            perror("Write write pipe failed"); //error
+            throw std::runtime_error("Write write pipe failed"); //error
         close(r_pip[1]);
         if (dup2(r_pip[0], STDIN_FILENO) < 0)
-            perror("Read read pipe failed"); //error
+            throw std::runtime_error("Read read pipe failed"); //error
         if (execve(cgiFile, argv, env) < 0){
-            perror("child");
+            throw std::runtime_error("child");
             exit(1);
         }
     }
     int status;
     char buf[BUFFER_SIZE]; // is buffer_size defined in config?
-    std::string body = "";
+    std::vector<char> body;
     ssize_t bytes = 1;
 //close write end and read output from pipe
     close(r_pip[0]);
     if (write(r_pip[1], this->postBody, getContentLen()) < 0)
-		return NULL;
+		throw std::runtime_error ("Write to r_pip failed" );
     close(r_pip[1]);
     close(w_pip[1]);
     if (waitpid(pid, &status, 0) < 0)
-        perror("wait failed"); 
+        throw std::runtime_error("wait failed"); 
     if (WIFEXITED(status) == false &&(WEXITSTATUS(status)!= 0)) 
-        return ("wait exit status failed");
+        throw std::runtime_error ("wait exit status failed");
     if (dup2(w_pip[0], STDIN_FILENO) < 0)
-        return ("Write read pipe failed"); // error
+        throw std::runtime_error ("Write read pipe failed"); // error
     while (bytes > 0){
         std::memset(buf, '\0', BUFFER_SIZE - 1);
         bytes = read(0, buf, BUFFER_SIZE);
+        // std::cout << YELLOW << bytes << DEFAULT << std::endl;
         // if (bytes < 0)
             // no read;
-        body = body + buf;
+            body.insert(body.end(), buf, buf + bytes);
     }
     printf("\n");
     close(w_pip[0]);

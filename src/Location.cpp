@@ -163,7 +163,7 @@ void Location::setLocationVar(std::stringstream& iss){
 
     std::size_t key;
     std::string line;
-    std::string parameter[9] = {"{", "root", "client_size", "autoindex", "index", "return", "methods", "error_page", "cgi_pass"};
+    std::string parameter[9] = {"{", "root", "max_body_size", "autoindex", "index", "return", "methods", "error_page", "cgi_pass"};
      while (std::getline(iss, line, '\n')){
         for (int i = 0; i < 9; i++){
             key = line.find(parameter[i]);
