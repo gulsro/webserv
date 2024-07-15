@@ -105,6 +105,7 @@ void	HttpResponse::createResponse_File(std::string filename)
 	}
 	else
 		createResponse(STATUS_INTERNAL_ERR);
+	this->completed = true;
 }
 
 void    HttpResponse::setResource()

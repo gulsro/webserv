@@ -108,7 +108,10 @@ void	HttpResponse::checkResourceType()
 	if (stat(path.c_str(), &buf) == 0)
 	{
 		if (S_ISDIR(buf.st_mode))
+		{
+			std::cout << "It's directory" << std::endl;
 			this->setResourceType(RESOURCE_DIR);
+		}
 		else if (S_ISREG(buf.st_mode))
 			this->setResourceType(RESOURCE_FILE);
 	}
@@ -134,6 +137,12 @@ void	HttpResponse::checkURI()
 		else
 			createResponse(STATUS_MOVED);
 	}
+	else
+	{
+		std::string	defaultPage = "." + this->Request->ReqServer->getRoot() + "/" + this->Request->ReqServer->getIndex();
+		std::cout << "default page ::" << defaultPage << std::endl;
+		createResponse_File(defaultPage);
+	}
 }
 
 void	HttpResponse::methodGet()
@@ -153,7 +162,7 @@ void	HttpResponse::methodGet()
 	{
 		checkURI();
 		if (completed == false)
-			this->resource = this->Request->ReqServer->getRoot() + "/" + this->Request->ReqServer->getIndex();
+			createResponse(STATUS_SUCCESS);
 	}
 }
 
