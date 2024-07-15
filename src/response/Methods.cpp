@@ -122,6 +122,13 @@ void	HttpResponse::checkResourceType()
 	}
 }
 
+void	HttpResponse::printDefaultPage()
+{
+	Server *server = this->Request->ReqServer;
+	std::string	defaultPage = "." + server->getRoot() + "/" + server->getIndex();
+	createResponse_File(defaultPage);
+}
+
 void	HttpResponse::checkURI()
 {
     #ifdef FUNC
@@ -136,12 +143,6 @@ void	HttpResponse::checkURI()
 			createResponse(STATUS_CONFLICT);
 		else
 			createResponse(STATUS_MOVED);
-	}
-	else
-	{
-		std::string	defaultPage = "." + this->Request->ReqServer->getRoot() + "/" + this->Request->ReqServer->getIndex();
-		std::cout << "default page ::" << defaultPage << std::endl;
-		createResponse_File(defaultPage);
 	}
 }
 
@@ -162,7 +163,7 @@ void	HttpResponse::methodGet()
 	{
 		checkURI();
 		if (completed == false)
-			createResponse(STATUS_SUCCESS);
+			printDefaultPage();
 	}
 }
 

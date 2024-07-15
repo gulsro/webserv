@@ -72,6 +72,9 @@ class HttpResponse
         bool        checkAllowedMethod();
 		bool		checkIndexFileExists(const std::string path, const std::string filename);
 		bool		checkResourcePermission(const std::string path);
+
+		void		printDefaultPage();
+
 		void		methodGet();
 		void		methodPost();
 		void		methodDelete();
