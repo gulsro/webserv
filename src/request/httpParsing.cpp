@@ -168,6 +168,10 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		this->body = rawRequest.substr(bodyStart, this->contentLength);
 	}
 	checkContentType();
+	std::cout << BLUE << "___________RawRequest___________" << std::endl;
+	std::cout << rawRequest << DEFAULT << std::endl;
+	std::cout << YELLOW << "___________RawBody___________" << std::endl;
+	std::cout << this->body << DEFAULT << std::endl;
 	#ifdef FUNC
 		printParsedRequest(this);
 	#endif	

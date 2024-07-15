@@ -285,6 +285,7 @@ int ServerManager::handleIncoming(int fd)
 
 			currClient->getRequest()->setReqServer(servers);
 			currClient->getRequest()->checkLocations();
+            currClient->getRequest()->checkRequestValid();
 		}
 	}
 	catch (const std::exception& e)

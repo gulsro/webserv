@@ -60,7 +60,12 @@ void	HttpRequest::checkRequestValid()
 	#endif
 	if (this->method == "POST" && this->headers.at("Content-Type").value.empty())
 		throw ErrorCodeException(STATUS_NOT_IMPLEMENTED);
-	if (this->body.size() > this->ReqLocation->getMaxBodySize())
+	unsigned long maxBodySize;
+	if (this->ReqLocation != nullptr)
+		maxBodySize = this->ReqLocation->getMaxBodySize();
+	else
+		maxBodySize = this->ReqServer->getMaxBodySize();
+	if (this->body.size() > maxBodySize)
 		throw ErrorCodeException(STATUS_TOO_LARGE);
 }
 
@@ -88,7 +93,6 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 
 	for (size_t i = 0; i < locationList.size(); ++i)
 	{
-		//std::cout << "iiiiiiii= " << i << std::endl;
 		std::string	path = locationList[i]->getPath();
 		if (this->uri == path)
 		{

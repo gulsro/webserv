@@ -2,6 +2,7 @@
 
 import cgi, cgitb
 import os
+import requests
 
 cgitb.enable()
 
@@ -9,9 +10,9 @@ print ("Content-type:text/html\r\n")
 print()
 
 form = cgi.FieldStorage()
+print(form);
 # Get filename here
-fileitem = form["filename"]
-print(form)
+fileitem = "./html/shopping_list.txt"
 
 # Test if the file was uploaded
 if fileitem.file:
