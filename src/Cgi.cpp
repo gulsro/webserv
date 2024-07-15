@@ -177,6 +177,8 @@ std::string    Cgi::execCgi(){
     while (bytes > 0){
         std::memset(buf, '\0', BUFFER_SIZE - 1);
         bytes = read(0, buf, BUFFER_SIZE);
+        std::cout << YELLOW << bytes << DEFAULT << std::endl;
+        std::cout << YELLOW << "buf: " << buf << DEFAULT << std::endl;
         // if (bytes < 0)
             // no read;
         body += buf;
