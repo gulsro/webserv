@@ -67,7 +67,8 @@ void	HttpResponse::createResponse(enum e_statusCode code, const std::string cont
 		ostream << "HTTP/1.1 " << this->statusCode << " " << returnStatusMessage(this->statusCode) << "\r\n";
 		if (this->statusCode == STATUS_MOVED)
 		{
-			ostream << "Location: " << this->resource + "/" << "\r\n";
+			// Remove leading '.' from resource.
+			ostream << "Location: " << this->resource.substr(1, this->resource.length() - 1) + "/" << "\r\n";
 		}
  		if (!content.empty())
 		{

@@ -160,6 +160,7 @@ void	HttpResponse::printDirectoryListing(const std::string &path)
 		oss << "<body>\n";
 		oss << "<h2>" << path << "</h2>\n";
 		oss << "<ul>\n";
+		oss << "<li><a href=\"..\">Parent directory</a></li>";
 		for (const auto& entry : std::filesystem::directory_iterator(path))
 		{
 			if (entry.is_regular_file())
@@ -167,7 +168,6 @@ void	HttpResponse::printDirectoryListing(const std::string &path)
 			else
 				oss << "<li><a href=\"" << entry.path().filename().string() << "/\">" << entry.path().filename().string() << "/</a></li>";
 
-			// oss << "<li>" << entry.path() << "</li>";
 		}
 		oss << "</ul>\n";
 		oss << "</body></html>";
