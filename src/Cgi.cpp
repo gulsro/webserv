@@ -25,7 +25,10 @@ Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser) : postBody(NULL), content
     // }
 }
 
-Cgi::~Cgi(){}
+Cgi::~Cgi(){
+    delete[] this->cgiFile;
+    delete[] this->env;
+}
 
 Cgi::Cgi(Cgi& a){
     operator=(a);
@@ -103,7 +106,7 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     tmp.push_back("SERVER_PROTOCOL=HTTP/1.1");
     tmp.push_back("SERVER_PORT=" + std::to_string(ser.getPort())); //server port
     tmp.push_back("REQUEST_METHOD=" + req.getMethod()); //request method
-    tmp.push_back("PATH_INFO=" + loc.getRoot() + req.getURI()); // <<< not sure about this
+    tmp.push_back("PATH_INFO=" + loc.getRoot() + req.getURI()); // <<< full path to the cgi file
     tmp.push_back("SCRIPT_NAME=/index.py"); //cgi pass
     tmp.push_back("DOCUMENT_ROOT=" + loc.getRoot()); //location getRoot()
     tmp.push_back("QUERY_STRING=" + req.getQueryString()); //getQuery
@@ -139,7 +142,7 @@ std::string    Cgi::execCgi(){
         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
 		if (access(cgiFile,X_OK) != 0)
 			throw ErrorCodeException(STATUS_FORBIDDEN);
-        char *pass = new char[cgiPass.size() + 1];
+        char *pass = new char[cgiPass.size() + 1]; // will it cause a leak?
         std::strcpy(pass, cgiPass.c_str());
         char *argv[3] = {pass, cgiFile, NULL};
         close(w_pip[0]); 

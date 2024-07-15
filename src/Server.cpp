@@ -235,7 +235,7 @@ void Server::setServerVar(std::stringstream& iss)
 {
     std::size_t key;
     std::string line;
-    std::string parameter[4] = {"listen", "root", "index", "client_size"};
+    std::string parameter[4] = {"listen", "root", "index", "max_body_size"};
      while (std::getline(iss, line, '\n')){
         for (int i = 0; i < 4; i++){
             key = line.find(parameter[i]);
