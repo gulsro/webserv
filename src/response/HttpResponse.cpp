@@ -142,6 +142,7 @@ void    HttpResponse::setResource()
 	}
 	else // No selected Location
 	{
+		std::cout << BLUE << "ORIGIN URI :::" << this->Request->getURI() << std::endl;
 		if (this->Request->getURI() == "/")
 			this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
 		else

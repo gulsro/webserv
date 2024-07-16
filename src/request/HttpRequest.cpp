@@ -125,12 +125,10 @@ void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 			std::cout << path << std::endl;
 			std::cout << "______uri____" << std::endl;
 			std::cout << this->uri << std::endl;
-		if (this->uri == path)
+		if (this->uri.find(path) != std::string::npos)
 		{
 			setReqLocation(locationList[i]);
 			return ;
-			std::cout << "______ReaLocation____" << std::endl;
-			std::cout << this->ReqLocation->getPath() << std::endl;
 		}
 	}
 	this->ReqLocation = nullptr;
