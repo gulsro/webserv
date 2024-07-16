@@ -73,6 +73,7 @@ class	HttpRequest
 		const	std::string	&getQueryString() const { return queryString; }
 		const	std::vector<std::pair<std::string, std::string>> &getQueryPairs() const { return queryPairs; }
 		const	bool		&getIsChunked() const { return isChunked; }
+		Server				*getReqServer() const { return ReqServer; }
 		
 		Cgi*		getCgi() const  { return cgi; }
 		const	std::string	getHeaderValue(const std::string &name) const;

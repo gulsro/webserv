@@ -82,8 +82,6 @@ void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 			this->ReqServer = serverList[i];
 			return ;
 		}
-		else
-			continue;
 	}
 	this->ReqServer = serverList[0]; // Default server
 }
