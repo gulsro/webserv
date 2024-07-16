@@ -204,7 +204,12 @@ void	HttpResponse::methodGet()
 				printDirectoryListing(this->resource);
 			}
 			else
-				printDefaultPage();
+			{
+				this->resource = "./html/index.html";
+				this->resourceType = RESOURCE_FILE;
+				createResponse(STATUS_MOVED);
+			}
+				// printDefaultPage();
 		}
 	}
 }

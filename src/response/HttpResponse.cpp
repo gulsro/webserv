@@ -68,7 +68,11 @@ void	HttpResponse::createResponse(enum e_statusCode code, const std::string cont
 		if (this->statusCode == STATUS_MOVED)
 		{
 			// Remove leading '.' from resource.
-			ostream << "Location: " << this->resource.substr(1, this->resource.length() - 1) + "/" << "\r\n";
+			if (this->resourceType == RESOURCE_DIR)
+				ostream << "Location: " << this->resource.substr(1, this->resource.length() - 1) + "/" << "\r\n";
+			else if (this->resourceType == RESOURCE_FILE)
+				ostream << "Location: " << this->resource.substr(1, this->resource.length() - 1) << "\r\n";
+
 		}
  		if (!content.empty())
 		{
@@ -142,7 +146,6 @@ void    HttpResponse::setResource()
 	}
 	else // No selected Location
 	{
-		std::cout << BLUE << "ORIGIN URI :::" << this->Request->getURI() << std::endl;
 		if (this->Request->getURI() == "/")
 			this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
 		else
