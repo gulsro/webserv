@@ -306,9 +306,9 @@ void	HttpResponse::checkMethod()
 
 	setResource();
 	checkResourceType();
-	if (this->resourceType == RESOURCE_FILE && fileExists(this->resource) == false && this->Request->cgi == nullptr)
+	if (this->resourceType == RESOURCE_FILE && fileExists(this->resource) == false && this->Request->getIsCgi() == false)
 		throw ErrorCodeException(STATUS_NOT_FOUND);
-	if (checkResourcePermission(this->resource) == false && this->Request->cgi == nullptr)
+	if (checkResourcePermission(this->resource) == false && this->Request->getIsCgi() == false)
 		throw ErrorCodeException(STATUS_FORBIDDEN);
 	if (method == "GET" || (method == "POST" && Request->contentLength == 0 ))
 		methodGet();

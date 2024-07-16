@@ -47,8 +47,8 @@ public:
     Cgi();
     Cgi(HttpRequest& req, Location& loc, Server& ser);
     ~Cgi();
-    Cgi(Cgi& a);
-    Cgi& operator=(const Cgi a);
+    // Cgi(Cgi& a);
+    // Cgi& operator=(const Cgi a);
 
     std::string getCgiPass() const {return cgiPass; };
     char* getCgiFile() const {return cgiFile; };
