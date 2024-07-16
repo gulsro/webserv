@@ -142,7 +142,7 @@ void	HttpResponse::checkURI()
 		if (method == "DELETE")
 			createResponse(STATUS_CONFLICT);
 		else
-			createResponse(STATUS_MOVED);
+			createResponse(STATUS_FOUND);
 	}
 }
 
@@ -207,7 +207,7 @@ void	HttpResponse::methodGet()
 			{
 				this->resource = "./html/index.html";
 				this->resourceType = RESOURCE_FILE;
-				createResponse(STATUS_MOVED);
+				createResponse(STATUS_FOUND);
 			}
 				// printDefaultPage();
 		}

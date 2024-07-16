@@ -60,12 +60,13 @@ void	HttpResponse::createResponse(enum e_statusCode code, const std::string cont
 
 	if (this->statusCode == STATUS_SUCCESS
 		|| this->statusCode == STATUS_MOVED
+		|| this->statusCode == STATUS_FOUND
 		|| this->statusCode == STATUS_NO_CONTENT
 		|| this->statusCode == STATUS_CREATED)
 	{
 		std::ostringstream	ostream;
 		ostream << "HTTP/1.1 " << this->statusCode << " " << returnStatusMessage(this->statusCode) << "\r\n";
-		if (this->statusCode == STATUS_MOVED)
+		if (this->statusCode == STATUS_MOVED || this->statusCode == STATUS_FOUND)
 		{
 			// Remove leading '.' from resource.
 			if (this->resourceType == RESOURCE_DIR)

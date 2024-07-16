@@ -69,7 +69,7 @@ bool	ServerManager::readRequest(Client *Client)
     	//mapClientFd[fd] = nullptr;
     	close(fd);
 		//std::cout << "Disconnection with " << fd << std::endl;
-		throw std::runtime_error("revc()");
+		throw std::runtime_error("recv()");
 	}
 	else if (byteRead == -1)
 	{
