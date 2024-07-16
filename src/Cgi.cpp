@@ -27,7 +27,11 @@ Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser) : postBody(NULL), content
 
 Cgi::~Cgi(){
     delete[] this->cgiFile;
+    for (int i = 0; this->env[i] != NULL; ++i) {
+        delete[] this->env[i];
+    }
     delete[] this->env;
+    //delete[] this->env;
 }
 
 Cgi::Cgi(Cgi& a){
