@@ -83,5 +83,5 @@ class HttpResponse
 		void		deleteDir();
         void        postFile();
 
-		void		runCgi();
+		void		runCgi(ServerManager &manager);
 };

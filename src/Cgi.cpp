@@ -13,7 +13,7 @@ from the CGI, EOF will mark the end of the returned data.
 
 Cgi::Cgi(){}
 
-Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser) : pass(NULL), postBody(NULL), contentLen(0)
+Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser, ServerManager &sManager) : pass(NULL), postBody(NULL), contentLen(0), manager(&sManager)
 {
     cgiPass = loc.getCgiPass();
     std::cout << loc.getRoot() << " aaaaaaaaaaaaaaaaaaaaaaand " << req.getURI() << std::endl;
@@ -131,8 +131,10 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
 
 //return http response msg or '\0' in case of internal error
 std::vector<char>    Cgi::execCgi(){
-    int w_pip[2]; // 2. Children write to the pipe -> 3. Parents read from here
-    int r_pip[2]; // 1. Children read body from STDIN
+   //PipeFromCGI
+    int w_pip[2]; // 3. Children write the output to the w_pipe -> 4. parent read and parse it to Response Body
+     //PipeToCGI
+    int r_pip[2]; // 1.  parent write body received from STDIN -> 2. Children read from pipe
     pid_t pid;
 
     std::cout << MAG << "CGI executed"<< RES << std::endl;
@@ -170,9 +172,21 @@ std::vector<char>    Cgi::execCgi(){
     std::vector<char> body {};
     ssize_t bytes = 1;
 //close write end and read output from pipe
+    
+    //If we type an input
     close(r_pip[0]);
-    if (write(r_pip[1], this->postBody, getContentLen()) < 0)
+    if (strlen(this->postBody) > 0){
+        manager->addFdToPollFds(r_pip[1], POLLOUT);
+    }
+    else{
+        close(r_pip[1]);
+        manager->addFdToPollFds(w_pip[0], POLLIN);
+    }
+
+    if (write(r_pip[1], this->postBody, getContentLen()) < 0) //GETCONTENTLEN() WILL BE CHECKED
 		throw std::runtime_error ("Write to r_pip failed" );
+    
+    
     close(r_pip[1]);
     close(w_pip[1]);
     if (waitpid(pid, &status, 0) < 0)

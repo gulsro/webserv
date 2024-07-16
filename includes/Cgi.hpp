@@ -5,6 +5,7 @@
 #include "Webserv.hpp"
 
 class Server;
+class ServerManager;
 class HttpRequest;
 class HttpResponse;
 class Location;
@@ -42,10 +43,14 @@ private:
     char *pass;
     char *postBody;
     int contentLen;
+
+    friend class ServerManager;
+    ServerManager *manager;
+    std::vector<struct pollfd*> pollfds;
     
 public:
     Cgi();
-    Cgi(HttpRequest& req, Location& loc, Server& ser);
+    Cgi(HttpRequest& req, Location& loc, Server& ser, ServerManager &sManager);
     ~Cgi();
     // Cgi(Cgi& a);
     // Cgi& operator=(const Cgi a);

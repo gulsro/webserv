@@ -157,9 +157,9 @@ void    HttpResponse::setResource()
 }
 
 //Yuka added
-void    HttpResponse::runCgi(){
+void    HttpResponse::runCgi(ServerManager &manager){
     if (Request->getIsCgi() == true){
-		Cgi cgi((*Request), Request->getReqLocation(), Request->getReqServer());
+		Cgi cgi((*Request), Request->getReqLocation(), Request->getReqServer(), manager);
 		std::cout << YEL << cgi.getCgiFile() << RES << std::endl;
 		std::vector<char> cgiReturnedBody = cgi.execCgi();
         content = std::string(cgiReturnedBody.begin(), cgiReturnedBody.end());

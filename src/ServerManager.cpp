@@ -241,6 +241,7 @@ void ServerManager::startPoll()
                     sendResponse(fd);
                     //pollfds[i].fd = -1;
                     }
+                
             }
             // Handle events for accepted connections (read/write data)
             // You'll need to iterate over other servers and their connections here
@@ -327,7 +328,7 @@ void	ServerManager::sendResponse(int clientFd)
     try
     {
         currClient->getResponse()->setRequest(currClient->getRequest());
-        currClient->getResponse()->runCgi();
+        currClient->getResponse()->runCgi(&this);
         currClient->getResponse()->checkMethod();
     }
     catch(const std::exception& e)
