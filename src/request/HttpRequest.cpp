@@ -120,7 +120,7 @@ void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 				return ;
 			}
 		}
-		std::string	path =  this->ReqServer->getRoot() + locationList[i]->getPath() + "/";
+		std::string	path =  this->ReqServer->getRoot() + locationList[i]->getPath();
 			std::cout << "______path____" << std::endl;
 			std::cout << path << std::endl;
 			std::cout << "______uri____" << std::endl;

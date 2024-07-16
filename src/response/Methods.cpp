@@ -124,6 +124,9 @@ void	HttpResponse::checkResourceType()
 
 void	HttpResponse::printDefaultPage()
 {
+	 #ifdef FUNC
+	    std::cout << YELLOW << "[FUNCTION] printDefaultPage" << DEFAULT << std::endl;
+	#endif
 	Server *server = this->Request->ReqServer;
 	std::string	defaultPage = "." + server->getRoot() + "/" + server->getIndex();
 	createResponse_File(defaultPage);
@@ -205,11 +208,11 @@ void	HttpResponse::methodGet()
 			}
 			else
 			{
-				this->resource = "./html/index.html";
-				this->resourceType = RESOURCE_FILE;
-				createResponse(STATUS_FOUND);
+				printDefaultPage();
+				// this->resource = "./html/index.html";
+				// this->resourceType = RESOURCE_FILE;
+				// createResponse(STATUS_FOUND);
 			}
-				// printDefaultPage();
 		}
 	}
 }
