@@ -271,12 +271,12 @@ void Server::splitLocation(std::string cont){
     //     std::cout << BLU << s << RES << std::endl;
 }
 
-void Server::initLocation(std::string serverCont){
+void Server::initLocation(){
     for (std::string cont : this->locationCont){
         std::stringstream iss(cont);
         Location* l = new Location(this);
         l->setLocationVar(iss);
-        l->checkLocationVar(serverCont);
+        l->checkLocationVar();
         this->locationList.push_back(l);
     }
 }

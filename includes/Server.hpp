@@ -75,7 +75,7 @@ public:
     void splitLocation(std::string cont);
     std::size_t skipLocationPath(std::string cont, std::size_t found);
     void setServerVar(std::stringstream& iss);
-    void initLocation(std::string serverCont);
+    void initLocation();
 
 //*******SOCKET***************************
     void createSocket();

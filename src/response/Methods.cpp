@@ -192,6 +192,14 @@ void	HttpResponse::methodGet()
 		checkURI();
 		if (completed == false)
 		{
+			if (this->Request->ReqLocation )
+			{
+				std::cout << YELLOW << "LOCAION :: " << this->Request->ReqLocation->getPath() << std::endl;
+				if (this->Request->ReqLocation->getAutoindex() == true)
+					std::cout << "auto index ON" << DEFAULT << std::endl;
+				else if (this->Request->ReqLocation->getAutoindex() == false)
+					std::cout << "auto index OFF" << DEFAULT << std::endl;
+			}
 			if  (this->Request->ReqLocation && this->Request->ReqLocation->getAutoindex() == true)
 			{
 				printDirectoryListing(this->resource);

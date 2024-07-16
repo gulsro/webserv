@@ -119,7 +119,7 @@ void Config::parseLocation(){
     int i = 0;
     for (std::string cont : serverCont){
         this->serverList[i]->splitLocation(cont);
-        this->serverList[i]->initLocation(cont);
+        this->serverList[i]->initLocation();
         i++;
      }
 }
