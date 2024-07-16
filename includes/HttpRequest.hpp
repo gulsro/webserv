@@ -50,7 +50,8 @@ class	HttpRequest
 		bool	isChunked;
 
 		//Yuka added
-		Cgi			*cgi;
+		// Cgi			*cgi;
+		bool		isCgi;
 
 	public:
 		HttpRequest();
@@ -73,9 +74,12 @@ class	HttpRequest
 		const	std::string	&getQueryString() const { return queryString; }
 		const	std::vector<std::pair<std::string, std::string>> &getQueryPairs() const { return queryPairs; }
 		const	bool		&getIsChunked() const { return isChunked; }
-		Server				*getReqServer() const { return ReqServer; }
+		const	bool		&getIsCgi() const { return isCgi; }
+		Server		&getReqServer() const { return *ReqServer; }
+		Location	&getReqLocation() const { return *ReqLocation; }
+
 		
-		Cgi*		getCgi() const  { return cgi; }
+		// Cgi*		getCgi() const  { return cgi; }
 		const	std::string	getHeaderValue(const std::string &name) const;
 
 		//Setters
@@ -90,6 +94,9 @@ class	HttpRequest
 		void	setQueryString(std::string str);
 		void	setQueryPairs();
 		void	setIsChunked(bool value) { this->isChunked = value; }
+		void	setIsCgi(bool value) { this->isCgi = value; }
+		// void	setCgi(Cgi* c) { this->cgi = c; }
+
 		
 		bool	isReadingRequestFinished(std::string rawRequest);
 		bool	parseHttpRequest(const std::string &rawRequest);

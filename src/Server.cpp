@@ -1,23 +1,10 @@
 
 #include "Webserv.hpp"
 
-Server::Server() : port(0), root(""), index(""), maxBodySize(0)
+Server::Server() : port(0), root(""), index(""), maxBodySize(10000000)
 {
     // std::cout << "Server constructor is called" << std::endl;
 }
-
-// Server::Server(int port,
-// 				std::string host,
-// 				std::vector<std::string> serverNames,map
-// 				std::string root,
-//                 std::string index,
-// 				unsigned long maxBodySize
-// )
-//         : port(port), host(host), serverNames(serverNames),
-//         root(root), index(index), maxBodySize(maxBodySize)
-// {
-//     std::cout << "Server constructor is called" << std::endl;
-// }
 
 Server::~Server()
 {

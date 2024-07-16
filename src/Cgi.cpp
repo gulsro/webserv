@@ -13,19 +13,20 @@ from the CGI, EOF will mark the end of the returned data.
 
 Cgi::Cgi(){}
 
-Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser) : postBody(NULL), contentLen(0)
+Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser) : pass(NULL), postBody(NULL), contentLen(0)
 {
     cgiPass = loc.getCgiPass();
-    std::cout << loc.getRoot()+req.getURI() << std::endl;
+    std::cout << loc.getRoot() << " aaaaaaaaaaaaaaaaaaaaaaand " << req.getURI() << std::endl;
     setCgiFile("."+loc.getRoot()+req.getURI());
     setCgiEnv(req, loc, ser);
-    // if (req.getMethod() == "POST"){
-        setPostBody(req);
-        setContentLen(req);
-    // }
+    setPostBody(req);
+    setContentLen(req);
 }
 
 Cgi::~Cgi(){
+    #ifdef STRUCTOR
+		std::cout << GREY << "Cgi : Default destructor called" << DEFAULT << std::endl; 
+	#endif
     delete[] this->cgiFile;
     for (int i = 0; this->env[i] != NULL; ++i) {
         delete[] this->env[i];
@@ -34,18 +35,18 @@ Cgi::~Cgi(){
     //delete[] this->env;
 }
 
-Cgi::Cgi(Cgi& a){
-    operator=(a);
-}
+// Cgi::Cgi(Cgi& a){
+//     operator=(a);
+// }
 
-Cgi& Cgi::operator=(const Cgi a){
-    if (this == &a)
-        return (*this);
-    this->cgiPass = a.getCgiPass();
-    this->cgiFile = a.getCgiFile();
-    this->env = a.getEnv();
-    return (*this);
-}
+// Cgi& Cgi::operator=(const Cgi a){
+//     if (this == &a)
+//         return (*this);
+//     this->cgiPass = a.getCgiPass();
+//     this->cgiFile = a.getCgiFile();
+//     this->env = a.getEnv();
+//     return (*this);
+// }
 
 // // check if this is valid for bth GET and POST
 // void Cgi::setCgiFile(std::string s){
@@ -114,15 +115,16 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     tmp.push_back("SCRIPT_NAME=/index.py"); //cgi pass
     tmp.push_back("DOCUMENT_ROOT=" + loc.getRoot()); //location getRoot()
     tmp.push_back("QUERY_STRING=" + req.getQueryString()); //getQuery
-    if (req.getMethod() == "POST"){
-        tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
-        tmp.push_back("CONTENT_LENGTH=" + std::to_string(req.getContentLength()));
-    }
+    // if (req.getMethod() == "POST"){
+    //     tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
+    //     tmp.push_back("CONTENT_LENGTH=" + std::to_string(req.getContentLength()));
+    // }
     this->env = new char*[tmp.size() + 1];
     int i = 0;
     for (std::vector<std::string>::iterator t = tmp.begin(); t != tmp.end(); ++t){
         this->env[i] = new char[(*t).size() + 1];
         strcpy(this->env[i], (*t).c_str());
+        std::cout << env[i] << "ENVVVVVVVVVVVVVVVVVVVVVVVVV" << std::endl;
         ++i;
     }
     this->env[tmp.size()] = NULL;
@@ -150,7 +152,7 @@ std::vector<char>    Cgi::execCgi(){
 			throw ErrorCodeException(STATUS_NOT_FOUND);
 		if (access(cgiFile,X_OK) != 0)
 			throw ErrorCodeException(STATUS_FORBIDDEN);
-        char *pass = new char[cgiPass.size() + 1]; // will it cause a leak?
+        pass = new char[cgiPass.size() + 1];
         std::strcpy(pass, cgiPass.c_str());
         char *argv[3] = {pass, cgiFile, NULL};
         close(w_pip[0]); 
@@ -183,10 +185,9 @@ std::vector<char>    Cgi::execCgi(){
     while (bytes > 0){
         std::memset(buf, '\0', BUFFER_SIZE - 1);
         bytes = read(0, buf, BUFFER_SIZE);
-        // std::cout << YELLOW << bytes << DEFAULT << std::endl;
         // if (bytes < 0)
             // no read;
-            body.insert(body.end(), buf, buf + bytes);
+        body.insert(body.end(), buf, buf + bytes);
     }
     printf("\n");
     close(w_pip[0]);

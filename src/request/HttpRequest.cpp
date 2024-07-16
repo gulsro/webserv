@@ -4,7 +4,7 @@
 #include <cstring>
 
 HttpRequest::HttpRequest()
-	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false), cgi(nullptr)
+	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false), isCgi(false)
 {
 	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Default constructor called" << DEFAULT << std::endl; 
@@ -37,9 +37,9 @@ HttpRequest &HttpRequest::operator=(const HttpRequest &other)
 
 HttpRequest::~HttpRequest()
 {
-	#ifdef STRUCTOR
+	// #ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Destructor called" << DEFAULT << std::endl; 
-	#endif
+	// #endif
 }
 
 void	HttpRequest::checkContentType()
@@ -117,7 +117,8 @@ void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 			{
 				setReqLocation(locationList[i]);
 				std::cout << MAG << "CGI is instantiated" << RES << std::endl;
-				cgi = new Cgi(*this, *(locationList[i]), *ReqServer);
+				this->isCgi = true;
+				setReqLocation(locationList[i]);
 				return ;
 			}
 		}
