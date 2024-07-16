@@ -98,7 +98,7 @@ std::string returnFileExtension(const std::string path)
 	return fileExtension;
 }
 
-void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
+void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 {
 	#ifdef FUNC
 	std::cout << YELLOW << "[FUNCTION] setReqLocation" << DEFAULT << std::endl;
@@ -106,28 +106,30 @@ void	HttpRequest::setReqLocation(std::vector<Location*> locationList)
 
 	for (size_t i = 0; i < locationList.size(); ++i)
 	{
-		//std::cout << "iiiiiiii= " << i << std::endl;
-		std::string	path = locationList[i]->getPath();
-		if (this->uri == path)
-		{
-			this->ReqLocation = locationList[i];
-			break;
-		}
 		// if uri contains cgi program extension file name. For us, Python.
 		size_t pos = this->uri.find(".py");
-		if (pos != std::string::npos && path == "/*.py")
+		if (pos != std::string::npos && locationList[i]->getPath() == "/*.py")
 		{
 			std::cout << MAG << "CGI extention is detected" << RES << std::endl;
-			std::string fileExtension = returnFileExtension(path);
-			char	c = this->uri[pos + fileExtension.length()];
+			std::string fileExtension = returnFileExtension(locationList[i]->getPath());
 			// check file extension name is only ".py"
 			if (isdigit(c) == false && isalpha(c) == false && c != '-' && c != '_')
 			{
-				this->ReqLocation = locationList[i];
+				setReqLocation(locationList[i]);
 				std::cout << MAG << "CGI is instantiated" << RES << std::endl;
 				cgi = new Cgi(*this, *(locationList[i]), *ReqServer);
-				break;
+				return ;
 			}
+		}
+		std::string	path =  this->ReqServer->getRoot() + locationList[i]->getPath() + "/";
+			std::cout << "______path____" << std::endl;
+			std::cout << path << std::endl;
+			std::cout << "______uri____" << std::endl;
+			std::cout << this->uri << std::endl;
+		if (this->uri.find(path) != std::string::npos)
+		{
+			setReqLocation(locationList[i]);
+			return ;
 		}
 	}
 	this->ReqLocation = nullptr;
@@ -158,6 +160,48 @@ void	HttpRequest::checkUriValidation()
 	}
 }
 
+int hexdigiToInt(char hex)
+{
+    if (hex >= '0' && hex <= '9')
+        return hex - '0';
+    else if (hex >= 'a' && hex <= 'f')
+        return hex - 'a' + 10;
+    else if (hex >= 'A' && hex <= 'F')
+        return hex - 'A' + 10;
+    else
+        return -1;
+}
+std::string decodeUri(const std::string& encoded)
+{	
+	std::string decoded;
+	decoded.reserve(encoded.size());
+
+    for (size_t i = 0; i < encoded.size(); ++i)
+	{
+        char c = encoded[i];
+        if (c == '%') {
+            if (i + 2 >= encoded.size())
+			{
+                // Invalid encoding
+                break;
+            }
+            char hex1 = encoded[i + 1];
+            char hex2 = encoded[i + 2];
+            if (!isxdigit(hex1) || !isxdigit(hex2))
+			{
+                // Invalid encoding
+                break;
+            }
+            int value = (hexdigiToInt(hex1) << 4) + hexdigiToInt(hex2);
+            decoded += static_cast<char>(value);
+            i += 2;
+        } else
+            decoded += c;
+    }
+
+    return decoded;
+}
+
 bool	HttpRequest::parseRequestLine(const std::string &line)
 {
 	std::istringstream stream(line);
@@ -173,9 +217,9 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	checkUriValidation();
 	// check query string in URI
 	if (this->uri.find('?') != std::string::npos)
-	{
 		this->setQueryPairs();
-	}
+	if (this->uri.find('%') != std::string::npos)
+		this->uri = decodeUri(this->uri);
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
 		throw ErrorCodeException(STATUS_NOT_ALLOWED);

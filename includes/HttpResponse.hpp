@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <unordered_map>
 #include "utils.hpp"
 #include <cstdlib> // remove(), std::system()
@@ -8,7 +7,7 @@
 #include "HttpRequest.hpp"
 #include "Webserv.hpp"
 #include <exception>
-
+#include <optional>
 
 enum	e_resourceType
 {
@@ -64,6 +63,7 @@ class HttpResponse
 		void		setMIMEtype(const std::string &filename);
 		
 		void		createResponse(enum e_statusCode code);
+		void		createResponse(enum e_statusCode code, const std::string content);
 		void		createResponse_File(std::string filename);
 	
 		void		checkMethod();
@@ -72,6 +72,10 @@ class HttpResponse
         bool        checkAllowedMethod();
 		bool		checkIndexFileExists(const std::string path, const std::string filename);
 		bool		checkResourcePermission(const std::string path);
+
+		void		printDefaultPage();
+		void		printDirectoryListing(const std::string &path);
+
 		void		methodGet();
 		void		methodPost();
 		void		methodDelete();

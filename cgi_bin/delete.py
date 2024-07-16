@@ -11,7 +11,6 @@ UPLOAD_DIR = "./html/upload"
 
 request_method = os.environ.get("REQUEST_METHOD", "")
 
-
 if (request_method == "DELETE"):
 	query_string = os.environ.get("QUERY_STRING", "")
 	parameters = urllib.parse.parse_qs(query_string)

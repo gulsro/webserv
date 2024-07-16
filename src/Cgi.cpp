@@ -144,6 +144,8 @@ std::vector<char>    Cgi::execCgi(){
         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
         // signal(SIGINT, SIG_DFL);
         // signal(SIGTERM, SIG_DFL);
+        if (access(cgiFile,F_OK) != 0)
+			throw ErrorCodeException(STATUS_NOT_FOUND);
 		if (access(cgiFile,X_OK) != 0)
 			throw ErrorCodeException(STATUS_FORBIDDEN);
         pass = new char[cgiPass.size() + 1]; // will it cause a leak?

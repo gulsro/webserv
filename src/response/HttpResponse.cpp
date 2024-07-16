@@ -48,6 +48,11 @@ HttpResponse::~HttpResponse()
 
 void	HttpResponse::createResponse(enum e_statusCode code)
 {
+	this->createResponse(code, "");
+}
+
+void	HttpResponse::createResponse(enum e_statusCode code, const std::string content)
+{
     #ifdef FUNC
 	    std::cout << YELLOW << "[FUNCTION] createResponse" << DEFAULT << std::endl;
 	#endif
@@ -62,10 +67,23 @@ void	HttpResponse::createResponse(enum e_statusCode code)
 		ostream << "HTTP/1.1 " << this->statusCode << " " << returnStatusMessage(this->statusCode) << "\r\n";
 		if (this->statusCode == STATUS_MOVED)
 		{
-			ostream << "Location: " << this->resource + "/" << "\r\n";
+			// Remove leading '.' from resource.
+			if (this->resourceType == RESOURCE_DIR)
+				ostream << "Location: " << this->resource.substr(1, this->resource.length() - 1) + "/" << "\r\n";
+			else if (this->resourceType == RESOURCE_FILE)
+				ostream << "Location: " << this->resource.substr(1, this->resource.length() - 1) << "\r\n";
+
 		}
-		ostream << "Content-Length: 0\r\n";
- 		ostream << "\r\n";
+ 		if (!content.empty())
+		{
+			ostream << "Content-Length: " << content.length() << "\r\n";
+			ostream << "Content-Type: text/html\r\n";
+		}
+		else
+			ostream << "Content-Length: 0\r\n";
+		ostream << "\r\n";
+		if (!content.empty())
+			ostream << content;
 		this->content = ostream.str(); // a string a copy of ostream
 	}
 	if (this->statusCode >= 400)
@@ -105,6 +123,7 @@ void	HttpResponse::createResponse_File(std::string filename)
 	}
 	else
 		createResponse(STATUS_INTERNAL_ERR);
+	this->completed = true;
 }
 
 void    HttpResponse::setResource()
@@ -113,7 +132,8 @@ void    HttpResponse::setResource()
 	    std::cout << YELLOW << "[FUNCTION] setResource" << DEFAULT << std::endl;
 	#endif
 	Server	*Server = this->Request->ReqServer;
-	if (this->Request->ReqLocation != nullptr)
+
+	if (this->Request->ReqLocation)
 	{
 		Location	*Location = this->Request->ReqLocation;
 		// Check redirection
@@ -122,23 +142,7 @@ void    HttpResponse::setResource()
 			this->resource = Location->getRedirect();
 			createResponse(STATUS_FOUND);
 		}
-		// Check index
-		if (Location->getIndex().empty())
-		{
-			if (Location->getAutoindex() == true)
-			{
-				// Set default index
-				this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
-			}
-		}
-		else
-		{
-			if (fileExistsInDir(Location->getRoot() + Location->getPath(), Location->getIndex()) == true)
-				this->resource = "." + Location->getRoot() + Location->getPath() + Location->getIndex();
-			else
-				createErrorResponse(STATUS_FORBIDDEN);
-		}
-		this->resource = "." + Location->getPath() + this->Request->getURI();
+		this->resource = "." + this->Request->getURI();
 	}
 	else // No selected Location
 	{

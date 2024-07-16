@@ -65,8 +65,8 @@ bool	ServerManager::readRequest(Client *Client)
 	if (byteRead == 0)
 	{
 		rmFdFromPollfd(fd);
-    	delete mapClientFd[fd];
-    	mapClientFd[fd] = nullptr;
+    	//delete mapClientFd[fd];
+    	//mapClientFd[fd] = nullptr;
     	close(fd);
 		//std::cout << "Disconnection with " << fd << std::endl;
 		throw std::runtime_error("revc()");
@@ -195,7 +195,7 @@ void	HttpRequest::checkLocations()
 	#ifdef FUNC
 		std::cout << YELLOW << "[FUNCTION] checkLocation" << DEFAULT << std::endl;
 	#endif
-	setReqLocation(this->ReqServer->getLocationList());
+	selectReqLocation(this->ReqServer->getLocationList());
 	// GET is always allowed depending on our own config file
 	if (this->getMethod() != "GET" && this->ReqLocation != nullptr)
 		checkAllowedMethods();

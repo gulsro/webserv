@@ -103,12 +103,15 @@ void	HttpResponse::checkResourceType()
 	
 	if (this->completed == true)
 		return	;
-    setResource();
 	path = this->resource;
+	std::cout << "RESOURCE:::" << path << std::endl;
 	if (stat(path.c_str(), &buf) == 0)
 	{
 		if (S_ISDIR(buf.st_mode))
+		{
+			std::cout << "It's directory" << std::endl;
 			this->setResourceType(RESOURCE_DIR);
+		}
 		else if (S_ISREG(buf.st_mode))
 			this->setResourceType(RESOURCE_FILE);
 	}
@@ -117,6 +120,13 @@ void	HttpResponse::checkResourceType()
 		this->content = createErrorResponse(STATUS_NOT_FOUND);
 		this->completed = true;
 	}
+}
+
+void	HttpResponse::printDefaultPage()
+{
+	Server *server = this->Request->ReqServer;
+	std::string	defaultPage = "." + server->getRoot() + "/" + server->getIndex();
+	createResponse_File(defaultPage);
 }
 
 void	HttpResponse::checkURI()
@@ -133,6 +143,41 @@ void	HttpResponse::checkURI()
 			createResponse(STATUS_CONFLICT);
 		else
 			createResponse(STATUS_MOVED);
+	}
+}
+
+void	HttpResponse::printDirectoryListing(const std::string &path)
+{
+	if (std::filesystem::exists(path) == true)
+	{
+		std::string contnet = "";
+		std::ostringstream oss;
+
+		oss << "<!DOCTYPE html>\n<html lang=\"en\">\n";
+		oss << "<head>\n<meta charset=\"UTF-8\">\n";
+		oss << "<title>Directory Listing</title>\n";
+		oss << "</head>\n";
+		oss << "<body>\n";
+		oss << "<h2>" << path << "</h2>\n";
+		oss << "<ul>\n";
+		oss << "<li><a href=\"..\">Parent directory</a></li>";
+		for (const auto& entry : std::filesystem::directory_iterator(path))
+		{
+			if (entry.is_regular_file())
+				oss << "<li><a href=\"" << entry.path().filename().string() << "\">" << entry.path().filename().string() << "</a></li>";
+			else
+				oss << "<li><a href=\"" << entry.path().filename().string() << "/\">" << entry.path().filename().string() << "/</a></li>";
+
+		}
+		oss << "</ul>\n";
+		oss << "</body></html>";
+		content = oss.str();
+		createResponse(STATUS_SUCCESS, content);
+	}
+	else
+	{
+		createErrorResponse(STATUS_NOT_FOUND);
+		this->completed = true;
 	}
 }
 
@@ -153,7 +198,19 @@ void	HttpResponse::methodGet()
 	{
 		checkURI();
 		if (completed == false)
-			createResponse_File(getResource());
+		{
+			if  (this->Request->ReqLocation && this->Request->ReqLocation->getAutoindex() == true)
+			{
+				printDirectoryListing(this->resource);
+			}
+			else
+			{
+				this->resource = "./html/index.html";
+				this->resourceType = RESOURCE_FILE;
+				createResponse(STATUS_MOVED);
+			}
+				// printDefaultPage();
+		}
 	}
 }
 
@@ -171,7 +228,7 @@ void    HttpResponse::postFile()
         {
             file << Request->parts[i].data;
             file.close();
-            createResponse(STATUS_CREATED);
+           createResponse(STATUS_CREATED);
         }
     }
 }
@@ -231,7 +288,7 @@ void	HttpResponse::methodDelete()
 		return ;
 	if (this->resourceType == RESOURCE_FILE)	
 		deleteFile();
-	else
+	else // Resource is a directory
 	{
 		checkURI();
 		if (this->completed == false)
@@ -247,8 +304,9 @@ void	HttpResponse::checkMethod()
 	#endif
 	std::string	method = Request->getMethod();
 
+	setResource();
 	checkResourceType();
-	if (fileExists(this->resource) == false && this->Request->cgi == nullptr)
+	if (this->resourceType == RESOURCE_FILE && fileExists(this->resource) == false && this->Request->cgi == nullptr)
 		throw ErrorCodeException(STATUS_NOT_FOUND);
 	if (checkResourcePermission(this->resource) == false && this->Request->cgi == nullptr)
 		throw ErrorCodeException(STATUS_FORBIDDEN);

@@ -82,7 +82,8 @@ class	HttpRequest
 		void	setContentLength(int len) { this->contentLength = len; }
 		void	setRequestedPort();
         void    setReqServer(const std::vector<Server*> serverList);
-		void	setReqLocation(const std::vector<Location*> locationList);
+		void	setReqLocation(Location *location) { ReqLocation = location; }
+		void	selectReqLocation(const std::vector<Location*> locationList);
 		void	setContentType();
 		void	setBoundary();
 		void	setQueryString(std::string str);
