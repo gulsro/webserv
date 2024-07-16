@@ -59,7 +59,7 @@ html_content = ('''<!DOCTYPE html>
 		color: black;
 		border: none;
 		cursor: pointer;
-		margin-top: 5em;
+		margin-top: 1em;
 	}
 	.button:hover {
 		background-color: #99f077;
