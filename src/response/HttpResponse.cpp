@@ -69,6 +69,9 @@ void	HttpResponse::createResponse(enum e_statusCode code, const std::string cont
 		if (this->statusCode == STATUS_MOVED || this->statusCode == STATUS_FOUND)
 		{
 			// Remove leading '.' from resource.
+			if (this->resourceType == RESOURCE_FILE)
+				ostream << "Location: " << this->resource.substr(1, this->resource.length() - 1) << "\r\n";
+			else
 				ostream << "Location: " << this->resource.substr(1, this->resource.length() - 1) + "/" << "\r\n";
 		}
  		if (!content.empty())
