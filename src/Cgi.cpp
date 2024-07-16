@@ -16,7 +16,7 @@ Cgi::Cgi(){}
 Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser) : pass(NULL), postBody(NULL), contentLen(0)
 {
     cgiPass = loc.getCgiPass();
-    std::cout << loc.getRoot()+req.getURI() << std::endl;
+    std::cout << loc.getRoot() << " aaaaaaaaaaaaaaaaaaaaaaand " << req.getURI() << std::endl;
     setCgiFile("."+loc.getRoot()+req.getURI());
     setCgiEnv(req, loc, ser);
     setPostBody(req);

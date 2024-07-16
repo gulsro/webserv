@@ -77,10 +77,10 @@ void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 	for (size_t i = 0; i < serverList.size(); ++i)
 	{
 		int	port = serverList[i]->getPort();
-		if (this->requestedPort == port)
+		if (this->requestedPort == port){
 			this->ReqServer = serverList[i];
-		else
-			continue;
+			return ;
+		}
 	}
 	this->ReqServer = serverList[0]; // Default server
 }
@@ -118,7 +118,6 @@ void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 				std::cout << MAG << "CGI is instantiated" << RES << std::endl;
 				this->isCgi = true;
 				setReqLocation(locationList[i]);
-				// cgi = new Cgi(*this, *(locationList[i]), *ReqServer);
 				return ;
 			}
 		}
