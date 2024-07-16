@@ -131,8 +131,8 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
 
 //return http response msg or '\0' in case of internal error
 std::vector<char>    Cgi::execCgi(){
-    int w_pip[2];
-    int r_pip[2];
+    int w_pip[2]; // 2. Children write to the pipe -> 3. Parents read from here
+    int r_pip[2]; // 1. Children read body from STDIN
     pid_t pid;
 
     std::cout << MAG << "CGI executed"<< RES << std::endl;
@@ -167,7 +167,7 @@ std::vector<char>    Cgi::execCgi(){
     }
     int status;
     char buf[BUFFER_SIZE]; // is buffer_size defined in config?
-    std::vector<char> body;
+    std::vector<char> body {};
     ssize_t bytes = 1;
 //close write end and read output from pipe
     close(r_pip[0]);

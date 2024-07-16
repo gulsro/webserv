@@ -1,7 +1,7 @@
 #include "HttpResponse.hpp"
 
 HttpResponse::HttpResponse()
-	: statusCode(0), body(""), index(""), resource(""), content(""), contentType(""), MIMEtype(""), completed(false)
+	: statusCode(0), body(""), index(""), resource(""), resourceType(RESOURCE_FILE), content(""), contentType(""), MIMEtype(""), completed(false)
 {
 	#ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Default constructor called" << DEFAULT << std::endl; 

@@ -1,7 +1,7 @@
 
 #include "Webserv.hpp"
 
-Server::Server() : port(0), root(""), index(""), maxBodySize(10000000)
+Server::Server() : port(0), root(""), index(""), maxBodySize(10000000), nbLocation(0)
 {
     // std::cout << "Server constructor is called" << std::endl;
 }
@@ -32,13 +32,6 @@ Server& Server::operator=(const Server s){
     this->maxBodySize = s.getMaxBodySize();
     return (*this);
 }
-
-//Not necessary because createSock() assigns value for serverFd
-// void Server::setServerFd(int fd)
-// {
-//     this->serverFd = fd;
-// }
-
 
 //--------------Getters-------------------
 int Server::getPort() const
@@ -185,9 +178,6 @@ void Server::setHost(std::string& cont){
         return ;
     this->host = cont;
 }
-// void Server::setServerFd(int fd){
-
-// }
 
 void Server::setRoot(std::string& cont, int key){
     if (!getRoot().empty())
@@ -257,9 +247,6 @@ void Server::splitLocation(std::string cont){
     }
     if (!this->nbLocation)
         throw std::runtime_error("No server was found in config file");
-    // std::cout << "# of Location is: " << nbLocation << std:: endl;
-    // for (std::string s : locationCont)
-    //     std::cout << BLU << s << RES << std::endl;
 }
 
 void Server::initLocation(std::string serverCont){
