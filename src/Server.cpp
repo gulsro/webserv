@@ -1,7 +1,7 @@
 
 #include "Webserv.hpp"
 
-Server::Server() : port(0), root(""), index(""), maxBodySize(10000000)
+Server::Server() : port(0), root(""), index(""), maxBodySize(0)
 {
     // std::cout << "Server constructor is called" << std::endl;
 }
