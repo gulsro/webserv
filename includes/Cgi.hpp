@@ -36,13 +36,26 @@ public:
 class Cgi
 {
 private:
-    std::string cgiPass;
     char *cgiFile;
     char **env;
     char *pass;
     char *postBody;
     int contentLen;
-    
+    std::string cgiPass;
+    /******************/
+    ServerManager   &ServerManager;
+    int r_pip;
+    int w_pip;
+    std::vector<char> cgiInput;
+    std::vector<char> cgiOutput;
+    size_t  readBytes;
+    size_t  writeBytes;
+    pid_t   childPid;
+    bool    finishReading;
+
+    void    ParseCgiOutput();
+    void    initPipesChild(int toCgi[2], int fromCgi[2]);
+    void    initPipesParent(int toCgi[2], int fromCgi[2]);
 public:
     Cgi();
     Cgi(HttpRequest& req, Location& loc, Server& ser);
@@ -50,6 +63,8 @@ public:
     // Cgi(Cgi& a);
     // Cgi& operator=(const Cgi a);
 
+    // Read function
+    // Write function
     std::string getCgiPass() const {return cgiPass; };
     char* getCgiFile() const {return cgiFile; };
     char* getPostBody() const {return postBody; };

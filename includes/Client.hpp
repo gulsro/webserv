@@ -19,15 +19,15 @@ private:
     //Server& server;
     int clientFd;
 	int readyTo;
-	HttpRequest	*Request;
+	HttpRequest		*Request;
 	HttpResponse	*Response;
-//         Response&
+	Cgi				*cgi;
 
 public:
     Client(int fd, int readyTo);
     ~Client();
 
-    int 		getClientFd();
+    int 			getClientFd();
 	HttpRequest		*getRequest() const { return Request; }
 	HttpResponse	*getResponse() const { return Response; }
 	int getReadyToFlag() const;
