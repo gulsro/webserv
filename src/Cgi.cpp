@@ -149,7 +149,6 @@ void    Cgi::WriteToCgi(){
 		throw std::runtime_error ("Writing to CGI has failed" );
     else if (bytes < WRITE_SIZE)
         ssize_t bytes = write(this->pipeWrite, '\0', 1);//is it needed?
-    }
     reqBody.erase(reqBody.begin(), bytes);
     poll.addEvent(pipeWrite, POLLOUT);
     
