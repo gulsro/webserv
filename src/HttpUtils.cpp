@@ -63,6 +63,8 @@ std::string	returnStatusMessage(int statusCode)
 			return ("Created");
 		case 204:
 			return ("No Content");
+		case 301:
+			return ("Moved Permanently"); // redirection permanently
 		case 302:
 			return ("Found"); // redirection temporary 
 		case 400:

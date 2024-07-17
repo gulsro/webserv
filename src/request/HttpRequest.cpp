@@ -77,7 +77,8 @@ void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 	for (size_t i = 0; i < serverList.size(); ++i)
 	{
 		int	port = serverList[i]->getPort();
-		if (this->requestedPort == port){
+		if (this->requestedPort == port)
+		{
 			this->ReqServer = serverList[i];
 			return ;
 		}
@@ -121,11 +122,7 @@ void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 				return ;
 			}
 		}
-		std::string	path =  this->ReqServer->getRoot() + locationList[i]->getPath() + "/";
-			std::cout << "______path____" << std::endl;
-			std::cout << path << std::endl;
-			std::cout << "______uri____" << std::endl;
-			std::cout << this->uri << std::endl;
+		std::string	path =  this->ReqServer->getRoot() + locationList[i]->getPath();
 		if (this->uri.find(path) != std::string::npos)
 		{
 			setReqLocation(locationList[i]);

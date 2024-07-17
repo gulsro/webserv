@@ -31,11 +31,13 @@ private:
     std::string index;
     unsigned long maxBodySize; // in bytes
     int nbLocation;
+
+    bool    autoindex;
     
     std::vector<Location*> locationList;
     std::vector<std::string> locationCont;
     struct sockaddr_in serverAddr;
-    setFunc func[4] {&Server::setPort, &Server::setRoot, &Server::setIndex, &Server::setMaxBodySize};
+    setFunc func[5] {&Server::setPort, &Server::setRoot, &Server::setIndex, &Server::setMaxBodySize, &Server::setAutoindex};
 
 public:
     Server();
@@ -55,6 +57,7 @@ public:
     unsigned long getMaxBodySize() const;
     std::vector<Location*> getLocationList() const;
     struct sockaddr_in* getSocketAddr() const;
+    bool        getAutoindex() const { return autoindex; }
     //std::vector<Location> getLocationList() const;
 
     
@@ -66,12 +69,13 @@ public:
     void setRoot(std::string& cont, int key);
     void setIndex(std::string& cont, int key);
     void setMaxBodySize(std::string& cont, int key);
+    void setAutoindex(std::string&cont, int key);
 
 //********PARSING************************
     void splitLocation(std::string cont);
     std::size_t skipLocationPath(std::string cont, std::size_t found);
     void setServerVar(std::stringstream& iss);
-    void initLocation(std::string serverCont);
+    void initLocation();
 
 //*******SOCKET***************************
     void createSocket();

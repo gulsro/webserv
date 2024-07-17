@@ -40,3 +40,32 @@ void	Client::setClientFdEvent(std::vector<struct pollfd>& pollfds, short events)
         }
     }
 }
+
+
+void  Client::handleCgiRequest()
+{
+	HttpResponse *response = this->Response;
+	Cgi cgi((*this->Request), this->Request->getReqLocation(), this->Request->getReqServer());
+	this->cgi = &cgi; // Assigning client cgi
+	std::cout << YEL << this->cgi->getCgiFile() << RES << std::endl;
+
+	std::string	cgiFilename = this->cgi->getCgiFile();
+	std::ifstream file(cgiFilename);
+
+	// if it's not allowed method, it'll throw an error.
+	this->Request->checkAllowedMethods(this->Request->getMethod());
+
+	if (file.is_open())
+	{
+		// this->cgi->write;
+		this->cgi->executeCgi();
+		file.close();	
+	}
+	else
+	{
+		if (access(cgiFilename.c_str(), F_OK) != 0)
+			throw ErrorCodeException(STATUS_NOT_FOUND);
+		else
+			throw ErrorCodeException(STATUS_FORBIDDEN);
+	}
+}

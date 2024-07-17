@@ -109,7 +109,7 @@ class	HttpRequest
 		void	checkRequestValid();
 		void	checkLocations();
 		void	checkUriValidation();
-		void	checkAllowedMethods();
+		void	checkAllowedMethods(std::string requestedMethod);
 	
 		void	handleMultiPartForm();
 		void	handleChunkedBody(const size_t bodyStart, const std::string rawRequest);

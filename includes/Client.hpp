@@ -19,23 +19,25 @@ private:
     //Server& server;
     int clientFd;
 	int readyTo;
-	HttpRequest	*Request;
+	HttpRequest		*Request;
 	HttpResponse	*Response;
-//         Response&
+	Cgi				*cgi;
 
 public:
     Client(int fd, int readyTo);
     ~Client();
 
-    int 		getClientFd();
+    int 			getClientFd();
 	HttpRequest		*getRequest() const { return Request; }
 	HttpResponse	*getResponse() const { return Response; }
 	int getReadyToFlag() const;
 
 	void	setRequest(HttpRequest	*request) { Request = request; }
 	void	setResponse(HttpResponse	*response) { Response = response; }	
-	void setReadyToFlag(int readyTo);
+	void 	setReadyToFlag(int readyTo);
 	void	setClientFdEvent(std::vector<struct pollfd>& pollfds, short events);
+
+	void  handleCgiRequest();
 };
 
 std::ostream& operator<<(std::ostream& out, const Client& client);

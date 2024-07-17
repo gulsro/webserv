@@ -122,13 +122,6 @@ void	HttpResponse::checkResourceType()
 	}
 }
 
-void	HttpResponse::printDefaultPage()
-{
-	Server *server = this->Request->ReqServer;
-	std::string	defaultPage = "." + server->getRoot() + "/" + server->getIndex();
-	createResponse_File(defaultPage);
-}
-
 void	HttpResponse::checkURI()
 {
     #ifdef FUNC
@@ -142,7 +135,7 @@ void	HttpResponse::checkURI()
 		if (method == "DELETE")
 			createResponse(STATUS_CONFLICT);
 		else
-			createResponse(STATUS_MOVED);
+			createResponse(STATUS_FOUND);
 	}
 }
 
@@ -199,6 +192,14 @@ void	HttpResponse::methodGet()
 		checkURI();
 		if (completed == false)
 		{
+			if (this->Request->ReqLocation )
+			{
+				std::cout << YELLOW << "LOCAION :: " << this->Request->ReqLocation->getPath() << std::endl;
+				if (this->Request->ReqLocation->getAutoindex() == true)
+					std::cout << "auto index ON" << DEFAULT << std::endl;
+				else if (this->Request->ReqLocation->getAutoindex() == false)
+					std::cout << "auto index OFF" << DEFAULT << std::endl;
+			}
 			if  (this->Request->ReqLocation && this->Request->ReqLocation->getAutoindex() == true)
 			{
 				printDirectoryListing(this->resource);
@@ -207,9 +208,8 @@ void	HttpResponse::methodGet()
 			{
 				this->resource = "./html/index.html";
 				this->resourceType = RESOURCE_FILE;
-				createResponse(STATUS_MOVED);
+				createResponse(STATUS_FOUND);
 			}
-				// printDefaultPage();
 		}
 	}
 }

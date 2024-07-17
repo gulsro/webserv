@@ -52,7 +52,7 @@ public:
     void setCgiPass(std::string& cont, int key);
 
     void setLocationVar(std::stringstream& iss);
-    void checkLocationVar(std::string serverCont);
+    void checkLocationVar();
 };
 
 std::ostream& operator<<(std::ostream& out, const Location& location);

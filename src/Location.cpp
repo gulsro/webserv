@@ -104,11 +104,15 @@ void Location::setMaxBodySize(std::string& cont, int key){
 }
 
 void Location::setAutoindex(std::string& cont, int key){
-    if (getAutoindex())
-        return ;
-    while(std::isspace(cont[key]))
-        key++;
-    this->autoindex = true;
+    (void)key;
+    bool serverAutoIndex = this->server->getAutoindex();
+    
+    if (serverAutoIndex == true)
+        this->autoindex = true;
+    else if (serverAutoIndex == false && cont.find("on") != std::string::npos)
+        this->autoindex = true;
+    else
+        this->autoindex = false;
 }
 
 void Location::setIndex(std::string& cont, int key){
@@ -165,6 +169,7 @@ void Location::setLocationVar(std::stringstream& iss){
     std::string line;
     std::string parameter[9] = {"{", "root", "max_body_size", "autoindex", "index", "return", "methods", "error_page", "cgi_pass"};
      while (std::getline(iss, line, '\n')){
+                std::cout << line << std::endl;
         for (int i = 0; i < 9; i++){
             key = line.find(parameter[i]);
             if(key != std::string::npos){
@@ -174,19 +179,15 @@ void Location::setLocationVar(std::stringstream& iss){
             }
         }
     }
-    // std::cout << RED << *this << RES << std::endl;
+    std::cout << RED << *this << RES << std::endl;
 }
 
-void Location::checkLocationVar(std::string serverCont){
+void Location::checkLocationVar(){
     if (path.empty())
         throw std::runtime_error("No path is available for the location");
-    if (errorPage.empty()){
-        std::stringstream iss(serverCont);
-        setLocationVar(iss);
-    }
     if (!maxBodySize)
         this->maxBodySize = (*server).getMaxBodySize();
-    if (serverCont.find("autoindex") != std::string::npos && autoindex == false)
+    if (this->server->getAutoindex() == true && autoindex == false)
         autoindex = true;
 }
 

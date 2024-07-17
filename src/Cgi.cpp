@@ -30,10 +30,11 @@ Cgi::~Cgi(){
 		std::cout << GREY << "Cgi : Default destructor called" << DEFAULT << std::endl; 
 	#endif
     delete[] this->cgiFile;
-    for (int i = 0; env[i] != NULL; ++i)
-        delete[] env[i];
+    for (int i = 0; this->env[i] != NULL; ++i) {
+        delete[] this->env[i];
+    }
     delete[] this->env;
-    delete[] this->pass;
+    //delete[] this->env;
 }
 
 // Cgi::Cgi(Cgi& a){

@@ -197,7 +197,6 @@ void Server::setIndex(std::string& cont, int key){
     this->index = cont.substr(key, cont.find('\n') - key);
 }
 
-
 void Server::setMaxBodySize(std::string& cont, int key){
     if (getMaxBodySize() != 0)
         return ;
@@ -206,15 +205,25 @@ void Server::setMaxBodySize(std::string& cont, int key){
     this->maxBodySize = std::stoi(cont.substr(key, cont.find('\n') - key));
 }
 
+void Server::setAutoindex(std::string&cont, int key){
+    (void)key;
+    if (cont.find("on") != std::string::npos)
+        this->autoindex = true;
+    else if (cont.find("off") != std::string::npos)
+        this->autoindex = false;
+}
+
 //--------------Functions-------------------
 
 void Server::setServerVar(std::stringstream& iss)
 {
     std::size_t key;
     std::string line;
-    std::string parameter[4] = {"listen", "root", "index", "max_body_size"};
+    std::string parameter[5] = {"listen", "root", "index", "max_body_size", "autoindex"};
      while (std::getline(iss, line, '\n')){
-        for (int i = 0; i < 4; i++){
+        if (line.find("location") != std::string::npos)
+            break;
+        for (int i = 0; i < 5; i++){
             key = line.find(parameter[i]);
             if(key != std::string::npos)
                 (this->*func[i])(line, key + parameter[i].size());
@@ -249,12 +258,12 @@ void Server::splitLocation(std::string cont){
         throw std::runtime_error("No server was found in config file");
 }
 
-void Server::initLocation(std::string serverCont){
+void Server::initLocation(){
     for (std::string cont : this->locationCont){
         std::stringstream iss(cont);
         Location* l = new Location(this);
         l->setLocationVar(iss);
-        l->checkLocationVar(serverCont);
+        l->checkLocationVar();
         this->locationList.push_back(l);
     }
 }
@@ -275,6 +284,10 @@ std::ostream& operator<<(std::ostream& out, const Server& server)
     out << "root: " << server.getRoot()<< std::endl;
     out << "index: " << server.getIndex()<< std::endl;
     out << "Max body size: " << server.getMaxBodySize()<< std::endl;
+    if (server.getAutoindex() == true)
+         out << "auto index: " << "ON" << std::endl;
+    else if (server.getAutoindex() == false)
+         out << "auto index: " << "OFF" << std::endl;
     out << std::endl;
     return out;
 }
