@@ -289,8 +289,9 @@ int ServerManager::handleIncoming(int fd)
 		{    //Request.readRequest(fd); fd will be client's
 
 			currClient->getRequest()->setReqServer(servers);
-			currClient->getRequest()->checkLocations();
+			currClient->getRequest()->checkLocations(); // cgi is detected
             currClient->getRequest()->checkRequestValid();
+            // maybe read cgi?
 		}
 	}
 	catch (const std::exception& e)
