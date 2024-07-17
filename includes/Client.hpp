@@ -34,8 +34,10 @@ public:
 
 	void	setRequest(HttpRequest	*request) { Request = request; }
 	void	setResponse(HttpResponse	*response) { Response = response; }	
-	void setReadyToFlag(int readyTo);
+	void 	setReadyToFlag(int readyTo);
 	void	setClientFdEvent(std::vector<struct pollfd>& pollfds, short events);
+
+	void  handleCgiRequest();
 };
 
 std::ostream& operator<<(std::ostream& out, const Client& client);

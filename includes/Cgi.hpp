@@ -53,9 +53,6 @@ private:
     pid_t   childPid;
     bool    finishReading;
 
-    void    ParseCgiOutput();
-    void    initPipesChild(int toCgi[2], int fromCgi[2]);
-    void    initPipesParent(int toCgi[2], int fromCgi[2]);
 public:
     Cgi();
     Cgi(HttpRequest& req, Location& loc, Server& ser);

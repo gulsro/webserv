@@ -281,15 +281,27 @@ int ServerManager::handleIncoming(int fd)
 	Client *currClient;
 
 	currClient = mapClientFd[fd];
+
     try
     {
 		currClient->setResponse(new HttpResponse);
+        /**
+         * if (fd == cgi pipe)
+         *  readCgi(fd, currClient);
+         * else 
+         * (
+         *  if (this->readRequest(currClient) == true)
+         * )
+         * 
+         */
 		if (this->readRequest(currClient) == true) //continue reading operations on connected clients
 		{    //Request.readRequest(fd); fd will be client's
 
 			currClient->getRequest()->setReqServer(servers);
 			currClient->getRequest()->checkLocations();
             currClient->getRequest()->checkRequestValid();
+            if (currClient->getRequest()->getIsCgi() == true)
+                currClient->handleCgiRequest();
 		}
 	}
 	catch (const std::exception& e)
