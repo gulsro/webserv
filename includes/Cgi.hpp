@@ -74,6 +74,12 @@ public:
     void    setContentLen(HttpRequest& req);
     void    setCgiEnv(HttpRequest& req, Location& loc, Server& ser);
     std::vector<char>    execCgi();
+    /******************/
+    void    childDup(int ToCgi[2], int FromCgi[2]);
+    void    initparentPipe(int ToCgi[2], int FromCgi[2]);
+    void    writeToCgi();
+    void    readFromCgi();
+    void    execCGI();
 };
 
 

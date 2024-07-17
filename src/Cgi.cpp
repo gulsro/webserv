@@ -137,7 +137,7 @@ void    Cgi::initParentPipe(int ToCgi[2], int FromCgi[2]){
     pipeRead = FromCgi[0];
 }
 
-void    Cgi::WriteToCgi(){
+void    Cgi::writeToCgi(){
     std::vector<char> reqBody; // needs to add it to CGI class
     if (reqBody.size() == 0){
         poll.addEvent(pipeRead, POLLIN);
@@ -155,7 +155,7 @@ void    Cgi::WriteToCgi(){
     
 }
 
-void    Cgi::ReadFromCgi(){
+void    Cgi::readFromCgi(){
     char buf[BUFFER_SIZE];
     std::vector<char> resBody {};//need to add it to CGI class
     ssize_t bytes = 1;

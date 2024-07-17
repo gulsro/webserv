@@ -58,7 +58,7 @@ void  Client::handleCgiRequest()
 	if (file.is_open())
 	{
 		// this->cgi->write;
-		this->cgi->executeCgi();
+		this->cgi->execCGI();
 		file.close();	
 	}
 	else

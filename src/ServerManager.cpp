@@ -279,6 +279,10 @@ int ServerManager::handleIncoming(int fd)
 	#endif
     //readRequest(fd);
 	// Server *currServer = this->getServer(fd);
+
+    /* if fd is pipe, then we don't need to make a new Client class. 
+    compare fd value to the fds inside clientList in Servermanager
+    -> pass it to cgi read or execution*/
 	Client *currClient;
 
 	currClient = mapClientFd[fd];

@@ -58,6 +58,8 @@ bool	ServerManager::readRequest(Client *Client)
     std::cout << YELLOW << "[FUNCTION] readRequest" << DEFAULT << std::endl;
 	#endif
 
+	//detect cgi (for the second )
+	// check if cgi is running 
 	char	buffer[BUFFER_SIZE];
 	int		fd = Client->getClientFd();
 	ssize_t	byteRead = recv(fd, buffer, BUFFER_SIZE, 0);
