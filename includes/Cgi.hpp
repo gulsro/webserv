@@ -44,19 +44,20 @@ private:
     int contentLen;
     std::string cgiPass;
     /******************/
-    ServerManager   &ServerManager;
-    int r_pip;
-    int w_pip;
+    // friend class ServerManager;
+
+    ServerManager   *manager;
+    int pipeRead;
+    int pipeWrite;
     std::vector<char> cgiInput;
     std::vector<char> cgiOutput;
-    size_t  readBytes;
-    size_t  writeBytes;
+    // size_t  appendReadBytes;
     pid_t   childPid;
     bool    finishReading;
 
 public:
     Cgi();
-    Cgi(HttpRequest& req, Location& loc, Server& ser, ServerManager &sManager);
+    Cgi(HttpRequest& req, Location& loc, Server& ser, ServerManager& sManager);
     ~Cgi();
     // Cgi(Cgi& a);
     // Cgi& operator=(const Cgi a);
@@ -76,7 +77,7 @@ public:
     std::vector<char>    execCgi();
     /******************/
     void    childDup(int ToCgi[2], int FromCgi[2]);
-    void    initparentPipe(int ToCgi[2], int FromCgi[2]);
+    void    initParentPipe(int ToCgi[2], int FromCgi[2]);
     void    writeToCgi();
     void    readFromCgi();
     void    execCGI();

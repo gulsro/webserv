@@ -18,7 +18,6 @@ Cgi::Cgi(){}
 Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser, ServerManager &sManager) : pass(NULL), postBody(NULL), contentLen(0), manager(&sManager)
 {
     cgiPass = loc.getCgiPass();
-    std::cout << loc.getRoot() << " aaaaaaaaaaaaaaaaaaaaaaand " << req.getURI() << std::endl;
     setCgiFile("."+loc.getRoot()+req.getURI());
     setCgiEnv(req, loc, ser);
     setPostBody(req);
@@ -138,39 +137,37 @@ void    Cgi::initParentPipe(int ToCgi[2], int FromCgi[2]){
 }
 
 void    Cgi::writeToCgi(){
-    std::vector<char> reqBody; // needs to add it to CGI class
-    if (reqBody.size() == 0){
-        poll.addEvent(pipeRead, POLLIN);
-        poll.removeEvent(pipeWrite, POLLOUT);
+    if (cgiInput.size() == 0){
+        manager->addFdToPollFds(pipeRead, POLLIN);
+        manager->rmFdFromPollfd(pipeWrite);        // manager.removeEvent(pipeWrite, POLLOUT);
         close(pipeWrite);
         // pipeWrite = -1;
     }
-    ssize_t bytes = write(this->pipeWrite, this->reqBody.data(), WRITE_SIZE)
+    ssize_t bytes = write(this->pipeWrite, this->cgiInput.data(), WRITE_SIZE); //cgiInput stores a whole request incl
     if (bytes < 0)
 		throw std::runtime_error ("Writing to CGI has failed" );
     else if (bytes < WRITE_SIZE)
-        ssize_t bytes = write(this->pipeWrite, '\0', 1);//is it needed?
-    reqBody.erase(reqBody.begin(), bytes);
-    poll.addEvent(pipeWrite, POLLOUT);
-    
+        ssize_t bytes = write(this->pipeWrite, '\0', 1); //is it needed?
+    cgiInput.erase(cgiInput.begin(),  cgiInput.begin() + bytes);
+    manager->addFdToPollFds(pipeWrite, POLLOUT);
 }
 
 void    Cgi::readFromCgi(){
     char buf[BUFFER_SIZE];
-    std::vector<char> resBody {};//need to add it to CGI class
     ssize_t bytes = 1;
     std::memset(buf, '\0', BUFFER_SIZE - 1);
     bytes = read(this->pipeRead, buf, BUFFER_SIZE);
     if (bytes < 0)
         std::runtime_error("Reading from CGI has failed.");
-    resBody.insert(resBody.end(), buf, buf + bytes);
+    cgiOutput.insert(cgiOutput.end(), buf, buf + bytes);
+    // this->appendReadBytes += bytes;
     // bytes_read += bytes; // do we need to add bytes 
 }
 
 void    Cgi::execCGI()
 {
-    int r_pip[2];
-    int w_pip[2];
+    int r_pip[2]; // pipe to cgi
+    int w_pip[2]; // pipe from cgi
     pid_t pid;
 
     pass = new char[cgiPass.size() + 1];
@@ -185,6 +182,7 @@ void    Cgi::execCGI()
         close (r_pip[1]);
 		throw std::runtime_error("pipe failed");
     }
+    // Executing cgi script
 	pid = fork();
 	if (pid < 0){
         close (w_pip[0]);
@@ -193,7 +191,7 @@ void    Cgi::execCGI()
         close (r_pip[1]);
 		throw std::runtime_error("fork failed"); 
     }
-    if (pid == 0){ //child process
+    else if (pid == 0){ //child process
         childDup(r_pip, w_pip);
         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
         if (access(cgiFile,F_OK) != 0)
@@ -203,17 +201,18 @@ void    Cgi::execCGI()
         if (execve(cgiFile, argv, env) < 0){
             throw std::runtime_error("child");
             exit(1);
-        }
     }
-    //parent process
-    initParentPipe(r_pip, w_pip);
-    if (cgiInput.size() > 0) // if there is any data to send to CGI
-        poll.addEvent(pipeWrite, POLLOUT); //keep
-    else { 
-        //if there's nothing to send to CGI, we will trigger reading the output from pipe
-        close(pipeWrite);
-        // pipeWrite = -1; //add condition for 
-        poll.addEvent(pipeRead, POLLIN);
+    else {
+        //parent process
+        initParentPipe(r_pip, w_pip);
+        if (cgiInput.size() > 0) // if there is any data to send to CGI
+            manager->addFdToPollFds(pipeWrite, POLLOUT); // keep
+        else { 
+            //if there's nothing to send to CGI, we will trigger reading the output from pipe
+            close(pipeWrite);
+            // pipeWrite = -1; //add condition for 
+            manager->addFdToPollFds(pipeRead, POLLIN);
+        }
     }
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
