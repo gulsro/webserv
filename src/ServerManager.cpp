@@ -280,15 +280,17 @@ int ServerManager::handleIncoming(int fd)
     //readRequest(fd);
 	// Server *currServer = this->getServer(fd);
 
-    /* if fd is pipe, -> pass it to cgi read or execution*/
-
-    if (cgi) // detect from fd
-        cgiread()
-
 	Client *currClient;
 
-	currClient = mapClientFd[fd];
-
+    /* if fd is pipe, -> pass it to cgi read or execution*/
+	// check if the fd belongs to a Client fd eventhoug it's pipe.
+	if (isPipeFd(fd) ==  true)
+	{
+		int ClientFd = getClientFdOfPipe(fd);
+		currClient = mapClientFd[ClientFd];
+	}
+	else
+		currClient = mapClientFd[fd];
     try
     {
 		currClient->setResponse(new HttpResponse);
@@ -329,12 +331,19 @@ int ServerManager::handleIncoming(int fd)
     return 0;
 }
 
-void	ServerManager::sendResponse(int clientFd)
+void	ServerManager::sendResponse(int fd)
 {
     //same logic as above, decide cgi or not via fd. it can be clientfd of pipefd
     Client *currClient;
 
-	currClient = mapClientFd[clientFd];
+	// check if the fd belongs to a Client fd eventhoug it's pipe.
+	if (isPipeFd(fd) ==  true)
+	{
+		int ClientFd = getClientFdOfPipe(fd);
+		currClient = mapClientFd[ClientFd];
+	}
+	else
+		currClient = mapClientFd[fd];
 
     if (currClient->getRequest() == NULL)
         return ;
@@ -347,7 +356,7 @@ void	ServerManager::sendResponse(int clientFd)
     try
     {
         currClient->getResponse()->setRequest(currClient->getRequest());
-        currClient->getResponse()->runCgi(&this);
+        // currClient->getResponse()->runCgi(&this);
         currClient->getResponse()->checkMethod();
     }
     catch(const std::exception& e)
@@ -359,22 +368,22 @@ void	ServerManager::sendResponse(int clientFd)
     std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
 
 	//What's that enum status code???
-	ssize_t bytesSent = send(clientFd, currClient->getResponse()->getContent().c_str(),
+	ssize_t bytesSent = send(fd, currClient->getResponse()->getContent().c_str(),
                         currClient->getResponse()->getContent().size(), 0);
 	if (bytesSent == -1 || static_cast<size_t>(bytesSent) != currClient->getResponse()->getContent().size())
 	{
-        rmFdFromPollfd(clientFd);
+        rmFdFromPollfd(fd);
         delete currClient->getRequest();
-        delete mapClientFd[clientFd];
-        mapClientFd[clientFd] = nullptr;
+        delete mapClientFd[fd];
+        mapClientFd[fd] = nullptr;
         throw std::runtime_error("Error: send()");
 	}
-    rmFdFromPollfd(clientFd);
+    rmFdFromPollfd(fd);
     delete currClient->getRequest();
     delete currClient->getResponse();
-    delete mapClientFd[clientFd];
-    mapClientFd[clientFd] = nullptr;
-    close(clientFd);
+    delete mapClientFd[fd];
+    mapClientFd[fd] = nullptr;
+    close(fd);
     
 	//delete the request, it s done
 }
@@ -424,4 +433,25 @@ std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
 {
     (void)serverManager;
     return out;
+}
+
+bool	ServerManager::isPipeFd(int fd)
+{
+	// Iterates throught all clients and find if the clients has a pipe with same fd.
+	for (const auto& [clientFd, clientPtr] : mapClientFd)
+	{
+		if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeRead() == fd)
+			return true;
+	}
+	return false;
+}
+
+int		ServerManager::getClientFdOfPipe(int pipeFd)
+{
+	for (const auto& [clientFd, clientPtr] : mapClientFd)
+	{
+		if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeRead() == fd)
+			return clientFd;
+	}
+
 }

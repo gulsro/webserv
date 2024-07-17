@@ -25,8 +25,8 @@ class ServerManager
         std::map<int, Server*> mapServerFd;
         std::map<int, Client*> mapClientFd;
 
-        std::map<int, pair> mapPipe; // clienfd pipeRread, pipeWrite
-        std::map<pair, Client*> 
+        // std::map<int, pair> mapPipe; // clienfd pipeRread, pipeWrite
+        // std::map<pair, Client*> 
 
 
         // an array of fd's
@@ -63,6 +63,8 @@ class ServerManager
 
 
 		bool	readRequest(Client *currClient);
+		bool	isPipeFd(int fd);
+		int		getClientFdOfPipe(int pipeFd);
 };
     
 bool isFdConnected(int fd, std::vector<int>& connectedClientFds);

@@ -64,11 +64,13 @@ public:
 
     // Read function
     // Write function
-    std::string getCgiPass() const {return cgiPass; };
-    char* getCgiFile() const {return cgiFile; };
-    char* getPostBody() const {return postBody; };
-    char** getEnv() const {return env; };
-    int     getContentLen() const {return contentLen; };
+    std::string getCgiPass() const {return cgiPass; }
+    char* getCgiFile() const {return cgiFile; }
+    char* getPostBody() const {return postBody; }
+    char** getEnv() const {return env; }
+    int     getContentLen() const {return contentLen; }
+	const int	getPipeRead() const { return pipeRead; }
+	const int	getPipeWrite() const { return pipeWrite; }
 
     void    setCgiFile(std::string s);
     void    setPostBody(HttpRequest& req);

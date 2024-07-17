@@ -30,6 +30,7 @@ public:
     int 			getClientFd();
 	HttpRequest		*getRequest() const { return Request; }
 	HttpResponse	*getResponse() const { return Response; }
+	Cgi				*getCgi() const { return cgi; }
 	int getReadyToFlag() const;
 
 	void	setRequest(HttpRequest	*request) { Request = request; }
