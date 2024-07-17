@@ -24,6 +24,11 @@ class ServerManager
         //std::map<int, std::unique_ptr<Server>> mapServerFd;
         std::map<int, Server*> mapServerFd;
         std::map<int, Client*> mapClientFd;
+
+        std::map<int, pair> mapPipe; // clienfd pipeRread, pipeWrite
+        std::map<pair, Client*> 
+
+
         // an array of fd's
         // first elem of the pollpds is serverfd, the rest will be client's
         std::vector<struct pollfd> pollfds;

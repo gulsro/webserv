@@ -280,9 +280,11 @@ int ServerManager::handleIncoming(int fd)
     //readRequest(fd);
 	// Server *currServer = this->getServer(fd);
 
-    /* if fd is pipe, then we don't need to make a new Client class. 
-    compare fd value to the fds inside clientList in Servermanager
-    -> pass it to cgi read or execution*/
+    /* if fd is pipe, -> pass it to cgi read or execution*/
+
+    if (cgi) // detect from fd
+        cgiread()
+
 	Client *currClient;
 
 	currClient = mapClientFd[fd];
@@ -329,6 +331,7 @@ int ServerManager::handleIncoming(int fd)
 
 void	ServerManager::sendResponse(int clientFd)
 {
+    //same logic as above, decide cgi or not via fd. it can be clientfd of pipefd
     Client *currClient;
 
 	currClient = mapClientFd[clientFd];
