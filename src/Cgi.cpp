@@ -246,7 +246,6 @@ void    Cgi::putRequestIntoCgiInput(const std::string rawRequest)
     #ifdef CGI
 		std::cout << PINK << "[ Cgi ] putRequestIntoCgiInput" << DEFAULT << std::endl; 
 	#endif
-    this->cgiInput.clear();
     for (size_t i = 0; i < rawRequest.size(); ++i)
         this->cgiInput.push_back(rawRequest[i]);
 }

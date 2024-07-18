@@ -332,10 +332,10 @@ int ServerManager::handleIncoming(int fd)
     {
         if (currClient->getCgi() != NULL && currClient->getCgi()->isRunningCgi() == false)
             return 0;
-        if (currClient->getCgi() != NULL && currClient->getCgi()->getFinishReading() == true){
-            std::string tmp(currClient->getCgi()->getCgiOutput().begin(), currClient->getCgi()->getCgiOutput().end()); 
-            currClient->getResponse()->setContent(tmp); 
-        }
+        // if (currClient->getCgi() != NULL && currClient->getCgi()->getFinishReading() == true){
+        //     std::string tmp(currClient->getCgi()->getCgiOutput().begin(), currClient->getCgi()->getCgiOutput().end()); 
+        //     currClient->getResponse()->setContent(tmp); 
+        // }
         std::vector<struct pollfd>& pollfds = getPollfds();
         currClient->setClientFdEvent(pollfds, POLLOUT);
     }
@@ -362,21 +362,32 @@ void	ServerManager::sendResponse(int fd)
 		currClient = mapClientFd[fd];
 
     if (currClient->getRequest() == NULL)
+    {
         return ;
+    }
     //from client getResponse
 	//Checking client is still connected??
 
 	//checking is clientFd is still connected
 	//also check "if reading request is done" therefor we need a flag ?
 	//if (fd ....)
+    // if (currClient->getCgi() != NULL && currClient->getCgi()->getFinishReading() == true){
+    // std::cout << "________CGI OUTPUT__________" << std::endl;
+    // std::cout << currClient->getCgi()->getCgiOutput().data() << std::endl;
+    // std::string tmp(currClient->getCgi()->getCgiOutput().begin(), currClient->getCgi()->getCgiOutput().end()); 
+    // currClient->getResponse()->setContent(tmp); 
+    // }
     try
     {
+
 		if (isPipeFd(fd) == false)
 		{
         	currClient->getResponse()->setRequest(currClient->getRequest());
         	// currClient->getResponse()->runCgi(&this);
         	currClient->getResponse()->checkMethod();
 		}
+        else
+            currClient->getCgi()->writeToCgi();
     }
     catch(const std::exception& e)
     {
@@ -457,6 +468,9 @@ std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
 
 bool	ServerManager::isPipeFd(int fd)
 {
+     #ifdef CGI
+		std::cout << PINK << "[ Cgi ] isPipeFd" << DEFAULT << std::endl; 
+	#endif
     std::cout << YELLOW << "Give Fd: " << fd << std::endl;
 	// Iterates throught all clients and find if the clients has a pipe with same fd.
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
@@ -474,6 +488,9 @@ bool	ServerManager::isPipeFd(int fd)
 
 int		ServerManager::getClientFdOfPipe(int pipeFd)
 {
+        #ifdef CGI
+		std::cout << PINK << "[ Cgi ] getClientFdOfPipe" << DEFAULT << std::endl; 
+	#endif
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
 	{
         if(clientPtr->getCgi() != NULL)
