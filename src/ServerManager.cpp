@@ -7,6 +7,7 @@ ServerManager::ServerManager(const Config& config) {
   for (Server* server : config.serverList) {
             servers.emplace_back(server);
         }
+	isWritingDone = false;
         //config->serverList.clear(); // Clear temporary list after moving servers
 }
 
@@ -236,16 +237,43 @@ void ServerManager::startPoll()
             {
                 std::cout << "THE POLLOUT IS " << fd << std::endl;
                 std::cout << "RESPONSEEEEE" << std::endl;
-				if (isPipeFd(fd) == true || mapClientFd[fd]->getReadyToFlag() == WRITE)
+				if (mapClientFd[fd]->getReadyToFlag() == WRITE)
                 {
                     sendResponse(fd);
+					isWritingDone = true;
                     //pollfds[i].fd = -1;
-                    }
+                }
                 
             }
             // Handle events for accepted connections (read/write data)
             // You'll need to iterate over other servers and their connections here
             // ...
+			else if (revents & POLLHUP)
+			{
+				std::cout << "\n\nPOLLHUP \n";
+				Client *currClient;
+				if (isPipeFd(fd) == false)
+				{
+					currClient = mapClientFd[fd];
+					rmFdFromPollfd(fd);
+					// delete currClient->getRequest();
+					// delete currClient->getResponse();
+					delete mapClientFd[fd];
+					mapClientFd[fd] = nullptr;
+					close(fd);
+				}
+				else
+				{
+					int clientFd = getClientFdOfPipe(fd);
+					currClient	= mapClientFd[clientFd];
+					if (!(revents & POLLIN))
+					{
+						currClient->finishCgi();
+						this->addFdToPollFds(clientFd, POLLOUT);
+						continue;
+					}
+				}
+			}
         }
     }
 }
@@ -371,12 +399,6 @@ void	ServerManager::sendResponse(int fd)
 	//checking is clientFd is still connected
 	//also check "if reading request is done" therefor we need a flag ?
 	//if (fd ....)
-    // if (currClient->getCgi() != NULL && currClient->getCgi()->getFinishReading() == true){
-    // std::cout << "________CGI OUTPUT__________" << std::endl;
-    // std::cout << currClient->getCgi()->getCgiOutput().data() << std::endl;
-    // std::string tmp(currClient->getCgi()->getCgiOutput().begin(), currClient->getCgi()->getCgiOutput().end()); 
-    // currClient->getResponse()->setContent(tmp); 
-    // }
     try
     {
 
@@ -409,12 +431,15 @@ void	ServerManager::sendResponse(int fd)
         mapClientFd[fd] = nullptr;
         throw std::runtime_error("Error: send()");
 	}
+	if (isWritingDone == true)
+	{
     rmFdFromPollfd(fd);
     delete currClient->getRequest();
     delete currClient->getResponse();
     delete mapClientFd[fd];
     mapClientFd[fd] = nullptr;
     close(fd);
+	}
     
 	//delete the request, it s done
 }
@@ -475,10 +500,10 @@ bool	ServerManager::isPipeFd(int fd)
 	// Iterates throught all clients and find if the clients has a pipe with same fd.
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
 	{
-        if( clientPtr->getCgi() != NULL)
+        if (clientPtr != nullptr && clientPtr->getCgi() != nullptr)
         {
             std::cout << YELLOW << "Read PIPE : " <<  clientPtr->getCgi()->getPipeRead() << std::endl;
-            std::cout << YELLOW <<  "Write PIPE : " <<clientPtr->getCgi()->getPipeWrite() << std::endl;
+            std::cout << YELLOW <<  "Write PIPE : " <<clientPtr->getCgi()->getPipeWrite() << DEFAULT << std::endl;
             if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeWrite() == fd)
                 return true;
         }
@@ -493,7 +518,7 @@ int		ServerManager::getClientFdOfPipe(int pipeFd)
 	#endif
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
 	{
-        if(clientPtr->getCgi() != NULL)
+        if (clientPtr != nullptr && clientPtr->getCgi() != nullptr)
         {
 		    if (clientPtr->getCgi()->getPipeRead() == pipeFd || clientPtr->getCgi()->getPipeWrite() == pipeFd)
 			    return clientFd;

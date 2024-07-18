@@ -153,7 +153,14 @@ void    Cgi::writeToCgi(){
         close(pipeWrite);
         // pipeWrite = -1;
     }
-    ssize_t bytes = write(this->pipeWrite, this->cgiInput.data(), WRITE_SIZE); //cgiInput stores a whole request incl
+
+	size_t writeSize = WRITE_SIZE;
+
+	if (WRITE_SIZE >= this->cgiInput.size()) {
+		this->cgiInput.push_back('\0');
+		writeSize = this->cgiInput.size();
+	}
+    ssize_t bytes = write(this->pipeWrite, this->cgiInput.data(), writeSize); //cgiInput stores a whole request incl
     if (bytes < 0)
 		throw std::runtime_error ("Writing to CGI has failed" );
     else if (bytes < WRITE_SIZE)
@@ -166,20 +173,20 @@ void    Cgi::readFromCgi(){
     #ifdef CGI
 		std::cout << PINK << "[ Cgi ] readFromCgi" << DEFAULT << std::endl; 
 	#endif
-    char buf[BUFFER_SIZE];
+    std::vector<char> buf(BUFFER_SIZE);
     ssize_t bytes = 1;
 
-    std::memset(buf, '\0', BUFFER_SIZE - 1);
-    bytes = read(this->pipeRead, buf, BUFFER_SIZE);
+    // std::memset(buf, '\0', BUFFER_SIZE - 1);
+    bytes = read(this->pipeRead, buf.data(), BUFFER_SIZE);
     if (bytes < 0)
         std::runtime_error("Reading from CGI has failed.");
      if (bytes== 0){
         finishReading = true;
-        manager->rmFdFromPollfd(pipeRead);        // manager.removeEvent(pipeWrite, POLLOUT);
-        close(pipeRead);
+        // manager->rmFdFromPollfd(pipeRead);        // manager.removeEvent(pipeWrite, POLLOUT);
+        // close(pipeRead);
     }
-    cgiOutput.insert(cgiOutput.end(), buf, buf + bytes);
-    manager->addFdToPollFds(pipeRead, POLLIN);
+    cgiOutput.insert(cgiOutput.end(), buf.begin(), buf.begin() + bytes);
+    // manager->addFdToPollFds(pipeRead, POLLIN);
 
     // this->appendReadBytes += bytes;
     // bytes_read += bytes; // do we need to add bytes 
@@ -235,7 +242,7 @@ void    Cgi::execCGI()
         else { 
             //if there's nothing to send to CGI, we will trigger reading the output from pipe
             close(pipeWrite);
-            // pipeWrite = -1; //add condition for 
+            pipeWrite = -1; //add condition for 
             manager->addFdToPollFds(pipeRead, POLLIN);
         }
     }

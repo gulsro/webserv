@@ -32,6 +32,7 @@ class ServerManager
         // an array of fd's
         // first elem of the pollpds is serverfd, the rest will be client's
         std::vector<struct pollfd> pollfds;
+		bool	isWritingDone;
     
     public:
        // ServerManager();

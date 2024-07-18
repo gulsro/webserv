@@ -1,2 +1,13 @@
-1- delete.py stack overflow on execcgi()
+< index.py >
 
+1. readRequest() : read a full initial request.
+2. execCgi()
+3. initParentPipe()
+4. Set [ pipeRead POLLIN ]
+5. Detect [ pipeRead POLLIN ] event in the poll loop.
+6. readFromCGI()
+7. Quit CGI
+8. Detect [ ClientFd POLLOUT ]
+9. Send response
+10. Detect [ ClientFd POLLIN ]
+11. Disconnect

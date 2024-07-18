@@ -70,9 +70,9 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 	if (file.is_open())
 	{
 		// Pass the full request to the cgiInput to execute cgi.
-		this->cgi->putRequestIntoCgiInput(this->Request->getRawRequest());
-		this->  Request->setIsCgi(false);
+		// this->cgi->putRequestIntoCgiInput(this->Request->getRawRequest());
 		this->cgi->execCGI();
+		// this->  Request->setIsCgi(false);
 		file.close();	
 	}
 	else
@@ -82,4 +82,18 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 		else
 			throw ErrorCodeException(STATUS_FORBIDDEN);
 	}
+}
+
+void	Client::finishCgi()
+{
+	#ifdef CGI
+		std::cout << PINK << "[ Client ] finishCgi" << DEFAULT << std::endl; 
+	#endif
+	std::vector<char> cgiResponse = this->cgi->getCgiOutput();
+	this->Response->setContent(std::string(cgiResponse.begin(), cgiResponse.end()));
+	// this->Response->setContent(this->cgi->getCgiOutput().data());
+	this->Response->setCompleted(true);
+	close (this->cgi->getPipeRead());
+	delete this->cgi;
+	this->cgi = nullptr;
 }

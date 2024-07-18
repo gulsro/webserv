@@ -39,7 +39,8 @@ public:
 	void 	setReadyToFlag(int readyTo);
 	void	setClientFdEvent(std::vector<struct pollfd>& pollfds, short events);
 
-	void  handleCgiRequest(ServerManager *ServerManager);
+	void 	handleCgiRequest(ServerManager *ServerManager);
+	void	finishCgi();
 };
 
 std::ostream& operator<<(std::ostream& out, const Client& client);
