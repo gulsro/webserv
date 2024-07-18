@@ -219,79 +219,79 @@ void    Cgi::execCGI()
 
 
 //return http response msg or '\0' in case of internal error
-std::vector<char>    Cgi::execCgi(){
-   //PipeFromCGI
-    int w_pip[2]; // 3. Children write the output to the w_pipe -> 4. parent read and parse it to Response Body
-     //PipeToCGI
-    int r_pip[2]; // 1.  parent write body received from STDIN -> 2. Children read from pipe
-    pid_t pid;
+// std::vector<char>    Cgi::execCgi(){
+//    //PipeFromCGI
+//     int w_pip[2]; // 3. Children write the output to the w_pipe -> 4. parent read and parse it to Response Body
+//      //PipeToCGI
+//     int r_pip[2]; // 1.  parent write body received from STDIN -> 2. Children read from pipe
+//     pid_t pid;
 
-    std::cout << MAG << "CGI executed"<< RES << std::endl;
-    if (pipe(w_pip) < 0 || pipe(r_pip) < 0)
-		throw std::runtime_error("pipe failed"); //error
-	pid = fork();
-	if (pid < 0)
-		throw std::runtime_error("fork failed"); //error
-	if (pid == 0){
-        // close read end and write to pipe 
-        //output of cgi script will be written in pipe
-        std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
-        // signal(SIGINT, SIG_DFL);
-        // signal(SIGTERM, SIG_DFL);
-        if (access(cgiFile,F_OK) != 0)
-			throw ErrorCodeException(STATUS_NOT_FOUND);
-		if (access(cgiFile,X_OK) != 0)
-			throw ErrorCodeException(STATUS_FORBIDDEN);
-        pass = new char[cgiPass.size() + 1];
-        std::strcpy(pass, cgiPass.c_str());
-        char *argv[3] = {pass, cgiFile, NULL};
-        close(w_pip[0]); 
-        if (dup2(w_pip[1], STDOUT_FILENO) < 0)
-            throw std::runtime_error("Write write pipe failed"); //error
-        close(r_pip[1]);
-        if (dup2(r_pip[0], STDIN_FILENO) < 0)
-            throw std::runtime_error("Read read pipe failed"); //error
-        if (execve(cgiFile, argv, env) < 0){
-            throw std::runtime_error("child");
-            exit(1);
-        }
-    }
-    int status;
-    char buf[BUFFER_SIZE]; // is buffer_size defined in config?
-    std::vector<char> body {};
-    ssize_t bytes = 1;
-//close write end and read output from pipe
+//     std::cout << MAG << "CGI executed"<< RES << std::endl;
+//     if (pipe(w_pip) < 0 || pipe(r_pip) < 0)
+// 		throw std::runtime_error("pipe failed"); //error
+// 	pid = fork();
+// 	if (pid < 0)
+// 		throw std::runtime_error("fork failed"); //error
+// 	if (pid == 0){
+//         // close read end and write to pipe 
+//         //output of cgi script will be written in pipe
+//         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
+//         // signal(SIGINT, SIG_DFL);
+//         // signal(SIGTERM, SIG_DFL);
+//         if (access(cgiFile,F_OK) != 0)
+// 			throw ErrorCodeException(STATUS_NOT_FOUND);
+// 		if (access(cgiFile,X_OK) != 0)
+// 			throw ErrorCodeException(STATUS_FORBIDDEN);
+//         pass = new char[cgiPass.size() + 1];
+//         std::strcpy(pass, cgiPass.c_str());
+//         char *argv[3] = {pass, cgiFile, NULL};
+//         close(w_pip[0]); 
+//         if (dup2(w_pip[1], STDOUT_FILENO) < 0)
+//             throw std::runtime_error("Write write pipe failed"); //error
+//         close(r_pip[1]);
+//         if (dup2(r_pip[0], STDIN_FILENO) < 0)
+//             throw std::runtime_error("Read read pipe failed"); //error
+//         if (execve(cgiFile, argv, env) < 0){
+//             throw std::runtime_error("child");
+//             exit(1);
+//         }
+//     }
+//     int status;
+//     char buf[BUFFER_SIZE]; // is buffer_size defined in config?
+//     std::vector<char> body {};
+//     ssize_t bytes = 1;
+// //close write end and read output from pipe
     
-    //If we type an input
-    close(r_pip[0]);
-    if (strlen(this->postBody) > 0){
-        manager->addFdToPollFds(r_pip[1], POLLOUT);
-    }
-    else{
-        close(r_pip[1]);
-        manager->addFdToPollFds(w_pip[0], POLLIN);
-    }
+//     //If we type an input
+//     close(r_pip[0]);
+//     if (strlen(this->postBody) > 0){
+//         manager->addFdToPollFds(r_pip[1], POLLOUT);
+//     }
+//     else{
+//         close(r_pip[1]);
+//         manager->addFdToPollFds(w_pip[0], POLLIN);
+//     }
 
-    if (write(r_pip[1], this->postBody, getContentLen()) < 0) //GETCONTENTLEN() WILL BE CHECKED
-		throw std::runtime_error ("Write to r_pip failed" );
+//     if (write(r_pip[1], this->postBody, getContentLen()) < 0) //GETCONTENTLEN() WILL BE CHECKED
+// 		throw std::runtime_error ("Write to r_pip failed" );
     
     
-    close(r_pip[1]);
-    close(w_pip[1]);
-    if (waitpid(pid, &status, 0) < 0)
-        throw std::runtime_error("wait failed"); 
-    if (WIFEXITED(status) == false &&(WEXITSTATUS(status)!= 0)) 
-        throw std::runtime_error ("wait exit status failed");
-    if (dup2(w_pip[0], STDIN_FILENO) < 0)
-        throw std::runtime_error ("Write read pipe failed"); // error
-    while (bytes > 0){
-        std::memset(buf, '\0', BUFFER_SIZE - 1);
-        bytes = read(0, buf, BUFFER_SIZE);
-        // if (bytes < 0)
-            // no read;
-        body.insert(body.end(), buf, buf + bytes);
-    }
-    printf("\n");
-    close(w_pip[0]);
-    return (body);
-}
+//     close(r_pip[1]);
+//     close(w_pip[1]);
+//     if (waitpid(pid, &status, 0) < 0)
+//         throw std::runtime_error("wait failed"); 
+//     if (WIFEXITED(status) == false &&(WEXITSTATUS(status)!= 0)) 
+//         throw std::runtime_error ("wait exit status failed");
+//     if (dup2(w_pip[0], STDIN_FILENO) < 0)
+//         throw std::runtime_error ("Write read pipe failed"); // error
+//     while (bytes > 0){
+//         std::memset(buf, '\0', BUFFER_SIZE - 1);
+//         bytes = read(0, buf, BUFFER_SIZE);
+//         // if (bytes < 0)
+//             // no read;
+//         body.insert(body.end(), buf, buf + bytes);
+//     }
+//     printf("\n");
+//     close(w_pip[0]);
+//     return (body);
+// }

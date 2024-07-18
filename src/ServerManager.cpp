@@ -294,23 +294,21 @@ int ServerManager::handleIncoming(int fd)
     try
     {
 		currClient->setResponse(new HttpResponse);
-        /**
-         * if (fd == cgi pipe)
-         *  readCgi(fd, currClient);
-         * else 
-         * (
-         *  if (this->readRequest(currClient) == true)
-         * )
-         * 
-         */
-		if (this->readRequest(currClient) == true) //continue reading operations on connected clients
-		{    //Request.readRequest(fd); fd will be client's
 
-			currClient->getRequest()->setReqServer(servers);
-			currClient->getRequest()->checkLocations(); // cgi is detected
-            currClient->getRequest()->checkRequestValid();
-            if (currClient->getRequest()->getIsCgi() == true)
-                currClient->handleCgiRequest();
+		// requests from cgi will be handled internally.
+		if (currClient->getRequest()->getIsCgi() == true && isPipeFd(fd) == true)
+			currClient->getCgi()->readFromCgi();
+		else
+		{
+			if (this->readRequest(currClient) == true) //continue reading operations on connected clients
+			{    //Request.readRequest(fd); fd will be client's
+
+				currClient->getRequest()->setReqServer(servers);
+				currClient->getRequest()->checkLocations(); // cgi is detected
+				currClient->getRequest()->checkRequestValid();
+				// Initial excution after receiving the first cgi request.
+				if (currClient->getRequest()->getIsCgi() == true)
+			}		currClient->handleCgiRequest();
 		}
 	}
 	catch (const std::exception& e)
@@ -355,9 +353,14 @@ void	ServerManager::sendResponse(int fd)
 	//if (fd ....)
     try
     {
-        currClient->getResponse()->setRequest(currClient->getRequest());
-        // currClient->getResponse()->runCgi(&this);
-        currClient->getResponse()->checkMethod();
+		if (currClient->getRequest()->getIsCgi() == true && isPipeFd(fd) == true)
+			currClient->getCgi()->writeToCgi();
+		else
+		{
+        	currClient->getResponse()->setRequest(currClient->getRequest());
+        	// currClient->getResponse()->runCgi(&this);
+        	currClient->getResponse()->checkMethod();
+		}
     }
     catch(const std::exception& e)
     {
