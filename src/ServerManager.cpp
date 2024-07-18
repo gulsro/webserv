@@ -371,9 +371,7 @@ void	ServerManager::sendResponse(int fd)
 	//if (fd ....)
     try
     {
-		if (isPipeFd(fd) == true)
-			currClient->getCgi()->writeToCgi();
-		else
+		if (isPipeFd(fd) == false)
 		{
         	currClient->getResponse()->setRequest(currClient->getRequest());
         	// currClient->getResponse()->runCgi(&this);

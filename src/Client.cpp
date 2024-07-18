@@ -53,8 +53,8 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 		std::cout << PINK << "[ Client ] handleCgiRequest" << DEFAULT << std::endl; 
 	#endif
 	// HttpResponse *response = this->Response;
-	Cgi cgi((*this->Request), this->Request->getReqLocation(), this->Request->getReqServer(), *serverManager);
-	this->cgi = &cgi; // Assigning client cgi
+	Cgi *cgi = new Cgi((*this->Request), this->Request->getReqLocation(), this->Request->getReqServer(), *serverManager);
+	this->cgi = cgi; // Assigning client cgi
 
 	std::cout << BLUE << "this->cgi  address : " << this->cgi << std::endl;
 	std::cout << BLUE << "cgi  address : " << &cgi << std::endl; 
