@@ -332,6 +332,10 @@ int ServerManager::handleIncoming(int fd)
     {
         if (currClient->getCgi() != NULL && currClient->getCgi()->isRunningCgi() == false)
             return 0;
+        if (currClient->getCgi() != NULL && currClient->getCgi()->getFinishReading() == true){
+            std::string tmp(currClient->getCgi()->getCgiOutput().begin(), currClient->getCgi()->getCgiOutput().end()); 
+            currClient->getResponse()->setContent(tmp); 
+        }
         std::vector<struct pollfd>& pollfds = getPollfds();
         currClient->setClientFdEvent(pollfds, POLLOUT);
     }
@@ -385,6 +389,7 @@ void	ServerManager::sendResponse(int fd)
     std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
 
 	//What's that enum status code???
+    std::cout << BLUE << "send FD : " << fd << DEFAULT << std::endl;
 	ssize_t bytesSent = send(fd, currClient->getResponse()->getContent().c_str(),
                         currClient->getResponse()->getContent().size(), 0);
 	if (bytesSent == -1 || static_cast<size_t>(bytesSent) != currClient->getResponse()->getContent().size())

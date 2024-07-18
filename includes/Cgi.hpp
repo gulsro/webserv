@@ -71,6 +71,9 @@ public:
     int     getContentLen() const {return contentLen; }
 	int	getPipeRead() const { return pipeRead; }
 	int	getPipeWrite() const { return pipeWrite; }
+	int	getFinishReading() const { return finishReading; }
+    std::vector<char> getCgiOutput() const {return cgiOutput; }
+
 
     void    setCgiFile(std::string s);
     void    setPostBody(HttpRequest& req);

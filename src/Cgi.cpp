@@ -168,11 +168,19 @@ void    Cgi::readFromCgi(){
 	#endif
     char buf[BUFFER_SIZE];
     ssize_t bytes = 1;
+
     std::memset(buf, '\0', BUFFER_SIZE - 1);
     bytes = read(this->pipeRead, buf, BUFFER_SIZE);
     if (bytes < 0)
         std::runtime_error("Reading from CGI has failed.");
+     if (bytes== 0){
+        finishReading = true;
+        manager->rmFdFromPollfd(pipeRead);        // manager.removeEvent(pipeWrite, POLLOUT);
+        close(pipeRead);
+    }
     cgiOutput.insert(cgiOutput.end(), buf, buf + bytes);
+    manager->addFdToPollFds(pipeRead, POLLIN);
+
     // this->appendReadBytes += bytes;
     // bytes_read += bytes; // do we need to add bytes 
 }
