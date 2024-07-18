@@ -36,7 +36,7 @@ void Client::setReadyToFlag(int readyTo)
 void	Client::setClientFdEvent(std::vector<struct pollfd>& pollfds, short events)
 {
 	#ifdef CGI
-		std::cout << GREY << "[ Client ] handleCgiRequest" << DEFAULT << std::endl; 
+		std::cout << PINK << "[ Client ] handleCgiRequest" << DEFAULT << std::endl; 
 	#endif
     for (auto& pfd : pollfds) {
         if (pfd.fd == clientFd) {
@@ -50,11 +50,14 @@ void	Client::setClientFdEvent(std::vector<struct pollfd>& pollfds, short events)
 void  Client::handleCgiRequest(ServerManager *serverManager)
 {
 	#ifdef CGI
-		std::cout << GREY << "[ Client ] handleCgiRequest" << DEFAULT << std::endl; 
+		std::cout << PINK << "[ Client ] handleCgiRequest" << DEFAULT << std::endl; 
 	#endif
 	// HttpResponse *response = this->Response;
 	Cgi cgi((*this->Request), this->Request->getReqLocation(), this->Request->getReqServer(), *serverManager);
 	this->cgi = &cgi; // Assigning client cgi
+
+	std::cout << BLUE << "this->cgi  address : " << this->cgi << std::endl;
+	std::cout << BLUE << "cgi  address : " << &cgi << std::endl; 
 	std::cout << YEL << this->cgi->getCgiFile() << RES << std::endl;
 
 	std::string	cgiFilename = this->cgi->getCgiFile();
@@ -68,8 +71,8 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 	{
 		// Pass the full request to the cgiInput to execute cgi.
 		this->cgi->putRequestIntoCgiInput(this->Request->getRawRequest());
-		this->cgi->execCGI();
 		this->  Request->setIsCgi(false);
+		this->cgi->execCGI();
 		file.close();	
 	}
 	else

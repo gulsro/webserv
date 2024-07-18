@@ -84,6 +84,8 @@ public:
     void    readFromCgi();
     void    execCGI();
     void    putRequestIntoCgiInput(const std::string rawRequest);
+    bool	isRunningCgi();
+
 };
 
 

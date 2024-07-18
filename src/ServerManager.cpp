@@ -236,7 +236,7 @@ void ServerManager::startPoll()
             {
                 std::cout << "THE POLLOUT IS " << fd << std::endl;
                 std::cout << "RESPONSEEEEE" << std::endl;
-				if (mapClientFd[fd]->getReadyToFlag() == WRITE)
+				if (isPipeFd(fd) == true || mapClientFd[fd]->getReadyToFlag() == WRITE)
                 {
                     sendResponse(fd);
                     //pollfds[i].fd = -1;
@@ -327,8 +327,11 @@ int ServerManager::handleIncoming(int fd)
         return 0;
 	}
 	// else continue reading
+    
     if (currClient->getReadyToFlag() == WRITE)
     {
+        if (currClient->getCgi() != NULL && currClient->getCgi()->isRunningCgi() == false)
+            return 0;
         std::vector<struct pollfd>& pollfds = getPollfds();
         currClient->setClientFdEvent(pollfds, POLLOUT);
     }
@@ -451,14 +454,14 @@ std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
 
 bool	ServerManager::isPipeFd(int fd)
 {
-    std::cout << YELLOW << fd << std::endl;
+    std::cout << YELLOW << "Give Fd: " << fd << std::endl;
 	// Iterates throught all clients and find if the clients has a pipe with same fd.
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
 	{
-        if(clientPtr->getCgi() != NULL)
+        if( clientPtr->getCgi() != NULL)
         {
-            std::cout << YELLOW << clientPtr->getCgi()->getPipeRead() << std::endl;
-            std::cout << YELLOW << clientPtr->getCgi()->getPipeWrite() << std::endl;
+            std::cout << YELLOW << "Read PIPE : " <<  clientPtr->getCgi()->getPipeRead() << std::endl;
+            std::cout << YELLOW <<  "Write PIPE : " <<clientPtr->getCgi()->getPipeWrite() << std::endl;
             if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeWrite() == fd)
                 return true;
         }
