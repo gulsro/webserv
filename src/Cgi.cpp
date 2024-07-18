@@ -15,7 +15,8 @@ from the CGI, EOF will mark the end of the returned data.
 
 Cgi::Cgi(){}
 
-Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser, ServerManager &sManager) : pass(NULL), postBody(NULL), contentLen(0), manager(&sManager)
+Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser, ServerManager &sManager)
+: pass(NULL), postBody(NULL), contentLen(0), manager(&sManager), pipeRead(-1), pipeWrite(-1), childPid(-1), finishReading(false)
 {
     cgiPass = loc.getCgiPass();
     setCgiFile("."+loc.getRoot()+req.getURI());
@@ -153,7 +154,7 @@ void    Cgi::writeToCgi(){
     if (bytes < 0)
 		throw std::runtime_error ("Writing to CGI has failed" );
     else if (bytes < WRITE_SIZE)
-        ssize_t bytes = write(this->pipeWrite, '\0', 1); //is it needed?
+        bytes = write(this->pipeWrite, "\0", 1); //is it needed?
     cgiInput.erase(cgiInput.begin(),  cgiInput.begin() + bytes);
     manager->addFdToPollFds(pipeWrite, POLLOUT);
 }

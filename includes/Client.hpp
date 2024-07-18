@@ -6,6 +6,7 @@
 class Server;
 class HttpRequest;
 class HttpResponse;
+class Cgi;
 
 enum e_readyTo
 {
@@ -38,7 +39,7 @@ public:
 	void 	setReadyToFlag(int readyTo);
 	void	setClientFdEvent(std::vector<struct pollfd>& pollfds, short events);
 
-	void  handleCgiRequest();
+	void  handleCgiRequest(ServerManager *ServerManager);
 };
 
 std::ostream& operator<<(std::ostream& out, const Client& client);

@@ -1,5 +1,6 @@
 #include "Webserv.hpp"
 
+
 Client::Client(int fd, int readyTo)
 //    :clientFd(fd)
 {
@@ -8,6 +9,7 @@ Client::Client(int fd, int readyTo)
     this->readyTo = readyTo;
 	this->Request = NULL;
 	this->Response = NULL;
+	this->cgi = NULL;
     std::cout << "Client constructor is called" << std::endl;
 }
 
@@ -45,13 +47,13 @@ void	Client::setClientFdEvent(std::vector<struct pollfd>& pollfds, short events)
 }
 
 
-void  Client::handleCgiRequest()
+void  Client::handleCgiRequest(ServerManager *serverManager)
 {
 	#ifdef CGI
 		std::cout << GREY << "[ Client ] handleCgiRequest" << DEFAULT << std::endl; 
 	#endif
-	HttpResponse *response = this->Response;
-	Cgi cgi((*this->Request), this->Request->getReqLocation(), this->Request->getReqServer());
+	// HttpResponse *response = this->Response;
+	Cgi cgi((*this->Request), this->Request->getReqLocation(), this->Request->getReqServer(), *serverManager);
 	this->cgi = &cgi; // Assigning client cgi
 	std::cout << YEL << this->cgi->getCgiFile() << RES << std::endl;
 

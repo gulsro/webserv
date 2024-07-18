@@ -287,6 +287,11 @@ int ServerManager::handleIncoming(int fd)
 	if (isPipeFd(fd) ==  true)
 	{
 		int ClientFd = getClientFdOfPipe(fd);
+        if (ClientFd == -1)
+        {
+            close(fd);
+            throw std::runtime_error("pipe doesn't exist in any client");
+        }
 		currClient = mapClientFd[ClientFd];
 	}
 	else
@@ -296,7 +301,7 @@ int ServerManager::handleIncoming(int fd)
 		currClient->setResponse(new HttpResponse);
 
 		// requests from cgi will be handled internally.
-		if (currClient->getRequest()->getIsCgi() == true && isPipeFd(fd) == true)
+		if (isPipeFd(fd) == true)
 			currClient->getCgi()->readFromCgi();
 		else
 		{
@@ -308,7 +313,7 @@ int ServerManager::handleIncoming(int fd)
 				currClient->getRequest()->checkRequestValid();
 				// Initial excution after receiving the first cgi request.
 				if (currClient->getRequest()->getIsCgi() == true)
-					currClient->handleCgiRequest(); // execute cgi
+					currClient->handleCgiRequest(this); // execute cgi
             }
         }
 	}
@@ -339,6 +344,11 @@ void	ServerManager::sendResponse(int fd)
 	if (isPipeFd(fd) ==  true)
 	{
 		int ClientFd = getClientFdOfPipe(fd);
+        if (ClientFd == -1)
+        {
+            close(fd);
+            throw std::runtime_error("pipe doesn't exist in any client");
+        }
 		currClient = mapClientFd[ClientFd];
 	}
 	else
@@ -354,7 +364,7 @@ void	ServerManager::sendResponse(int fd)
 	//if (fd ....)
     try
     {
-		if (currClient->getRequest()->getIsCgi() == true && isPipeFd(fd) == true)
+		if (isPipeFd(fd) == true)
 			currClient->getCgi()->writeToCgi();
 		else
 		{
@@ -441,11 +451,17 @@ std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
 
 bool	ServerManager::isPipeFd(int fd)
 {
+    std::cout << YELLOW << fd << std::endl;
 	// Iterates throught all clients and find if the clients has a pipe with same fd.
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
 	{
-		if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeWrite() == fd)
-			return true;
+        if(clientPtr->getCgi() != NULL)
+        {
+            std::cout << YELLOW << clientPtr->getCgi()->getPipeRead() << std::endl;
+            std::cout << YELLOW << clientPtr->getCgi()->getPipeWrite() << std::endl;
+            if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeWrite() == fd)
+                return true;
+        }
 	}
 	return false;
 }
@@ -454,8 +470,12 @@ int		ServerManager::getClientFdOfPipe(int pipeFd)
 {
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
 	{
-		if (clientPtr->getCgi()->getPipeRead() == pipeFd || clientPtr->getCgi()->getPipeWrite() == pipeFd)
-			return clientFd;
+        if(clientPtr->getCgi() != NULL)
+        {
+		    if (clientPtr->getCgi()->getPipeRead() == pipeFd || clientPtr->getCgi()->getPipeWrite() == pipeFd)
+			    return clientFd;
+        
+        }
 	}
-
+    return -1;
 }

@@ -69,8 +69,8 @@ public:
     char* getPostBody() const {return postBody; }
     char** getEnv() const {return env; }
     int     getContentLen() const {return contentLen; }
-	const int	getPipeRead() const { return pipeRead; }
-	const int	getPipeWrite() const { return pipeWrite; }
+	int	getPipeRead() const { return pipeRead; }
+	int	getPipeWrite() const { return pipeWrite; }
 
     void    setCgiFile(std::string s);
     void    setPostBody(HttpRequest& req);
