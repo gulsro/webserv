@@ -14,6 +14,8 @@ else ifdef STRUCTOR
 FLAGS	=	-Wall -Wextra -Werror -g -D STRUCTOR -std=c++20 -Ofast -flto
 else ifdef FUNC
 FLAGS	=	-Wall -Wextra -Werror -g -D FUNC -std=c++20 -Ofast -flto
+else ifdef CGI
+FLAGS	=	-Wall -Wextra -Werror -g -D CGI -std=c++20 -Ofast -flto
 else
 FLAGS	=	-Wall -Wextra -Werror -std=c++20 -Ofast -flto
 endif

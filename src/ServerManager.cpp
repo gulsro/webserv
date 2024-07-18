@@ -308,8 +308,9 @@ int ServerManager::handleIncoming(int fd)
 				currClient->getRequest()->checkRequestValid();
 				// Initial excution after receiving the first cgi request.
 				if (currClient->getRequest()->getIsCgi() == true)
-			}		currClient->handleCgiRequest();
-		}
+					currClient->handleCgiRequest(); // execute cgi
+            }
+        }
 	}
 	catch (const std::exception& e)
 	{
@@ -443,7 +444,7 @@ bool	ServerManager::isPipeFd(int fd)
 	// Iterates throught all clients and find if the clients has a pipe with same fd.
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
 	{
-		if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeRead() == fd)
+		if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeWrite() == fd)
 			return true;
 	}
 	return false;
@@ -453,7 +454,7 @@ int		ServerManager::getClientFdOfPipe(int pipeFd)
 {
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
 	{
-		if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeRead() == fd)
+		if (clientPtr->getCgi()->getPipeRead() == pipeFd || clientPtr->getCgi()->getPipeWrite() == pipeFd)
 			return clientFd;
 	}
 

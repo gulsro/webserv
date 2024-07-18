@@ -33,6 +33,9 @@ void Client::setReadyToFlag(int readyTo)
 
 void	Client::setClientFdEvent(std::vector<struct pollfd>& pollfds, short events)
 {
+	#ifdef CGI
+		std::cout << GREY << "[ Client ] handleCgiRequest" << DEFAULT << std::endl; 
+	#endif
     for (auto& pfd : pollfds) {
         if (pfd.fd == clientFd) {
             pfd.events = events;
@@ -44,6 +47,9 @@ void	Client::setClientFdEvent(std::vector<struct pollfd>& pollfds, short events)
 
 void  Client::handleCgiRequest()
 {
+	#ifdef CGI
+		std::cout << GREY << "[ Client ] handleCgiRequest" << DEFAULT << std::endl; 
+	#endif
 	HttpResponse *response = this->Response;
 	Cgi cgi((*this->Request), this->Request->getReqLocation(), this->Request->getReqServer());
 	this->cgi = &cgi; // Assigning client cgi
@@ -55,10 +61,13 @@ void  Client::handleCgiRequest()
 	// if it's not allowed method, it'll throw an error.
 	this->Request->checkAllowedMethods(this->Request->getMethod());
 
+	// this->cgi->writeToCgi();
 	if (file.is_open())
 	{
-		// this->cgi->write;
+		// Pass the full request to the cgiInput to execute cgi.
+		this->cgi->putRequestIntoCgiInput(this->Request->getRawRequest());
 		this->cgi->execCGI();
+		this->  Request->setIsCgi(false);
 		file.close();	
 	}
 	else

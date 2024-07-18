@@ -83,6 +83,7 @@ public:
     void    writeToCgi();
     void    readFromCgi();
     void    execCGI();
+    void    putRequestIntoCgiInput(const std::string rawRequest);
 };
 
 

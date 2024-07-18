@@ -130,6 +130,9 @@ void    Cgi::childDup(int ToCgi[2], int FromCgi[2]){
 }
 
 void    Cgi::initParentPipe(int ToCgi[2], int FromCgi[2]){
+    #ifdef CGI
+		std::cout << GREY << "[ Cgi ] initParentPipe" << DEFAULT << std::endl; 
+	#endif
     close(ToCgi[0]);
     close(FromCgi[1]);
     pipeWrite = ToCgi[1];
@@ -137,6 +140,9 @@ void    Cgi::initParentPipe(int ToCgi[2], int FromCgi[2]){
 }
 
 void    Cgi::writeToCgi(){
+    #ifdef CGI
+		std::cout << GREY << "[ Cgi ] writeToCgi" << DEFAULT << std::endl; 
+	#endif
     if (cgiInput.size() == 0){
         manager->addFdToPollFds(pipeRead, POLLIN);
         manager->rmFdFromPollfd(pipeWrite);        // manager.removeEvent(pipeWrite, POLLOUT);
@@ -153,6 +159,9 @@ void    Cgi::writeToCgi(){
 }
 
 void    Cgi::readFromCgi(){
+    #ifdef CGI
+		std::cout << GREY << "[ Cgi ] readFromCgi" << DEFAULT << std::endl; 
+	#endif
     char buf[BUFFER_SIZE];
     ssize_t bytes = 1;
     std::memset(buf, '\0', BUFFER_SIZE - 1);
@@ -166,6 +175,9 @@ void    Cgi::readFromCgi(){
 
 void    Cgi::execCGI()
 {
+    #ifdef CGI
+		std::cout << GREY << "[ Cgi ] execCGI" << DEFAULT << std::endl; 
+	#endif
     int r_pip[2]; // pipe to cgi
     int w_pip[2]; // pipe from cgi
     pid_t pid;
@@ -201,6 +213,7 @@ void    Cgi::execCGI()
         if (execve(cgiFile, argv, env) < 0){
             throw std::runtime_error("child");
             exit(1);
+        }
     }
     else {
         //parent process
@@ -214,6 +227,16 @@ void    Cgi::execCGI()
             manager->addFdToPollFds(pipeRead, POLLIN);
         }
     }
+}
+
+void    Cgi::putRequestIntoCgiInput(const std::string rawRequest)
+{
+    #ifdef CGI
+		std::cout << GREY << "[ Cgi ] putRequestIntoCgiInput" << DEFAULT << std::endl; 
+	#endif
+    this->cgiInput.clear();
+    for (size_t i = 0; i < rawRequest.size(); ++i)
+        this->cgiInput.push_back(rawRequest[i]);
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
