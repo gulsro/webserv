@@ -178,7 +178,7 @@ void ServerManager::startPoll()
     //are stored, essentially treating it like an array.
     while (!gSignal)
     {
-        this->printPollFds();
+        // this->printPollFds();
         int num_readyFds = poll(pollfds.data(), pollfds.size(), -1);  // Wait indefinitely
         if (num_readyFds == -1)
         {
@@ -340,8 +340,10 @@ int ServerManager::handleIncoming(int fd)
 				currClient->getRequest()->checkLocations(); // cgi is detected
 				currClient->getRequest()->checkRequestValid();
 				// Initial excution after receiving the first cgi request.
-				if (currClient->getRequest()->getIsCgi() == true)
+				if (currClient->getRequest()->getIsCgi() == true && currClient->getCgi() == NULL)
 					currClient->handleCgiRequest(this); // execute cgi
+                else if (currClient->getRequest()->getIsCgi() == true)
+                    currClient->getCgi()->execCGI();
             }
         }
 	}
@@ -359,6 +361,8 @@ int ServerManager::handleIncoming(int fd)
     if (currClient->getReadyToFlag() == WRITE)
     {
         if (currClient->getCgi() != NULL && currClient->getCgi()->isRunningCgi() == false)
+            return 0;
+        if (currClient->getCgi() != NULL && currClient->getCgi()->getFinishReading() == false)
             return 0;
         // if (currClient->getCgi() != NULL && currClient->getCgi()->getFinishReading() == true){
         //     std::string tmp(currClient->getCgi()->getCgiOutput().begin(), currClient->getCgi()->getCgiOutput().end()); 

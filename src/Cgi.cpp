@@ -144,7 +144,11 @@ void    Cgi::initParentPipe(int ToCgi[2], int FromCgi[2]){
 }
 
 void    Cgi::writeToCgi(){
+
     #ifdef CGI
+		std::cout << PINK << "[ Cgi ] writeToCgi" << DEFAULT << std::endl; 
+	#endif
+    #ifdef FUNC
 		std::cout << PINK << "[ Cgi ] writeToCgi" << DEFAULT << std::endl; 
 	#endif
     if (cgiInput.size() == 0){
@@ -173,6 +177,9 @@ void    Cgi::readFromCgi(){
     #ifdef CGI
 		std::cout << PINK << "[ Cgi ] readFromCgi" << DEFAULT << std::endl; 
 	#endif
+    #ifdef FUNC
+		std::cout << PINK << "[ Cgi ] readFromCgi" << DEFAULT << std::endl; 
+	#endif
     std::vector<char> buf(BUFFER_SIZE);
     ssize_t bytes = 1;
 
@@ -194,7 +201,11 @@ void    Cgi::readFromCgi(){
 
 void    Cgi::execCGI()
 {
+    
     #ifdef CGI
+		std::cout << PINK << "[ Cgi ] execCGI" << DEFAULT << std::endl; 
+	#endif
+    #ifdef FUNC
 		std::cout << PINK << "[ Cgi ] execCGI" << DEFAULT << std::endl; 
 	#endif
     int r_pip[2]; // pipe to cgi
@@ -223,8 +234,8 @@ void    Cgi::execCGI()
 		throw std::runtime_error("fork failed"); 
     }
     else if (pid == 0){ //child process
-        childDup(r_pip, w_pip);
         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
+        childDup(r_pip, w_pip);
         if (access(cgiFile,F_OK) != 0)
 			throw ErrorCodeException(STATUS_NOT_FOUND);
 		if (access(cgiFile,X_OK) != 0)
@@ -242,7 +253,8 @@ void    Cgi::execCGI()
         else { 
             //if there's nothing to send to CGI, we will trigger reading the output from pipe
             close(pipeWrite);
-            pipeWrite = -1; //add condition for 
+            std::cout << "all input is sent to cgi pipe -> Now it should execute pipe read is " << pipeRead <<std::endl;
+            pipeWrite = -2; //add condition for 
             manager->addFdToPollFds(pipeRead, POLLIN);
         }
     }
