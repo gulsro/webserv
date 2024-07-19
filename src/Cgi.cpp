@@ -224,7 +224,7 @@ void    Cgi::execCGI()
     }
     else if (pid == 0){ //child process
         childDup(r_pip, w_pip);
-        std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
+        // std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
         if (access(cgiFile,F_OK) != 0)
 			throw ErrorCodeException(STATUS_NOT_FOUND);
 		if (access(cgiFile,X_OK) != 0)

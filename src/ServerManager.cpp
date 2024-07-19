@@ -178,7 +178,8 @@ void ServerManager::startPoll()
     //are stored, essentially treating it like an array.
     while (!gSignal)
     {
-        this->printPollFds();
+        // this->printPollFds();
+		// std::cout << RED << "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
         int num_readyFds = poll(pollfds.data(), pollfds.size(), -1);  // Wait indefinitely
         if (num_readyFds == -1)
         {
@@ -192,6 +193,7 @@ void ServerManager::startPoll()
         //counter is to see how many time poll loop turns.
         //int counter = 0;
         // Process ready file descriptors
+		// list pollFds to Remove = [];
         for (size_t i = 0; i < pollfds.size(); ++i)
         {
             int fd = pollfds[i].fd;
@@ -255,7 +257,7 @@ void ServerManager::startPoll()
 				if (isPipeFd(fd) == false)
 				{
 					currClient = mapClientFd[fd];
-					rmFdFromPollfd(fd);
+					// pollFdsToRemove += fd;
 					// delete currClient->getRequest();
 					// delete currClient->getResponse();
 					delete mapClientFd[fd];
@@ -275,6 +277,9 @@ void ServerManager::startPoll()
 				}
 			}
         }
+
+		
+					// rmFdFromPollfd(fd);
     }
 }
 
@@ -431,15 +436,14 @@ void	ServerManager::sendResponse(int fd)
         mapClientFd[fd] = nullptr;
         throw std::runtime_error("Error: send()");
 	}
-	if (isWritingDone == true)
-	{
+
+    std::cout << GREEN << "-----------CLEANING UP---------------" << std::endl;
     rmFdFromPollfd(fd);
     delete currClient->getRequest();
     delete currClient->getResponse();
     delete mapClientFd[fd];
     mapClientFd[fd] = nullptr;
     close(fd);
-	}
     
 	//delete the request, it s done
 }
