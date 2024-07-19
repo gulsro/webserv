@@ -334,7 +334,6 @@ int ServerManager::handleIncoming(int fd)
     try
     {
 		currClient->setResponse(new HttpResponse);
-
 		// requests from cgi will be handled internally.
 		if (isPipeFd(fd) == true)
 			currClient->getCgi()->readFromCgi();

@@ -110,13 +110,12 @@ void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 		size_t pos = this->uri.find(".py");
 		if (pos != std::string::npos && locationList[i]->getPath() == "/*.py")
 		{
-			std::cout << MAG << "CGI extention is detected" << RES << std::endl;
 			std::string fileExtension = returnFileExtension(locationList[i]->getPath());
 			// check file extension name is only ".py"
 			if (fileExtension == ".py")
 			{
 				setReqLocation(locationList[i]);
-				std::cout << MAG << "CGI is instantiated" << RES << std::endl;
+				std::cout << MAG << "isCgi is True" << RES << std::endl;
 				this->isCgi = true;
 				setReqLocation(locationList[i]);
 				return ;
