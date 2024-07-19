@@ -187,7 +187,7 @@ void    Cgi::readFromCgi(){
         // close(pipeRead);
     }
     cgiOutput.insert(cgiOutput.end(), buf.begin(), buf.begin() + bytes);
-    // manager->addFdToPollFds(pipeRead, POLLIN);
+    manager->addFdToPollFds(pipeRead, POLLIN);
 
     // this->appendReadBytes += bytes;
     // bytes_read += bytes; // do we need to add bytes 
