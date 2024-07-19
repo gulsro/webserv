@@ -148,6 +148,7 @@ void    Cgi::writeToCgi(){
 		std::cout << PINK << "[ Cgi ] writeToCgi" << DEFAULT << std::endl; 
 	#endif
     if (cgiInput.size() == 0){
+        std::cout << "- PIPEREAD POLLIN < writeToCgi 1 >\n";
         manager->addFdToPollFds(pipeRead, POLLIN);
         manager->rmFdFromPollfd(pipeWrite);        // manager.removeEvent(pipeWrite, POLLOUT);
         close(pipeWrite);
@@ -167,7 +168,8 @@ void    Cgi::writeToCgi(){
         bytes = write(this->pipeWrite, "\0", 1); //is it needed?
     cgiInput.erase(cgiInput.begin(),  cgiInput.begin() + bytes);
     manager->rmFdFromPollfd(pipeWrite);
-    manager->addFdToPollFds(pipeRead, POLLIN);
+    std::cout << "- PIPEREAD POLLIN < writeToCgi 2 >\n";
+    // manager->addFdToPollFds(pipeRead, POLLIN);
 }
 
 void    Cgi::readFromCgi(){
@@ -187,6 +189,7 @@ void    Cgi::readFromCgi(){
         // close(pipeRead);
     }
     cgiOutput.insert(cgiOutput.end(), buf.begin(), buf.begin() + bytes);
+    std::cout << "- PIPEREAD POLLIN < readFromCgi >\n";
     manager->addFdToPollFds(pipeRead, POLLIN);
 
     // this->appendReadBytes += bytes;
@@ -247,6 +250,7 @@ void    Cgi::execCGI()
             std::cout << BLUE << "-----------AFTER INIT PARENT---------------" << std::endl;
             close(pipeWrite);
             pipeWrite = -1; //add condition for 
+            std::cout << "- PIPEREAD POLLIN < execCgi >\n";
             manager->addFdToPollFds(pipeRead, POLLIN);
         }
     }
