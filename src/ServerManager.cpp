@@ -179,7 +179,6 @@ void ServerManager::startPoll()
     while (!gSignal)
     {
         //this->printPollFds();
-		//std::cout << RED << "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
         int num_readyFds = poll(pollfds.data(), pollfds.size(), -1);  // Wait indefinitely
         if (num_readyFds == -1)
         {
@@ -188,7 +187,6 @@ void ServerManager::startPoll()
             //'continue' is from the book, not sure.
             continue ;
         }
-        //std::cout << pollfds.size() << std::endl;
         
         //counter is to see how many time poll loop turns.
         //int counter = 0;
@@ -228,7 +226,6 @@ void ServerManager::startPoll()
                 else //continue reading operations on connected clients
                 {
                     std::cout << "REQUESTTTTTT" << std::endl;
-                     //readRequest(fd);
                     handleIncoming(fd);
                 }
             }
@@ -257,9 +254,6 @@ void ServerManager::startPoll()
 				if (isPipeFd(fd) == false)
 				{
 					currClient = mapClientFd[fd];
-					// pollFdsToRemove += fd;
-					// delete currClient->getRequest();
-					// delete currClient->getResponse();
 					delete mapClientFd[fd];
 					mapClientFd[fd] = nullptr;
 					close(fd);
@@ -272,8 +266,6 @@ void ServerManager::startPoll()
 					{
 						currClient->finishCgi();
 						currClient->setClientFdEvent(pollfds, POLLOUT);
-                        //this->addFdToPollFds(clientFd, POLLOUT);
-						//continue;
 					}
 				}
 			}
@@ -508,7 +500,7 @@ bool	ServerManager::isPipeFd(int fd)
      #ifdef CGI
 		std::cout << PINK << "[ Cgi ] isPipeFd" << DEFAULT << std::endl; 
 	#endif
-    std::cout << YELLOW << "Give Fd: " << fd << std::endl;
+    std::cout << YELLOW << "Give Fd: " << fd << DEFAULT << std::endl;
 	// Iterates throught all clients and find if the clients has a pipe with same fd.
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
 	{
