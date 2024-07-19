@@ -236,11 +236,18 @@ void ServerManager::startPoll()
             {
                 std::cout << "THE POLLOUT IS " << fd << std::endl;
                 std::cout << "RESPONSEEEEE" << std::endl;
-				if (mapClientFd[fd]->getReadyToFlag() == WRITE)
+				if (isPipeFd(fd) == false && mapClientFd[fd]->getReadyToFlag() == WRITE)
                 {
                     sendResponse(fd);
 					isWritingDone = true;
                     //pollfds[i].fd = -1;
+                }
+                else
+                {
+                    Client *currClient;
+                    int clientFd = getClientFdOfPipe(fd);
+					currClient	= mapClientFd[clientFd];
+                    currClient->getCgi()->writeToCgi();
                 }
                 
             }
@@ -344,6 +351,9 @@ int ServerManager::handleIncoming(int fd)
 					currClient->handleCgiRequest(this); // execute cgi
             }
         }
+        std::cout << PURPLE << "___________________Raw Request_______________________" << std::endl;
+        std::cout << currClient->getRequest()->getRawRequest() << std::endl;
+        std::cout << "___________________________________________" << DEFAULT << std::endl;
 	}
 	catch (const std::exception& e)
 	{
@@ -408,8 +418,6 @@ void	ServerManager::sendResponse(int fd)
         	// currClient->getResponse()->runCgi(&this);
         	currClient->getResponse()->checkMethod();
 		}
-        else
-            currClient->getCgi()->writeToCgi();
     }
     catch(const std::exception& e)
     {

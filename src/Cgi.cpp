@@ -105,15 +105,15 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     tmp.push_back("DOCUMENT_ROOT=" + loc.getRoot()); //location getRoot()
     tmp.push_back("QUERY_STRING=" + req.getQueryString()); //getQuery
     // if (req.getMethod() == "POST"){
-    //     tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
-    //     tmp.push_back("CONTENT_LENGTH=" + std::to_string(req.getContentLength()));
+        tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
+        tmp.push_back("CONTENT_LENGTH=" + std::to_string(req.getContentLength()));
     // }
     this->env = new char*[tmp.size() + 1];
     int i = 0;
     for (std::vector<std::string>::iterator t = tmp.begin(); t != tmp.end(); ++t){
         this->env[i] = new char[(*t).size() + 1];
         strcpy(this->env[i], (*t).c_str());
-        std::cout << env[i] << "ENVVVVVVVVVVVVVVVVVVVVVVVVV" << std::endl;
+        std::cout << env[i] << std::endl;
         ++i;
     }
     this->env[tmp.size()] = NULL;
@@ -166,7 +166,8 @@ void    Cgi::writeToCgi(){
     else if (bytes < WRITE_SIZE)
         bytes = write(this->pipeWrite, "\0", 1); //is it needed?
     cgiInput.erase(cgiInput.begin(),  cgiInput.begin() + bytes);
-    manager->addFdToPollFds(pipeWrite, POLLOUT);
+    manager->rmFdFromPollfd(pipeWrite);
+    manager->addFdToPollFds(pipeRead, POLLIN);
 }
 
 void    Cgi::readFromCgi(){
@@ -224,7 +225,6 @@ void    Cgi::execCGI()
     }
     else if (pid == 0){ //child process
         childDup(r_pip, w_pip);
-        // std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
         if (access(cgiFile,F_OK) != 0)
 			throw ErrorCodeException(STATUS_NOT_FOUND);
 		if (access(cgiFile,X_OK) != 0)
@@ -239,6 +239,7 @@ void    Cgi::execCGI()
         initParentPipe(r_pip, w_pip);
         if (cgiInput.size() > 0) // if there is any data to send to CGI
         {
+            std::cout << RED << "\n\n CGI INPUT exists \n\n" <<  DEFAULT << std::endl; 
             manager->addFdToPollFds(pipeWrite, POLLOUT); // keep
         }
         else { 
@@ -253,9 +254,10 @@ void    Cgi::execCGI()
 
 void    Cgi::putRequestIntoCgiInput(const std::string rawRequest)
 {
-    #ifdef CGI
-		std::cout << PINK << "[ Cgi ] putRequestIntoCgiInput" << DEFAULT << std::endl; 
-	#endif
+    // #ifdef CGI
+	// 	std::cout << PINK << "[ Cgi ] putRequestIntoCgiInput" << DEFAULT << std::endl; 
+	// #endif
+    this->cgiInput.clear();
     for (size_t i = 0; i < rawRequest.size(); ++i)
         this->cgiInput.push_back(rawRequest[i]);
 }

@@ -21,7 +21,7 @@ def add_item_to_shopping_list(item):
     with open(SHOPPING_LIST_FILE, "a") as file:
         file.write(item + "\n")
 
-request_method = os.environ.get("REQUEST_METHOD", "GET")
+request_method = os.environ.get("REQUEST_METHOD", "")
 
 #print(f"Debug: Request method - {request_method}")
 

@@ -79,6 +79,15 @@ public:
     void    setPostBody(HttpRequest& req);
     void    setContentLen(HttpRequest& req);
     void    setCgiEnv(HttpRequest& req, Location& loc, Server& ser);
+    void    setCgiInput(const char *postBody) { 
+                                            std::vector<char> charVector;
+                                            for (int i = 0; postBody[i] != '\0'; ++i)
+                                            {
+                                                charVector.push_back(postBody[i]);
+                                            }
+                                                cgiInput = charVector;
+                                            }
+
     std::vector<char>    execCgi();
     /******************/
     void    childDup(int ToCgi[2], int FromCgi[2]);

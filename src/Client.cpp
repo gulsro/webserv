@@ -55,9 +55,7 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 	// HttpResponse *response = this->Response;
 	Cgi *cgi = new Cgi((*this->Request), this->Request->getReqLocation(), this->Request->getReqServer(), *serverManager);
 	this->cgi = cgi; // Assigning client cgi
-
-	std::cout << BLUE << "this->cgi  address : " << this->cgi << std::endl;
-	std::cout << BLUE << "cgi  address : " << &cgi << std::endl; 
+ 
 	std::cout << YEL << this->cgi->getCgiFile() << RES << std::endl;
 
 	std::string	cgiFilename = this->cgi->getCgiFile();
@@ -71,6 +69,12 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 	{
 		// Pass the full request to the cgiInput to execute cgi.
 		// this->cgi->putRequestIntoCgiInput(this->Request->getRawRequest());
+		if (this->getRequest()->getMethod() == "POST")
+		{
+			// setPostBody
+			this->getCgi()->setPostBody(*this->getRequest());
+			this->getCgi()->setCgiInput(this->getCgi()->getPostBody());
+		}
 		this->cgi->execCGI();
 		// this->  Request->setIsCgi(false);
 		file.close();	

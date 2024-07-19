@@ -2,7 +2,7 @@
 
 Location::Location() {}
 
-Location::Location(Server* s) : server(s), path(""), root(""), maxBodySize(0), autoindex(false), index(""), redirect(""), cgiPass("")
+Location::Location(Server* s) : server(s), path(""), root(""), maxBodySize(100000), autoindex(false), index(""), redirect(""), cgiPass("")
 {
     // std::cout << "Location is constructed" << std::endl;
     methods["GET"] = 1;
