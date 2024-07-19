@@ -178,8 +178,8 @@ void ServerManager::startPoll()
     //are stored, essentially treating it like an array.
     while (!gSignal)
     {
-        // this->printPollFds();
-		// std::cout << RED << "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
+        //this->printPollFds();
+		//std::cout << RED << "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
         int num_readyFds = poll(pollfds.data(), pollfds.size(), -1);  // Wait indefinitely
         if (num_readyFds == -1)
         {
@@ -271,8 +271,9 @@ void ServerManager::startPoll()
 					if (!(revents & POLLIN))
 					{
 						currClient->finishCgi();
-						this->addFdToPollFds(clientFd, POLLOUT);
-						continue;
+						currClient->setClientFdEvent(pollfds, POLLOUT);
+                        //this->addFdToPollFds(clientFd, POLLOUT);
+						//continue;
 					}
 				}
 			}
@@ -437,14 +438,21 @@ void	ServerManager::sendResponse(int fd)
         throw std::runtime_error("Error: send()");
 	}
 
-    std::cout << GREEN << "-----------CLEANING UP---------------" << std::endl;
+    std::cout << GREEN << "-----------CLEANING UP---------------" << DEFAULT << std::endl;
+    
+    this->printPollFds();
+    std::cout << BLUE<< "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
     rmFdFromPollfd(fd);
+
+    this->printPollFds();
+    std::cout << BLUE<< "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
     delete currClient->getRequest();
     delete currClient->getResponse();
     delete mapClientFd[fd];
     mapClientFd[fd] = nullptr;
     close(fd);
-    
+    std::cout << GREEN << "-----------CLEANING UP----ENDDD-----------" << std::endl;
+
 	//delete the request, it s done
 }
 
