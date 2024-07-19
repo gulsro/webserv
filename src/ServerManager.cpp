@@ -265,7 +265,9 @@ void ServerManager::startPoll()
 					if (!(revents & POLLIN))
 					{
 						currClient->finishCgi();
-						currClient->setClientFdEvent(pollfds, POLLOUT);
+                        std::cout << BLUE << "-----------FD TO BE DELETED---------------" << fd << DEFAULT << std::endl;
+						rmFdFromPollfd(fd);
+                        currClient->setClientFdEvent(pollfds, POLLOUT);
 					}
 				}
 			}
@@ -417,7 +419,6 @@ void	ServerManager::sendResponse(int fd)
     std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
     std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
 
-	//What's that enum status code???
     std::cout << BLUE << "send FD : " << fd << DEFAULT << std::endl;
 	ssize_t bytesSent = send(fd, currClient->getResponse()->getContent().c_str(),
                         currClient->getResponse()->getContent().size(), 0);
@@ -438,6 +439,8 @@ void	ServerManager::sendResponse(int fd)
 
     this->printPollFds();
     std::cout << BLUE<< "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
+    
+    //rmFdFromPollfd(fd); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     delete currClient->getRequest();
     delete currClient->getResponse();
     delete mapClientFd[fd];
@@ -445,10 +448,8 @@ void	ServerManager::sendResponse(int fd)
     close(fd);
     std::cout << GREEN << "-----------CLEANING UP----ENDDD-----------" << std::endl;
 
-	//delete the request, it s done
 }
 
-//const std::vector<struct pollfd>& ServerManager::getPollfds() const
 std::vector<struct pollfd>& ServerManager::getPollfds()
 {
     return this->pollfds;

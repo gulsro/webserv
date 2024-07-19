@@ -238,9 +238,12 @@ void    Cgi::execCGI()
         //parent process
         initParentPipe(r_pip, w_pip);
         if (cgiInput.size() > 0) // if there is any data to send to CGI
+        {
             manager->addFdToPollFds(pipeWrite, POLLOUT); // keep
+        }
         else { 
             //if there's nothing to send to CGI, we will trigger reading the output from pipe
+            std::cout << BLUE << "-----------AFTER INIT PARENT---------------" << std::endl;
             close(pipeWrite);
             pipeWrite = -1; //add condition for 
             manager->addFdToPollFds(pipeRead, POLLIN);
@@ -260,6 +263,23 @@ void    Cgi::putRequestIntoCgiInput(const std::string rawRequest)
 bool	Cgi::isRunningCgi()
 {
 	return (childPid != -1 && waitpid(childPid, NULL, WNOHANG) == 0);
+}
+
+void Cgi::rmPipesFromPollfd()
+{
+    std::vector<struct pollfd> pollfds = this->manager->getPollfds();
+    for (std::vector<struct pollfd>::iterator it = pollfds.begin();
+		it != pollfds.end(); it++)
+	{
+		if (it -> fd == pipeWrite)
+		{
+			pollfds.erase(it);
+		}
+        else if (it -> fd == pipeRead)
+		{
+			pollfds.erase(it);
+		}
+	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

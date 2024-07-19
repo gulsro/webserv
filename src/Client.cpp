@@ -93,7 +93,9 @@ void	Client::finishCgi()
 	this->Response->setContent(std::string(cgiResponse.begin(), cgiResponse.end()));
 	// this->Response->setContent(this->cgi->getCgiOutput().data());
 	this->Response->setCompleted(true);
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!revove pipe from pollfs
 	close (this->cgi->getPipeRead());
+	//this->cgi->rmPipesFromPollfd();
 	delete this->cgi;
 	this->cgi = nullptr;
 }

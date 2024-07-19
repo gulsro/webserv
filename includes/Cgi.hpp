@@ -88,6 +88,8 @@ public:
     void    execCGI();
     void    putRequestIntoCgiInput(const std::string rawRequest);
     bool	isRunningCgi();
+    void    rmPipesFromPollfd();
+
 
 };
 
