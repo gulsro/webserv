@@ -540,3 +540,13 @@ int		ServerManager::getClientFdOfPipe(int pipeFd)
 	}
     return -1;
 }
+
+bool    ServerManager::isFdInPollfds(int targetFd)
+{
+    for (const auto& pollfd : pollfds)
+    {
+        if (pollfd.fd == targetFd)
+            return true;
+    }
+    return false;
+}

@@ -63,9 +63,10 @@ class ServerManager
     		void	sendResponse(int clientFd);
 
 
-		bool	readRequest(Client *currClient);
-		bool	isPipeFd(int fd);
-		int		getClientFdOfPipe(int pipeFd);
+        bool	readRequest(Client *currClient);
+        bool	isPipeFd(int fd);
+        int		getClientFdOfPipe(int pipeFd);
+        bool  isFdInPollfds(int targetFd);
 };
     
 bool isFdConnected(int fd, std::vector<int>& connectedClientFds);
