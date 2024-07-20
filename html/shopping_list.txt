@@ -3,11 +3,3 @@ banana
 carrot
 peanut buttercake
 
-a
-b
-c
-d
-e
-f
-g
-h

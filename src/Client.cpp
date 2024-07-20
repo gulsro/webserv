@@ -68,7 +68,6 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 	if (file.is_open())
 	{
 		// Pass the full request to the cgiInput to execute cgi.
-		// this->cgi->putRequestIntoCgiInput(this->Request->getRawRequest());
 		if (this->getRequest()->getMethod() == "POST")
 		{
 			// setPostBody

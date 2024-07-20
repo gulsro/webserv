@@ -85,7 +85,6 @@ void Cgi::setPostBody(HttpRequest& req){
 	printSafeString(safeString);
 }
 
-
 void Cgi::setContentLen(HttpRequest& req) {
     contentLen = req.getContentLength();
 }
