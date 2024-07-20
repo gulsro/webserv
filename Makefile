@@ -7,17 +7,17 @@ RESET_COLOR			:=	\033[0m
 NAME = webserv
 
 ifdef DEBUG
-FLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g -std=c++20 -Ofast -flto
+FLAGS	=	-Wall -Wextra -Werror -fsanitize=address -g -std=c++20 
 else ifdef LEAK
-FLAGS	=	-Wall -Wextra -Werror -fsanitize=leak -g -std=c++20 -Ofast -flto
+FLAGS	=	-Wall -Wextra -Werror -fsanitize=leak -g -std=c++20
 else ifdef STRUCTOR
-FLAGS	=	-Wall -Wextra -Werror -g -D STRUCTOR -std=c++20 -Ofast -flto
+FLAGS	=	-Wall -Wextra -Werror -g -D STRUCTOR -std=c++20
 else ifdef FUNC
-FLAGS	=	-Wall -Wextra -Werror -g -D FUNC -std=c++20 -Ofast -flto
+FLAGS	=	-Wall -Wextra -Werror -g -D FUNC -std=c++20
 else ifdef CGI
-FLAGS	=	-Wall -Wextra -Werror -g -D CGI -std=c++20 -Ofast -flto
+FLAGS	=	-Wall -Wextra -Werror -g -D CGI -std=c++20
 else
-FLAGS	=	-Wall -Wextra -Werror -std=c++20 -Ofast -flto
+FLAGS	=	-Wall -Wextra -Werror -std=c++20
 endif
 
 FILES =	main.cpp \

@@ -16,7 +16,7 @@ from the CGI, EOF will mark the end of the returned data.
 Cgi::Cgi(){}
 
 Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser, ServerManager &sManager)
-: pass(NULL), postBody(NULL), contentLen(0), manager(&sManager), pipeRead(-1), pipeWrite(-1), childPid(-1), finishReading(false)
+: pass(NULL), postBody(NULL), contentLen(0), manager(&sManager), pipeRead(-1), pipeWrite(-1), childPid(-1), finishReading(false), appendBytes(0)
 {
     cgiPass = loc.getCgiPass();
     setCgiFile("."+loc.getRoot()+req.getURI());
@@ -152,9 +152,7 @@ void    Cgi::writeToCgi(){
         manager->addFdToPollFds(pipeRead, POLLIN);
         manager->rmFdFromPollfd(pipeWrite);        // manager.removeEvent(pipeWrite, POLLOUT);
         close(pipeWrite);
-        // pipeWrite = -1;
     }
-
 	size_t writeSize = WRITE_SIZE;
 
 	if (WRITE_SIZE >= this->cgiInput.size()) {
@@ -168,8 +166,8 @@ void    Cgi::writeToCgi(){
         bytes = write(this->pipeWrite, "\0", 1); //is it needed?
     cgiInput.erase(cgiInput.begin(),  cgiInput.begin() + bytes);
     manager->rmFdFromPollfd(pipeWrite);
-    std::cout << "- PIPEREAD POLLIN < writeToCgi 2 >\n";
-    // manager->addFdToPollFds(pipeRead, POLLIN);
+    if (cgiInput.empty())
+        manager->addFdToPollFds(pipeRead, POLLIN);
 }
 
 void    Cgi::readFromCgi(){
@@ -183,17 +181,20 @@ void    Cgi::readFromCgi(){
     bytes = read(this->pipeRead, buf.data(), BUFFER_SIZE);
     if (bytes < 0)
         std::runtime_error("Reading from CGI has failed.");
-     if (bytes== 0){
+    if (bytes == 0)
+    {
+        std::cout << "\n\nbytes == 0 " << std::endl;
         finishReading = true;
-        // manager->rmFdFromPollfd(pipeRead);        // manager.removeEvent(pipeWrite, POLLOUT);
-        // close(pipeRead);
+        this->appendBytes = 0;
     }
-    cgiOutput.insert(cgiOutput.end(), buf.begin(), buf.begin() + bytes);
-    std::cout << "- PIPEREAD POLLIN < readFromCgi >\n";
-    manager->addFdToPollFds(pipeRead, POLLIN);
-
-    // this->appendReadBytes += bytes;
-    // bytes_read += bytes; // do we need to add bytes 
+    else
+    {
+        cgiOutput.insert(cgiOutput.end(), buf.begin(), buf.begin() + bytes);
+        std::cout << "- PIPEREAD POLLIN < readFromCgi >\n";
+        if (this->appendBytes == 0)
+            manager->addFdToPollFds(pipeRead, POLLIN);
+        this->appendBytes += bytes;
+    }
 }
 
 void    Cgi::execCGI()

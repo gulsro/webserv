@@ -54,6 +54,7 @@ private:
     // size_t  appendReadBytes;
     pid_t   childPid;
     bool    finishReading;
+    size_t  appendBytes;
 
 public:
     Cgi();
