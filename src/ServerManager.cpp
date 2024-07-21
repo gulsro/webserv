@@ -359,8 +359,12 @@ int ServerManager::handleIncoming(int fd)
 	{
         if (currClient)
         {
+            if (currClient->getCgi() != nullptr)
+                currClient->finishCgi();
             currClient->getResponse()->setContent(e.what());
             currClient->getResponse()->setCompleted(true);
+            currClient->setReadyToFlag(WRITE);
+            currClient->setClientFdEvent(pollfds, POLLOUT);
         }
         return 0;
 	}
@@ -415,7 +419,6 @@ void	ServerManager::sendResponse(int fd)
 		if (isPipeFd(fd) == false)
 		{
         	currClient->getResponse()->setRequest(currClient->getRequest());
-        	// currClient->getResponse()->runCgi(&this);
         	currClient->getResponse()->checkMethod();
 		}
     }

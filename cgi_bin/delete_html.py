@@ -52,8 +52,8 @@ html_content = ('''
 	.button:hover {
 		background-color: #99f077;
 	}
-	.delete_button{
-		margin : 5px;
+	.error {
+		color: red;
 	}
 
 	</style>
@@ -65,8 +65,14 @@ html_content += ('''
   <br>
   <script>
     function deleteFile(fileName) {
-		fetch('/html/upload/' + fileName, { method: 'DELETE' });
-		// location.reload();
+		document.getElementsByClassName("error")[0].textContent = "";
+		const response = fetch('/html/upload/' + fileName, { method: 'DELETE' });
+		if (response.ok) {
+			// Remove list item or reload page
+			location.reload();
+		} else {
+			document.getElementsByClassName("error")[0].textContent = 'Error deleting file';
+		}
 	}
   </script>
   <h2>Files</h2>
@@ -79,7 +85,7 @@ for file in f:
 		Delete
 	</button></li>'''
 
-html_content += ('''</body>
+html_content += ('''</ul><p class="error"></p></body>
 	</html>
 ''')
 
