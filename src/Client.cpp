@@ -71,8 +71,8 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 		if (this->getRequest()->getMethod() == "POST")
 		{
 			// setPostBody
-			this->getCgi()->setPostBody(*this->getRequest());
-			this->getCgi()->setCgiInput(this->getCgi()->getPostBody());
+			// this->getCgi()->setPostBody(*this->getRequest());
+			this->getCgi()->setCgiInput(this->getRequest()->getBody());
 		}
 		this->cgi->execCGI();
 		// this->  Request->setIsCgi(false);

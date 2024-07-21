@@ -349,9 +349,9 @@ int ServerManager::handleIncoming(int fd)
 				// Initial excution after receiving the first cgi request.
 				if (currClient->getRequest()->getIsCgi() == true)
 					currClient->handleCgiRequest(this); // execute cgi
-            std::cout << PURPLE << "___________________Raw Request_______________________" << std::endl;
-            std::cout << currClient->getRequest()->getRawRequest() << std::endl;
-            std::cout << "___________________________________________" << DEFAULT << std::endl;
+            // std::cout << PURPLE << "___________________Raw Request_______________________" << std::endl;
+            // std::cout << currClient->getRequest()->getRawRequest() << std::endl;
+            // std::cout << "___________________________________________" << DEFAULT << std::endl;
             }
         }
 	}

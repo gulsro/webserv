@@ -26,7 +26,6 @@ void	HttpRequest::makeKeyValuePair(int n, const std::string str)
 			this->parts[n].partFilename = value;
 		}
 	}
-	std::cout << "keyValue body : " << this->body << std::endl;
 }
 
 void	HttpRequest::handlePartInfo(const int n, const std::string partInfo)

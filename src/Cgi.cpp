@@ -81,8 +81,8 @@ void Cgi::setPostBody(HttpRequest& req){
 	std::string s = req.getBody();
 	SafeString safeString(s);
 	postBody = getSafeString(safeString);
-	std::cout << "________SafeString______" << std::endl;
-	printSafeString(safeString);
+	// std::cout << "________SafeString______" << std::endl;
+	// printSafeString(safeString);
 }
 
 void Cgi::setContentLen(HttpRequest& req) {
@@ -154,6 +154,7 @@ void    Cgi::writeToCgi(){
         return ;
     }
 	size_t writeSize = WRITE_SIZE;
+    std::cout << this->cgiInput.data() << std::endl;
 
 	if (WRITE_SIZE >= this->cgiInput.size()) {
 		this->cgiInput.push_back('\0');
@@ -292,6 +293,17 @@ void Cgi::rmPipesFromPollfd()
 			pollfds.erase(it);
 		}
 	}
+}
+
+void    Cgi::setCgiInput(std::string postBody)
+{ 
+    std::vector<char> charVector;
+    
+    for (size_t i = 0; i < postBody.size(); ++i)
+    {
+        charVector.push_back(postBody[i]);
+    }
+    this->cgiInput = charVector;
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
