@@ -147,7 +147,6 @@ void    Cgi::writeToCgi(){
 		std::cout << PINK << "[ Cgi ] writeToCgi" << DEFAULT << std::endl; 
 	#endif
     if (cgiInput.empty()){
-        std::cout << "- PIPEREAD POLLIN < writeToCgi 1 >\n";
         manager->addFdToPollFds(pipeRead, POLLIN);
         manager->rmFdFromPollfd(pipeWrite);        // manager.removeEvent(pipeWrite, POLLOUT);
         close(pipeWrite);
@@ -160,20 +159,15 @@ void    Cgi::writeToCgi(){
 		this->cgiInput.push_back('\0');
 		writeSize = this->cgiInput.size();
 	}
-    std::cout << "Write_SIze ::" << writeSize << std::endl;
     ssize_t bytes = write(this->pipeWrite, this->cgiInput.data(), writeSize); //cgiInput stores a whole request incl
     if (bytes < 0)
 		throw std::runtime_error ("Writing to CGI has failed" );
-    // else if (bytes < WRITE_SIZE)
-    //     bytes = write(this->pipeWrite, "\0", 1); //is it needed?
-    std::cout << "\n_________CGI SIZE__________" << std::endl;
-    std::cout << "before erasing ::" << cgiInput.size() << std::endl;
     cgiInput.erase(cgiInput.begin(),  cgiInput.begin() + bytes);
-    std::cout << "after erasing ::" << cgiInput.size() << std::endl;
-    std::cout << "\n";
-    manager->rmFdFromPollfd(pipeWrite);
     if (cgiInput.empty())
+    {
+        manager->rmFdFromPollfd(pipeWrite);
         manager->addFdToPollFds(pipeRead, POLLIN);
+    }
 }
 
 void    Cgi::readFromCgi(){
