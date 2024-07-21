@@ -153,7 +153,6 @@ void    Cgi::writeToCgi(){
         return ;
     }
 	size_t writeSize = WRITE_SIZE;
-    std::cout << this->cgiInput.data() << std::endl;
 
 	if (WRITE_SIZE >= this->cgiInput.size()) {
 		this->cgiInput.push_back('\0');
