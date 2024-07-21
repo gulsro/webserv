@@ -374,10 +374,6 @@ int ServerManager::handleIncoming(int fd)
     {
         if (currClient->getCgi() != NULL && currClient->getCgi()->isRunningCgi() == false)
             return 0;
-        // if (currClient->getCgi() != NULL && currClient->getCgi()->getFinishReading() == true){
-        //     std::string tmp(currClient->getCgi()->getCgiOutput().begin(), currClient->getCgi()->getCgiOutput().end()); 
-        //     currClient->getResponse()->setContent(tmp); 
-        // }
         std::vector<struct pollfd>& pollfds = getPollfds();
         currClient->setClientFdEvent(pollfds, POLLOUT);
     }
@@ -426,6 +422,8 @@ void	ServerManager::sendResponse(int fd)
     {
         currClient->getResponse()->setContent(e.what());
 		currClient->getResponse()->setCompleted(true);
+        currClient->setReadyToFlag(WRITE);
+        currClient->setClientFdEvent(pollfds, POLLOUT);
     }
     std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
     std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;

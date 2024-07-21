@@ -11,6 +11,7 @@ UPLOAD_DIR = "./html/upload"
 
 request_method = os.environ.get("REQUEST_METHOD", "")
 
+
 if (request_method == "DELETE"):
 	query_string = os.environ.get("QUERY_STRING", "")
 	parameters = urllib.parse.parse_qs(query_string)
@@ -63,14 +64,14 @@ html_content += ('''
 	<a href='/' class="button"> Back to main page </a> <br>
   <br>
   <script>
-    function deleteFile(fileName) {
+    async function deleteFile(fileName) {
 		document.getElementsByClassName("error")[0].textContent = "";
-		const response = fetch('/delete.py?fileName=' + fileName, { method: 'DELETE' });
+		const response = await fetch('/html/upload/' + fileName, { method: 'DELETE' });
 		if (response.ok) {
 			// Remove list item or reload page
 			location.reload();
 		} else {
-			document.getElementsByClassName("error")[0].textContent = 'Error deleting file';
+			document.getElementsByClassName("error")[0].textContent = 'Error deleting file, code ' + response.status;
 		}
 	}
   </script>
