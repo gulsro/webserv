@@ -3,6 +3,7 @@
 extern volatile sig_atomic_t gSignal;
 
 ServerManager::ServerManager(const Config& config) {
+    std::cout << "ServerManager destructor is called" << std::endl;
   // Loop and copy raw pointers (not recommended)
   for (Server* server : config.serverList) {
             servers.emplace_back(server);
@@ -280,11 +281,18 @@ void ServerManager::startPoll()
 			}
         }
 
-		
-					// rmFdFromPollfd(fd);
     }
 }
 
+// if (_pollFds[i].revents & POLLIN)
+//                 {
+//                     if (_pollFds[i].fd == _serverSocket)
+//                         acceptConnection();
+//                     else
+//                         handleClientData(i);
+//                 }
+//                 else if (_pollFds[i].revents & POLLOUT)
+//                     sendClientData(i);
 
 Server* ServerManager::getServer(int serverFd) const
 {
@@ -361,7 +369,7 @@ int ServerManager::handleIncoming(int fd)
     
     if (currClient->getReadyToFlag() == WRITE)
     {
-        if (currClient->getCgi() != NULL && currClient->getCgi()->isRunningCgi() == false)
+        if (currClient->getCgi() != NULL )
             return 0;
         std::vector<struct pollfd>& pollfds = getPollfds();
         currClient->setClientFdEvent(pollfds, POLLOUT);
