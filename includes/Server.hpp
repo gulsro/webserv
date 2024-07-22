@@ -31,13 +31,13 @@ private:
     std::string index;
     unsigned long long maxBodySize; // in bytes
     int nbLocation;
-
     bool    autoindex;
+    std::map<std::string, int> methods;
     
     std::vector<Location*> locationList;
     std::vector<std::string> locationCont;
     struct sockaddr_in serverAddr;
-    setFunc func[5] {&Server::setPort, &Server::setRoot, &Server::setIndex, &Server::setMaxBodySize, &Server::setAutoindex};
+    setFunc func[6] {&Server::setPort, &Server::setRoot, &Server::setIndex, &Server::setMaxBodySize, &Server::setAutoindex, &Server::setMethods};
 
 public:
     Server();
@@ -49,27 +49,28 @@ public:
     Server& operator=(const Server s);
 
 //**********GETTERS*********************
-    int getPort() const;
-    std::string getHost() const;
-    std::string getRoot() const;
-    std::string getIndex() const;
-    int getServerFd() const;
-    unsigned long long getMaxBodySize() const;
-    std::vector<Location*> getLocationList() const;
-    struct sockaddr_in* getSocketAddr() const;
+    int getPort() const { return port; }
+    std::string getHost() const { return host; }
+    std::string getRoot() const { return root; }
+    std::string getIndex() const { return index; }
+    int getServerFd() const { return serverFd; }
+    unsigned long long getMaxBodySize() const  { return maxBodySize; }
+    std::vector<Location*> getLocationList() const  { return locationList; }
     bool        getAutoindex() const { return autoindex; }
-    //std::vector<Location> getLocationList() const;
+    std::map<std::string, int> getMethods() const  { return methods; }
+    struct sockaddr_in* getSocketAddr() const;
 
     
 //**********SETTERS*********************
 
     void setPort(std::string& cont, int key);
     void setHost(std::string& cont);
-    // void setServerFd(int fd);
     void setRoot(std::string& cont, int key);
     void setIndex(std::string& cont, int key);
     void setMaxBodySize(std::string& cont, int key);
     void setAutoindex(std::string&cont, int key);
+    void setMethods(std::string& cont, int key);
+
 
 //********PARSING************************
     void splitLocation(std::string cont);

@@ -5,7 +5,7 @@ Location::Location() {}
 Location::Location(Server* s) : server(s), path(""), root(""), maxBodySize(0), autoindex(false), index(""), redirect(""), cgiPass("")
 {
     // std::cout << "Location is constructed" << std::endl;
-    methods["GET"] = 1;
+    methods["GET"] = 0;
     methods["POST"] = 0;
     methods["DELETE"] = 0;
 
@@ -26,7 +26,6 @@ Location& Location::operator=(const Location a){
     this->root = a.root;
     this->autoindex = a.autoindex;
     this->redirect = a.redirect;
-    // this->alias = a.alias;
     this->errorPage = a.errorPage;
     this->methods = a.methods;
     this->cgiPass = a.cgiPass;
@@ -132,12 +131,13 @@ void Location::setRedirect(std::string& cont, int key){
 }
 
 void Location::setMethods(std::string& cont, int key){
-    //Gul added
     (void)key;
     key = 0;
-    if (cont.find("POST") != std::string::npos)
+    if (cont.find("GET") != std::string::npos || this->server->getMethods()["GET"] == 1)
+        methods["GET"] = 1;
+    if (cont.find("POST") != std::string::npos || this->server->getMethods()["POST"] == 1)
         methods["POST"] = 1;
-    if (cont.find("DELETE") != std::string::npos)
+    if (cont.find("DELETE") != std::string::npos || this->server->getMethods()["DELETE"] == 1)
         methods["DELETE"] = 1;
 }
 

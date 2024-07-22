@@ -3,6 +3,9 @@
 
 Server::Server() : port(0), root(""), index(""), maxBodySize(0), nbLocation(0), autoindex(false)
 {
+    methods["GET"] = 0;
+    methods["POST"] = 0;
+    methods["DELETE"] = 0;
     // std::cout << "Server constructor is called" << std::endl;
 }
 
@@ -34,25 +37,6 @@ Server& Server::operator=(const Server s){
 }
 
 //--------------Getters-------------------
-int Server::getPort() const
-{
-    return this->port;
-}
-
-std::string Server::getHost() const
-{
-    return this->host;
-}
-
-int Server::getServerFd() const
-{
-    return this->serverFd;
-}
-
-std::string Server::getRoot() const
-{
-    return this->root;
-}
 
 struct sockaddr_in* Server::getSocketAddr() const
 {
@@ -138,20 +122,6 @@ void Server::printConnectedClientFds() const
     }
 }
 
-std::string Server::getIndex() const
-{
-    return this->index;
-}
-
-unsigned long long Server::getMaxBodySize() const
-{
-    return this->maxBodySize;
-}
-
-std::vector<Location*> Server::getLocationList() const
-{
-    return this->locationList;
-}
 
 
 //--------------Setters-------------------
@@ -213,17 +183,28 @@ void Server::setAutoindex(std::string&cont, int key){
         this->autoindex = false;
 }
 
+void Server::setMethods(std::string& cont, int key){
+    (void)key;
+    key = 0;
+    if (cont.find("GET") != std::string::npos)
+        this->methods["GET"] = 1;
+    if (cont.find("POST") != std::string::npos)
+        this->methods["POST"] = 1;
+    if (cont.find("DELETE") != std::string::npos)
+        this->methods["DELETE"] = 1;
+}
+
 //--------------Functions-------------------
 
 void Server::setServerVar(std::stringstream& iss)
 {
     std::size_t key;
     std::string line;
-    std::string parameter[5] = {"listen", "root", "index", "max_body_size", "autoindex"};
+    std::string parameter[6] = {"listen", "root", "index", "max_body_size", "autoindex", "methods"};
      while (std::getline(iss, line, '\n')){
         if (line.find("location") != std::string::npos)
             break;
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 6; i++){
             key = line.find(parameter[i]);
             if(key != std::string::npos)
                 (this->*func[i])(line, key + parameter[i].size());
@@ -287,6 +268,13 @@ std::ostream& operator<<(std::ostream& out, const Server& server)
          out << "auto index: " << "ON" << std::endl;
     else if (server.getAutoindex() == false)
          out << "auto index: " << "OFF" << std::endl;
-    out << std::endl;
+    out << "methods: ";
+    if (server.getMethods()["GET"] == 1)
+        out << "GET ";
+    if(server.getMethods()["POST"] == 1)
+        out << "POST ";
+    if (server.getMethods()["DELETE"] == 1)
+        out << "DELETE";
+    out << std::endl << std::endl;
     return out;
 }
