@@ -185,6 +185,7 @@ void    Cgi::readFromCgi(){
         std::cout << "\n\nbytes == 0 " << std::endl;
         finishReading = true;
         this->appendBytes = 0;
+        // manager->rmPipesFromPollfd()
     }
     else
     {

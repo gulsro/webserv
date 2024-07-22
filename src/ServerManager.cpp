@@ -333,7 +333,8 @@ int ServerManager::handleIncoming(int fd)
 		currClient = mapClientFd[fd];
     try
     {
-		currClient->setResponse(new HttpResponse);
+        if (currClient->getResponse() == nullptr)
+		    currClient->setResponse(new HttpResponse);
 
 		// requests from cgi will be handled internally.
 		if (isPipeFd(fd) == true && currClient->getCgi()->getFinishReading() == false)
