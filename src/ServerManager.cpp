@@ -118,9 +118,9 @@ void ServerManager::startSockets()
         //mapServerFd.emplace(server->getServerFd(), server);
 
     }
-    std::cout << "SIZE OF MAP IS: " << mapServerFd.size() << std::endl;
-    std::cout << "SIZE OF POLLFD VECTOR IS: " << pollfds.size() << std::endl;
-    printServers();
+    // std::cout << "SIZE OF MAP IS: " << mapServerFd.size() << std::endl;
+    // std::cout << "SIZE OF POLLFD VECTOR IS: " << pollfds.size() << std::endl;
+    // printServers();
 }
 
 // struct pollfd {
@@ -349,9 +349,6 @@ int ServerManager::handleIncoming(int fd)
 				// Initial excution after receiving the first cgi request.
 				if (currClient->getRequest()->getIsCgi() == true)
 					currClient->handleCgiRequest(this); // execute cgi
-            // std::cout << PURPLE << "___________________Raw Request_______________________" << std::endl;
-            // std::cout << currClient->getRequest()->getRawRequest() << std::endl;
-            // std::cout << "___________________________________________" << DEFAULT << std::endl;
             }
         }
 	}
@@ -426,9 +423,9 @@ void	ServerManager::sendResponse(int fd)
         currClient->setClientFdEvent(pollfds, POLLOUT);
     }
     std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
-    std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
+    // std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
 
-    std::cout << BLUE << "send FD : " << fd << DEFAULT << std::endl;
+    // std::cout << BLUE << "send FD : " << fd << DEFAULT << std::endl;
 	ssize_t bytesSent = send(fd, currClient->getResponse()->getContent().c_str(),
                         currClient->getResponse()->getContent().size(), 0);
 	if (bytesSent == -1 || static_cast<size_t>(bytesSent) != currClient->getResponse()->getContent().size())
@@ -443,11 +440,11 @@ void	ServerManager::sendResponse(int fd)
     std::cout << GREEN << "-----------CLEANING UP---------------" << DEFAULT << std::endl;
     
     this->printPollFds();
-    std::cout << BLUE<< "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
+    // std::cout << BLUE<< "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
     rmFdFromPollfd(fd);
 
     this->printPollFds();
-    std::cout << BLUE<< "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
+    // std::cout << BLUE<< "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
     
     //rmFdFromPollfd(fd); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     delete currClient->getRequest();
