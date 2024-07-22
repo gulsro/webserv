@@ -9,3 +9,6 @@ bread
 a
 b
 v
+a
+b
+c
