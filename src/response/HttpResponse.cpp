@@ -146,12 +146,19 @@ void    HttpResponse::setResource()
 	}
 	else // No selected Location
 	{
-		if (this->Request->getURI() == "/")
+        std::string uri = this->Request->getURI();
+        size_t pos = uri.find(Server->getRoot());
+		if (uri == "/")
 			this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
-		else if (this->Request->getURI().find(Server->getRoot() + "/") != std::string::npos)
-            this->resource = "." + this->Request->getURI();
+		else if (pos != std::string::npos)
+        {
+            if (uri[pos + Server->getRoot().length()] == '/' || uri[pos + Server->getRoot().length() + 1] == '\0' )
+                this->resource = "." + uri;
+            else
+                this->resource = "." + Server->getRoot() + uri;    
+        }
         else
-			this->resource = "." + Server->getRoot() + this->Request->getURI();
+			this->resource = "." + Server->getRoot() + uri;
 	}
 	#ifdef FUNC
 		std::cout << YELLOW  << "RESOURCE : " << this->resource << DEFAULT << std::endl;
