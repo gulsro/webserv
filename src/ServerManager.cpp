@@ -22,6 +22,10 @@ ServerManager::~ServerManager()
     std::cout << "ServerManager destructor is called" << std::endl;
     // for (auto server: this->servers)
     //     delete server;
+    for (std::vector<Server *>::iterator i = servers.begin(); i != servers.end(); i++){
+        delete *i;
+        *i = nullptr;
+     }
 }
 
 void ServerManager::printServers() const
@@ -327,8 +331,8 @@ int ServerManager::handleIncoming(int fd)
 		currClient = mapClientFd[fd];
     try
     {
-        if (currClient->getResponse() == nullptr)
-		    currClient->setResponse(new HttpResponse);
+		if (currClient->getResponse() == nullptr)
+			currClient->setResponse(new HttpResponse());
 
 		// requests from cgi will be handled internally.
 		if (isPipeFd(fd) == true && currClient->getCgi()->getFinishReading() == false)
@@ -404,7 +408,7 @@ void	ServerManager::sendResponse(int fd)
     try
     {
 
-		if (isPipeFd(fd) == false)
+		if (isPipeFd(fd) == false && currClient->getResponse() != nullptr)
 		{
         	currClient->getResponse()->setRequest(currClient->getRequest());
         	currClient->getResponse()->checkMethod();
@@ -427,6 +431,7 @@ void	ServerManager::sendResponse(int fd)
 	{
         rmFdFromPollfd(fd);
         delete currClient->getRequest();
+        delete currClient->getResponse();
         delete mapClientFd[fd];
         mapClientFd[fd] = nullptr;
         throw std::runtime_error("Error: send()");
@@ -444,6 +449,7 @@ void	ServerManager::sendResponse(int fd)
     //rmFdFromPollfd(fd); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     delete currClient->getRequest();
     delete currClient->getResponse();
+	currClient->setResponse(nullptr);
     delete mapClientFd[fd];
     mapClientFd[fd] = nullptr;
     close(fd);

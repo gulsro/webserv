@@ -1,7 +1,7 @@
 #include "../includes/Cgi.hpp"
 
-#define BUFFER_SIZE 1024
-#define WRITE_SIZE 1024
+#define BUFFER_SIZE 4096
+#define WRITE_SIZE 4096
 
 /*Because you won’t call the CGI directly, use the full path as PATH_INFO.
 ∗ Just remember that, for chunked request, your server needs to unchunk
@@ -35,7 +35,6 @@ Cgi::~Cgi(){
     }
     delete[] this->env;
     delete[] this->pass;
-    //delete[] this->env;
 }
 
 // Cgi::Cgi(Cgi& a){

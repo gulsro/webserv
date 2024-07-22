@@ -6,11 +6,15 @@ Config::Config(){
 }
 
 Config::~Config(){
-    for (std::vector<Server *>::iterator i = serverList.begin();
-     i != serverList.end();i++){
-        delete *i;
-        *i = nullptr;
-     }
+    #ifdef STRUCTOR
+		std::cout << GREY << "Config : Destructor called" << DEFAULT << std::endl; 
+	#endif
+    // for (std::vector<Server *>::iterator i = serverList.begin();
+    //  i != serverList.end(); i++){
+    //     if (*i != nullptr)
+    //         delete *i;
+    //     *i = nullptr;
+    //  }
 }
 
 void    Config::setConfigFile(std::string file){

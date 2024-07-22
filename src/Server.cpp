@@ -1,4 +1,3 @@
-
 #include "Webserv.hpp"
 
 Server::Server() : port(0), root(""), index(""), maxBodySize(0), nbLocation(0), autoindex(false)
@@ -11,12 +10,19 @@ Server::Server() : port(0), root(""), index(""), maxBodySize(0), nbLocation(0), 
 
 Server::~Server()
 {
-    // std::cout << "Server destructor is called" << std::endl;
-    for (std::vector<Location *>::iterator i = locationList.begin();
-     i != locationList.end();i++){
-        delete *i;
+    #ifdef STRUCTOR
+		std::cout << GREY << "Server : Destructor called" << DEFAULT << std::endl; 
+	#endif
+    for (std::vector<Location *>::iterator i = locationList.begin(); i != locationList.end(); i++){
+        if (*i != nullptr)
+            delete *i;
         *i = nullptr;
      }
+    // for (std::vector<Client *>::iterator i = clientList.begin(); i != clientList.end(); i++){
+    //     if (*i != nullptr)
+    //         delete *i;
+    //     *i = nullptr;
+    //  }
 }
 
 

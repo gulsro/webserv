@@ -12,6 +12,9 @@ Location::Location(Server* s) : server(s), path(""), root(""), maxBodySize(0), a
 }
 
 Location::~Location(){
+    #ifdef STRUCTOR
+		std::cout << GREY << "Location : Destructor called" << DEFAULT << std::endl; 
+	#endif
     // std::cout << "Location is destructed" << std::endl;
 }
 

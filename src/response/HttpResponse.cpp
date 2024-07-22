@@ -1,11 +1,13 @@
 #include "HttpResponse.hpp"
+#include <cctype>
 
 HttpResponse::HttpResponse()
-	: statusCode(0), body(""), index(""), resource(""), resourceType(RESOURCE_FILE), content(""), contentType(""), MIMEtype(""), completed(false)
+	: version(""), statusCode(0), index(""), resource(""), resourceType(RESOURCE_FILE), content(""), contentType(""), MIMEtype(""), completed(false)
 {
 	#ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Default constructor called" << DEFAULT << std::endl; 
 	#endif
+    this->Request = nullptr;
 }
 
 HttpResponse::HttpResponse(const HttpResponse &other)
@@ -41,9 +43,17 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other)
 
 HttpResponse::~HttpResponse()
 {
-	#ifdef STRUCTOR
+	// #ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Destructor called" << DEFAULT << std::endl; 
-	#endif
+	// #endif
+        for (auto& header : headers) {
+        // Remove duplicate headers (keep the last one)
+        auto it = headers.find(header.first);
+        if (it != headers.end() && it != std::prev(headers.end())) {
+            headers.erase(it);
+        }
+    }
+    headers.clear();
 }
 
 void	HttpResponse::createResponse(enum e_statusCode code)

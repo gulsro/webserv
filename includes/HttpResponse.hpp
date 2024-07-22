@@ -15,6 +15,7 @@ enum	e_resourceType
 	RESOURCE_DIR
 };
 
+
 class HttpRequest;
 class Cgi;
 

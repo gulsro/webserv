@@ -183,13 +183,12 @@ void	HttpRequest::checkAllowedMethods(std::string requestedMethod)
 	#endif
 	std::map<std::string, int> methods;
 	
-	if (this->ReqLocation == nullptr)
-	    methods = this->ReqServer->getMethods();
-	else
+	// if (this->ReqLocation == nullptr)
+	//     method = this->ReqServer->getMethods()
+	// else
 		methods = this->ReqLocation->getMethods();
 
-	if ((methods["GET"] == 0 && methods["POST"] == 0 && methods["DELETE"] == 0)
-		|| (methods["GET"] == 0 && requestedMethod == "GET")
+	if ((methods["POST"] == 0 && methods["DELETE"] == 0)
 		|| (methods["POST"] == 0 && requestedMethod == "POST")
 		|| (methods["DELETE"] == 0 && requestedMethod == "DELETE"))
 	{
@@ -204,7 +203,8 @@ void	HttpRequest::checkLocations()
 	#endif
 	selectReqLocation(this->ReqServer->getLocationList());
 	// GET is always allowed depending on our own config file
-	checkAllowedMethods(this->getMethod());
+	if (this->getMethod() != "GET" && this->ReqLocation != nullptr)
+		checkAllowedMethods(this->getMethod());
 }
 
 void	HttpRequest::handleChunkedBody(const size_t bodyStart, const std::string rawRequest)
