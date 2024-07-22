@@ -285,15 +285,6 @@ void ServerManager::startPoll()
     }
 }
 
-// if (_pollFds[i].revents & POLLIN)
-//                 {
-//                     if (_pollFds[i].fd == _serverSocket)
-//                         acceptConnection();
-//                     else
-//                         handleClientData(i);
-//                 }
-//                 else if (_pollFds[i].revents & POLLOUT)
-//                     sendClientData(i);
 
 Server* ServerManager::getServer(int serverFd) const
 {
