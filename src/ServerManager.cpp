@@ -45,26 +45,7 @@ const std::vector<Server*>& ServerManager::getServers() const
     return this->servers;
 }
 
-// std::unique_ptr<Server>	ServerManager::getServer(std::string host) const
-// {
-//     auto &servers = this->getServers();
 
-//     for (auto &server: this->servers)
-//     {
-//         if (std::string::compare(host, server->getHost()) == 0)
-//             //return *this;
-//     }
-// }
-
-//When you call this->servers.push_back(server);
-//you are trying to copy the std::unique_ptr.
-//However, copying std::unique_ptr is not allowed because
-//it would lead to multiple std::unique_ptr instances
-//trying to manage the same resource, violating the unique ownership guarantee.
-//Using this->servers.push_back(std::move(server));
-//explicitly moves the std::unique_ptr into the vector.
-//This transfer of ownership ensures that the vector now
-//owns the resource, and the original std::unique_ptr becomes empty.
 void ServerManager::addServer(Server* server)
 {
     //this->servers.push_back(server);
@@ -97,6 +78,7 @@ int ServerManager::setNonBlocking(int fd)
     }
     return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
+
 
 void ServerManager::startSockets()
 {
@@ -152,6 +134,7 @@ void ServerManager::acceptClient(int serverFd, Server& server)
         throw std::runtime_error("Error: accept()");
     }
     //std::cout << "MAAAAAA" << server << std::endl;
+    clientLastActivity[clientFd] = std::chrono::system_clock::now();
     setNonBlocking(clientFd);
     Client* client = new Client(clientFd, READ);
     //(void)client;
@@ -281,18 +264,30 @@ void ServerManager::startPoll()
 			}
         }
 
+		
+					// rmFdFromPollfd(fd);
     }
 }
 
-// if (_pollFds[i].revents & POLLIN)
-//                 {
-//                     if (_pollFds[i].fd == _serverSocket)
-//                         acceptConnection();
-//                     else
-//                         handleClientData(i);
-//                 }
-//                 else if (_pollFds[i].revents & POLLOUT)
-//                     sendClientData(i);
+void ServerManager::checkTimeouts() {
+    auto now = std::chrono::system_clock::now();
+
+    for (auto it = clientLastActivity.begin(); it != clientLastActivity.end();) {
+        int fd = it->first;
+        auto lastActivity = it->second;
+
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastActivity).count() > TIMEOUT) {
+            std::cout << "Client timed out: " << fd << std::endl;
+            rmFdFromPollfd(fd);
+            delete mapClientFd[fd];
+            mapClientFd.erase(fd);
+            it = clientLastActivity.erase(it);
+            close(fd);
+        } else {
+            ++it;
+        }
+    }
+}
 
 Server* ServerManager::getServer(int serverFd) const
 {

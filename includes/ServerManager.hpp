@@ -3,6 +3,7 @@
 
 #include "Webserv.hpp"
 
+#define TIMEOUT 5000
 // struct pollfd {
 //   int     fd;       /* descriptor to check */
 //   short   events;   /* events of interest on fd */
@@ -24,6 +25,7 @@ class ServerManager
         //std::map<int, std::unique_ptr<Server>> mapServerFd;
         std::map<int, Server*> mapServerFd;
         std::map<int, Client*> mapClientFd;
+        std::map<int, std::chrono::system_clock::time_point> clientLastActivity;
 
         // std::map<int, pair> mapPipe; // clienfd pipeRread, pipeWrite
         // std::map<pair, Client*> 
@@ -40,6 +42,7 @@ class ServerManager
         ~ServerManager();
 
         //const std::vector<std::unique_ptr<Server>>& getServers() const;
+        void checkTimeouts();
         const std::vector<Server*>& getServers() const;
 	      Server*	getServer(int serverFd) const;
         //const std::vector<struct pollfd>& getPollfds() const;

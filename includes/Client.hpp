@@ -23,12 +23,16 @@ private:
 	HttpRequest		*Request;
 	HttpResponse	*Response;
 	Cgi				*cgi;
+	std::time_t lastActivity;
+	std::time_t connectionTime;
 
 public:
     Client(int fd, int readyTo);
     ~Client();
 
     int 			getClientFd();
+	std::time_t		getLastActivity();
+	std::time_t		getConnectionTime();
 	HttpRequest		*getRequest() const { return Request; }
 	HttpResponse	*getResponse() const { return Response; }
 	Cgi				*getCgi() const { return cgi; }
