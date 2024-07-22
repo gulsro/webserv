@@ -148,8 +148,10 @@ void    HttpResponse::setResource()
 	{
 		if (this->Request->getURI() == "/")
 			this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
-		else
-			this->resource = "." + this->Request->getURI();
+		else if (this->Request->getURI().find(Server->getRoot() + "/") != std::string::npos)
+            this->resource = "." + this->Request->getURI();
+        else
+			this->resource = "." + Server->getRoot() + this->Request->getURI();
 	}
 	#ifdef FUNC
 		std::cout << YELLOW  << "RESOURCE : " << this->resource << DEFAULT << std::endl;

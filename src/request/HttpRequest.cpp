@@ -229,14 +229,7 @@ void HttpRequest::setContentType()
 	if (this->headers.count("Content-Type"))
 	{
 		std::string value = headers.at("Content-Type").value;
-
-		// size_t pos = value.find(';');
-		// if (pos != std::string::npos)
-		// {
-		// 	this->contentType = value.substr(0, pos);
-		// }
-		// else
-			this->contentType = value;
+		this->contentType = value;
 	}
 	else
 		this->contentType = "";
