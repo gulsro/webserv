@@ -54,8 +54,8 @@ void	HttpRequest::checkRequestSize()
 */
 bool	ServerManager::readRequest(Client *Client)
 {
-    #ifdef FUNC
-    std::cout << YELLOW << "[FUNCTION] readRequest" << DEFAULT << std::endl;
+	#ifdef FUNC
+	std::cout << YELLOW << "[FUNCTION] readRequest" << DEFAULT << std::endl;
 	#endif
 
 	//detect cgi (for the second )
@@ -67,9 +67,9 @@ bool	ServerManager::readRequest(Client *Client)
 	if (byteRead == 0)
 	{
 		rmFdFromPollfd(fd);
-    	//delete mapClientFd[fd];
-    	//mapClientFd[fd] = nullptr;
-    	close(fd);
+		//delete mapClientFd[fd];
+		//mapClientFd[fd] = nullptr;
+		close(fd);
 		//std::cout << "Disconnection with " << fd << std::endl;
 		throw std::runtime_error("recv()");
 	}
@@ -181,7 +181,12 @@ void	HttpRequest::checkAllowedMethods(std::string requestedMethod)
 	#ifdef FUNC
 		std::cout << YELLOW << "[FUNCTION] checkAllowedMethods" << DEFAULT << std::endl;
 	#endif
-	std::map<std::string, int> methods = this->ReqLocation->getMethods();
+	std::map<std::string, int> methods;
+	
+	// if (this->ReqLocation == nullptr)
+	//     method = this->ReqServer->getMethods()
+	// else
+		methods = this->ReqLocation->getMethods();
 
 	if ((methods["POST"] == 0 && methods["DELETE"] == 0)
 		|| (methods["POST"] == 0 && requestedMethod == "POST")
