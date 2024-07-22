@@ -2,7 +2,7 @@
 
 Location::Location() {}
 
-Location::Location(Server* s) : server(s), path(""), root(""), maxBodySize(100000), autoindex(false), index(""), redirect(""), cgiPass("")
+Location::Location(Server* s) : server(s), path(""), root(""), maxBodySize(0), autoindex(false), index(""), redirect(""), cgiPass("")
 {
     // std::cout << "Location is constructed" << std::endl;
     methods["GET"] = 1;
@@ -43,7 +43,7 @@ std::string Location::getRoot() const{
     return this->root;
 }
 
-unsigned long Location::getMaxBodySize() const{
+unsigned long long Location::getMaxBodySize() const{
     return this->maxBodySize;
 }
 
@@ -100,7 +100,7 @@ void Location::setMaxBodySize(std::string& cont, int key){
         return ;
     while(std::isspace(cont[key]))
         key++;
-    this->maxBodySize = std::stoi(cont.substr(key, cont.find('\n') - key));
+    this->maxBodySize = std::stoll(cont.substr(key, cont.find('\n') - key));
 }
 
 void Location::setAutoindex(std::string& cont, int key){
@@ -186,7 +186,12 @@ void Location::checkLocationVar(){
     if (path.empty())
         throw std::runtime_error("No path is available for the location");
     if (!maxBodySize)
-        this->maxBodySize = (*server).getMaxBodySize();
+    {
+        if (!(*server).getMaxBodySize())
+            this->maxBodySize = 1000000;
+        else
+            this->maxBodySize = (*server).getMaxBodySize();
+    }
     if (this->server->getAutoindex() == true && autoindex == false)
         autoindex = true;
 }
@@ -205,14 +210,6 @@ std::ostream& operator<<(std::ostream& out, const Location& location)
         out << "POST ";
     if (location.getMethods()["DELETE"] == 1)
         out << "DELETE";
-    out << std::endl << "Error pages: ";
-    if (!location.getErrorPage().empty()){
-        std::map<int, std::string >::iterator it;
-        std::map<int, std::string> test = location.getErrorPage();
-        for(it = (test.begin()); it != test.end(); ++it){
-            out << it->first << " => " << it->second << " - ";
-        }
-    }
     out << std::endl << "cgi_pass: " << location.getCgiPass() << std::endl;
     out << std::endl;
     return out;

@@ -1,7 +1,7 @@
 
 #include "Webserv.hpp"
 
-Server::Server() : port(0), root(""), index(""), maxBodySize(10000000), nbLocation(0)
+Server::Server() : port(0), root(""), index(""), maxBodySize(0), nbLocation(0), autoindex(false)
 {
     // std::cout << "Server constructor is called" << std::endl;
 }
@@ -143,7 +143,7 @@ std::string Server::getIndex() const
     return this->index;
 }
 
-unsigned long Server::getMaxBodySize() const
+unsigned long long Server::getMaxBodySize() const
 {
     return this->maxBodySize;
 }
@@ -202,7 +202,7 @@ void Server::setMaxBodySize(std::string& cont, int key){
         return ;
     while(std::isspace(cont[key]))
         key++;
-    this->maxBodySize = std::stoi(cont.substr(key, cont.find('\n') - key));
+    this->maxBodySize = std::stoll(cont.substr(key, cont.find('\n') - key));
 }
 
 void Server::setAutoindex(std::string&cont, int key){
@@ -280,7 +280,6 @@ std::ostream& operator<<(std::ostream& out, const Server& server)
     out << "port: " << server.getPort()<< std::endl;
     out << "serverFd: " << server.getServerFd()<< std::endl;
     out << "host: " << server.getHost()<< std::endl;
-    //out << server.serverNames;
     out << "root: " << server.getRoot()<< std::endl;
     out << "index: " << server.getIndex()<< std::endl;
     out << "Max body size: " << server.getMaxBodySize()<< std::endl;

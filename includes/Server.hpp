@@ -29,7 +29,7 @@ private:
     std::string host; //address
     std::string root;
     std::string index;
-    unsigned long maxBodySize; // in bytes
+    unsigned long long maxBodySize; // in bytes
     int nbLocation;
 
     bool    autoindex;
@@ -54,7 +54,7 @@ public:
     std::string getRoot() const;
     std::string getIndex() const;
     int getServerFd() const;
-    unsigned long getMaxBodySize() const;
+    unsigned long long getMaxBodySize() const;
     std::vector<Location*> getLocationList() const;
     struct sockaddr_in* getSocketAddr() const;
     bool        getAutoindex() const { return autoindex; }

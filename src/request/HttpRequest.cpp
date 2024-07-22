@@ -60,7 +60,7 @@ void	HttpRequest::checkRequestValid()
 	#endif
 	if (this->method == "POST" && this->headers.at("Content-Type").value.empty())
 		throw ErrorCodeException(STATUS_NOT_IMPLEMENTED);
-	unsigned long maxBodySize;
+	unsigned long long maxBodySize;
 	if (this->ReqLocation != nullptr)
 		maxBodySize = this->ReqLocation->getMaxBodySize();
 	else

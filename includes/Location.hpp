@@ -13,7 +13,7 @@ private:
     Server* server;
     std::string path;
     std::string root;
-    unsigned long maxBodySize;
+    unsigned long long maxBodySize;
     bool autoindex;
     std::string index;
     std::string redirect;
@@ -33,7 +33,7 @@ public:
 
     std::string getPath() const;
     std::string getRoot() const;
-    unsigned long getMaxBodySize() const;
+    unsigned long long getMaxBodySize() const;
     bool getAutoindex() const;
     std::string getIndex() const;
     std::string getRedirect() const;
