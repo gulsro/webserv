@@ -164,7 +164,7 @@ void ServerManager::startPoll()
             //'continue' is from the book, not sure.
             continue ;
         }
-        
+        checkTimeouts();
         for (size_t i = 0; i < pollfds.size(); ++i)
         {
             int fd = pollfds[i].fd;
