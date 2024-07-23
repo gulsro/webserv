@@ -105,6 +105,10 @@ void	Client::finishCgi()
 	this->Response->setCompleted(true);
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!revove pipe from pollfs
 	close (this->cgi->getPipeRead());
+    if (this->getCgi()->isRunningCgi() == true)
+    {
+        kill(this->getCgi()->getChildPid(), SIGKILL);
+    }
 	//this->cgi->rmPipesFromPollfd();
 	delete this->cgi;
 	this->cgi = nullptr;

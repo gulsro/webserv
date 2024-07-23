@@ -74,7 +74,7 @@ public:
 	int	getPipeWrite() const { return pipeWrite; }
 	int	getFinishReading() const { return finishReading; }
     std::vector<char> getCgiOutput() const {return cgiOutput; }
-
+    pid_t   getChildPid() const { return childPid; }
 
     void    setCgiFile(std::string s);
     void    setPostBody(HttpRequest& req);

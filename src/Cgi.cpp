@@ -12,7 +12,6 @@ from the CGI, EOF will mark the end of the returned data.
 ∗ The CGI should be run in the correct directory for relative path file access.
 ∗ Your server should work with one CGI (php-CGI, Python, and so forth)*/
 
-
 Cgi::Cgi(){}
 
 Cgi::Cgi(HttpRequest& req, Location& loc, Server& ser, ServerManager &sManager)
@@ -35,6 +34,14 @@ Cgi::~Cgi(){
     }
     delete[] this->env;
     delete[] this->pass;
+    if (this->pipeRead != -1)
+        close (this->pipeRead);
+    if (this->pipeWrite != -1)
+        close (this->pipeWrite);
+    if (isRunningCgi() == true)
+        kill(this->childPid, SIGKILL);
+    this->manager->rmFdFromPollfd(pipeRead);
+    this->manager->rmFdFromPollfd(pipeWrite);
 }
 
 // Cgi::Cgi(Cgi& a){
@@ -62,28 +69,6 @@ void Cgi::setCgiFile(std::string s) {
     std::strcpy(cgiFile, s.c_str());
 }
 
-	// void  printSafeString(const SafeString& str) 
-	// {
-	// 	std::ostream_iterator<char> out(std::cout);
-	// 	std::copy(str.getData(), str.getData() + str.getLength(), out);
-	// 	std::cout << std::endl;
-	// }
-	// char*  getSafeString(const SafeString& str)
-	// {
-	// 	size_t strLen = str.getLength() + 1;
-	// 	char * charPtr = new char[strLen];
-	// 	std::copy(str.getData(), str.getData() + strLen, charPtr);
-
-	// 	return charPtr;
-	// }
-
-// void Cgi::setPostBody(HttpRequest& req){
-// 	std::string s = req.getBody();
-// 	SafeString safeString(s);
-// 	postBody = getSafeString(safeString);
-// 	// std::cout << "________SafeString______" << std::endl;
-// 	// printSafeString(safeString);
-// }
 
 void Cgi::setContentLen(HttpRequest& req) {
     contentLen = req.getContentLength();
@@ -176,7 +161,6 @@ void    Cgi::readFromCgi(){
     std::vector<char> buf(BUFFER_SIZE);
     ssize_t bytes = 1;
 
-    // std::memset(buf, '\0', BUFFER_SIZE - 1);
     bytes = read(this->pipeRead, buf.data(), BUFFER_SIZE);
     if (bytes < 0)
         std::runtime_error("Reading from CGI has failed.");
@@ -223,6 +207,7 @@ void    Cgi::execCGI()
     // Executing cgi script
 	pid = fork();
     this->childPid = pid;
+    child_signal_handler();
 	if (pid < 0){
         close (w_pip[0]);
         close (w_pip[1]);

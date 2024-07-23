@@ -25,7 +25,7 @@ ServerManager::~ServerManager()
     for (std::vector<Server *>::iterator i = servers.begin(); i != servers.end(); i++){
         delete *i;
         *i = nullptr;
-     }
+    }
 }
 
 void ServerManager::printServers() const
@@ -98,16 +98,9 @@ void ServerManager::startSockets()
         server->bindSocket();
         server->listenSocket();
         addFdToPollFds(server->getServerFd(), POLLIN); //monitor incoming connections
-       
-        //get() returns a pointer to the managed object (server);   
-        // mapServerFd.emplace(server->getServerFd(), server);
-        mapServerFd[server->getServerFd()] = server;
-        //mapServerFd.emplace(server->getServerFd(), server);
 
+        mapServerFd[server->getServerFd()] = server;
     }
-    // std::cout << "SIZE OF MAP IS: " << mapServerFd.size() << std::endl;
-    // std::cout << "SIZE OF POLLFD VECTOR IS: " << pollfds.size() << std::endl;
-    // printServers();
 }
 
 // struct pollfd {
@@ -137,12 +130,10 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     {
         throw std::runtime_error("Error: accept()");
     }
-    //std::cout << "MAAAAAA" << server << std::endl;
     clientLastActivity[clientFd] = std::chrono::system_clock::now();
     setNonBlocking(clientFd);
     Client* client = new Client(clientFd, READ);
-    //(void)client;
-    //std::cout << "MAAAAAA" << server.getPort() << std::endl;
+
     server.clientList.push_back(client);
     server.connectedClientFds.push_back(clientFd);
     mapClientFd[clientFd] = client;
@@ -170,16 +161,10 @@ void ServerManager::startPoll()
         int num_readyFds = poll(pollfds.data(), pollfds.size(), -1);  // Wait indefinitely
         if (num_readyFds == -1)
         {
-            // throw std::runtime_error("Error: setsockopt()");
-            // break;
             //'continue' is from the book, not sure.
             continue ;
         }
         
-        //counter is to see how many time poll loop turns.
-        //int counter = 0;
-        // Process ready file descriptors
-		// list pollFds to Remove = [];
         for (size_t i = 0; i < pollfds.size(); ++i)
         {
             int fd = pollfds[i].fd;
@@ -196,10 +181,6 @@ void ServerManager::startPoll()
             //will evaluate to true because the POLLIN bit is set in the
             //revents flags.
 
-            //std::cout << "THE FISH IS " << fd << std::endl;
-            
-            //counter = counter+ 1;
-            //std::cout << "counter = " << counter << std::endl;
             if (revents & POLLIN)
             {
                 // if a server received a request. let's accept a client
@@ -208,8 +189,6 @@ void ServerManager::startPoll()
                     Server* server = mapServerFd[fd];
                     acceptClient(fd, *server); //that client is accepted by
                     std::cout << "client is accepted" << std::endl;
-                                    // *mapServerFd[fd] server
-                    //continue ;
                 }
                 else //continue reading operations on connected clients
                 {
@@ -228,7 +207,6 @@ void ServerManager::startPoll()
                 {
                     sendResponse(fd);
 					isWritingDone = true;
-                    //pollfds[i].fd = -1;
                 }
                 else
                 {
@@ -267,10 +245,9 @@ void ServerManager::startPoll()
 				}
 			}
         }
-
-		
-					// rmFdFromPollfd(fd);
     }
+	std::cout << BLUE << "-----------CLEAR ALL---------------" << DEFAULT << std::endl;
+
 }
 
 void ServerManager::checkTimeouts() {
@@ -399,12 +376,6 @@ void	ServerManager::sendResponse(int fd)
     {
         return ;
     }
-    //from client getResponse
-	//Checking client is still connected??
-
-	//checking is clientFd is still connected
-	//also check "if reading request is done" therefor we need a flag ?
-	//if (fd ....)
     try
     {
 
@@ -470,8 +441,7 @@ bool ServerManager::isFdInMap(int fd, std::map<int, Server*>& mapServerFd)
                          [fd](const auto& pair) { return pair.first == fd; });
 
   // Return true if a matching element is found, false otherwise
-  //it != mapServerFd.end();
-  //std::cout << "BOOL = " << a << std::endl;
+
   return it != mapServerFd.end();
 }
 
