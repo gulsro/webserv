@@ -420,11 +420,8 @@ void	ServerManager::sendResponse(int fd)
     //rmFdFromPollfd(fd); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // delete currClient->getRequest();
     // delete currClient->getResponse();
-<<<<<<< Updated upstream
 	// currClient->setResponse(nullptr);
-=======
-	//currClient->setResponse(nullptr);
->>>>>>> Stashed changes
+
     // delete mapClientFd[fd];
     // mapClientFd[fd] = nullptr;
     close(fd);
