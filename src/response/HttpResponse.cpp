@@ -27,8 +27,6 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other)
 	{
 		this->statusCode = other.statusCode;
 		this->body = other.body;
-		this->headers = other.headers;
-
 		this->Request = other.Request;
 		this->index = other.index;
 		this->resource = other.resource;
@@ -46,14 +44,6 @@ HttpResponse::~HttpResponse()
 	// #ifdef STRUCTOR
 		std::cout << GREY << "HttpResponse : Destructor called" << DEFAULT << std::endl; 
 	// #endif
-        for (auto& header : headers) {
-        // Remove duplicate headers (keep the last one)
-        auto it = headers.find(header.first);
-        if (it != headers.end() && it != std::prev(headers.end())) {
-            headers.erase(it);
-        }
-    }
-    headers.clear();
 }
 
 void	HttpResponse::createResponse(enum e_statusCode code)

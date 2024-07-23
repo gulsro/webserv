@@ -26,7 +26,6 @@ class HttpResponse
 		std::string		version;
 		int				statusCode;
 		std::string		body;
-		std::unordered_map<std::string, HttpHeader> headers;
 
 		std::string			index;
 		std::string			resource;
@@ -48,7 +47,6 @@ class HttpResponse
 		const	int			&getStatusCode()	const { return statusCode; }
 		// const	std::string	&getStatusMessage() const { statusMessage = returnStatusMessage(statusCode); return  statusMessage; }
 		const	std::string	&getBody() const { return body; }
-		const	std::unordered_map<std::string, HttpHeader> &getHeaders() const { return headers; }
 		HttpRequest			*getRequest() const { return Request; }
 		const	std::string	getResource() const { return resource + index; }
 		const	std::string	&getContent() { return content; }
