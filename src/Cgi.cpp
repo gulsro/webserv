@@ -207,7 +207,6 @@ void    Cgi::execCGI()
     // Executing cgi script
 	pid = fork();
     this->childPid = pid;
-    child_signal_handler();
 	if (pid < 0){
         close (w_pip[0]);
         close (w_pip[1]);

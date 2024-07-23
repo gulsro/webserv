@@ -47,6 +47,5 @@
 #define WHI "\033[37m"
 
 void readRequest(int clientFd);
-void child_signal_handler();
 
 #endif
