@@ -420,7 +420,11 @@ void	ServerManager::sendResponse(int fd)
     //rmFdFromPollfd(fd); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // delete currClient->getRequest();
     // delete currClient->getResponse();
+<<<<<<< Updated upstream
 	// currClient->setResponse(nullptr);
+=======
+	//currClient->setResponse(nullptr);
+>>>>>>> Stashed changes
     // delete mapClientFd[fd];
     // mapClientFd[fd] = nullptr;
     close(fd);
@@ -478,14 +482,14 @@ bool	ServerManager::isPipeFd(int fd)
      #ifdef CGI
 		std::cout << PINK << "[ Cgi ] isPipeFd" << DEFAULT << std::endl; 
 	#endif
-    std::cout << YELLOW << "Give Fd: " << fd << DEFAULT << std::endl;
+    //std::cout << YELLOW << "Give Fd: " << fd << DEFAULT << std::endl;
 	// Iterates throught all clients and find if the clients has a pipe with same fd.
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
 	{
         if (clientPtr != nullptr && clientPtr->getCgi() != nullptr)
         {
-            std::cout << YELLOW << "Read PIPE : " <<  clientPtr->getCgi()->getPipeRead() << std::endl;
-            std::cout << YELLOW <<  "Write PIPE : " <<clientPtr->getCgi()->getPipeWrite() << DEFAULT << std::endl;
+            //std::cout << YELLOW << "Read PIPE : " <<  clientPtr->getCgi()->getPipeRead() << std::endl;
+            //std::cout << YELLOW <<  "Write PIPE : " <<clientPtr->getCgi()->getPipeWrite() << DEFAULT << std::endl;
             if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeWrite() == fd)
                 return true;
         }
