@@ -202,7 +202,6 @@ void	HttpRequest::checkLocations()
 		std::cout << YELLOW << "[FUNCTION] checkLocation" << DEFAULT << std::endl;
 	#endif
 	selectReqLocation(this->ReqServer->getLocationList());
-	// GET is always allowed depending on our own config file
 	if (this->getMethod() != "GET" && this->ReqLocation != nullptr)
 		checkAllowedMethods(this->getMethod());
 }

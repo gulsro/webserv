@@ -378,8 +378,8 @@ void	ServerManager::sendResponse(int fd)
     }
     try
     {
-
-		if (isPipeFd(fd) == false && currClient->getResponse() != nullptr)
+		
+		if (isPipeFd(fd) == false && currClient->getResponse() != nullptr && currClient->getResponse()->getCompleted() == false)
 		{
         	currClient->getResponse()->setRequest(currClient->getRequest());
         	currClient->getResponse()->checkMethod();

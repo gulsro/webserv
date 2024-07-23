@@ -17,7 +17,6 @@ std::string	createErrorResponse(int code)
 	std::ifstream file(filename);
 	if (file.is_open())
 	{
-		std::cout << "error file is opened" << std::endl;
 		std::ostringstream fileContent;
 		fileContent << file.rdbuf();
 		file.seekg(0, std::ios::end);
