@@ -23,6 +23,7 @@ Client::~Client()
     //     delete this->Request;
     // if (this->Response != nullptr)
     delete this->Response;
+	delete this->Request;
     
 }
 
@@ -101,7 +102,8 @@ void	Client::finishCgi()
 		std::cout << PINK << "[ Client ] finishCgi" << DEFAULT << std::endl; 
 	#endif
 	std::vector<char> cgiResponse = this->cgi->getCgiOutput();
-	this->Response->setContent(std::string(cgiResponse.begin(), cgiResponse.end()));
+	std::string cont(cgiResponse.begin(), cgiResponse.end());
+	this->Response->setContent(cont);
 	// this->Response->setContent(this->cgi->getCgiOutput().data());
 	this->Response->setCompleted(true);
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!revove pipe from pollfs

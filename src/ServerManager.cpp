@@ -227,7 +227,7 @@ void ServerManager::startPoll()
 				if (isPipeFd(fd) == false)
 				{
 					currClient = mapClientFd[fd];
-					// delete mapClientFd[fd];
+					delete mapClientFd[fd];
 					mapClientFd[fd] = nullptr;
 					close(fd);
 				}
@@ -402,7 +402,7 @@ void	ServerManager::sendResponse(int fd)
 	{
         rmFdFromPollfd(fd);
         delete currClient->getRequest();
-        delete currClient->getResponse();
+        // delete currClient->getResponse();
         // delete mapClientFd[fd];
         mapClientFd[fd] = nullptr;
         throw std::runtime_error("Error: send()");
@@ -418,8 +418,8 @@ void	ServerManager::sendResponse(int fd)
     // std::cout << BLUE<< "_____pollfd size______" << pollfds.size() << DEFAULT << std::endl;
     
     //rmFdFromPollfd(fd); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    delete currClient->getRequest();
-    delete currClient->getResponse();
+    // delete currClient->getRequest();
+    // delete currClient->getResponse();
 	currClient->setResponse(nullptr);
     // delete mapClientFd[fd];
     mapClientFd[fd] = nullptr;

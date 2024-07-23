@@ -244,7 +244,12 @@ bool	HttpRequest::parseHeader(const std::string &line)
 	}
 	std::string	key = trim(keyValue[0], ' ');
 	std::string value = trim(keyValue[1], ' ');
-	headers[key] = HttpHeader{key, value};
+	HttpHeader h;
+	h.key = key;
+	h.value = value;
+	headers[key] = h;
+
+	// headers[key] = HttpHeader{key, value};
 	return true;
 }
 
