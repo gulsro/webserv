@@ -205,7 +205,7 @@ void	HttpResponse::methodGet()
 			}
 			else
 			{
-				this->resource = "./html/index.html";
+				this->resource = "." + this->Request->ReqServer->getRoot() + "/" + this->Request->ReqServer->getIndex();
 				this->resourceType = RESOURCE_FILE;
 				createResponse(STATUS_FOUND);
 			}
