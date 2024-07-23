@@ -4,24 +4,15 @@ extern volatile sig_atomic_t gSignal;
 
 ServerManager::ServerManager(const Config& config) {
     std::cout << "ServerManager destructor is called" << std::endl;
-  // Loop and copy raw pointers (not recommended)
   for (Server* server : config.serverList) {
             servers.emplace_back(server);
         }
 	isWritingDone = false;
-        //config->serverList.clear(); // Clear temporary list after moving servers
 }
-
-// ServerManager::ServerManager()
-// {
-//     std::cout << "ServerManager constructor is called" << std::endl;
-// }
 
 ServerManager::~ServerManager()
 {
     std::cout << "ServerManager destructor is called" << std::endl;
-    // for (auto server: this->servers)
-    //     delete server;
     for (std::vector<Server *>::iterator i = servers.begin(); i != servers.end(); i++){
         delete *i;
         *i = nullptr;
@@ -52,7 +43,6 @@ const std::vector<Server*>& ServerManager::getServers() const
 
 void ServerManager::addServer(Server* server)
 {
-    //this->servers.push_back(server);
     this->servers.push_back(server);
 }
 
@@ -60,13 +50,9 @@ void ServerManager::startServerManager(ServerManager &serverManager)
 {
     auto &servers = serverManager.getServers();
     
-    //tempConfigServer(serverManager);
     startSockets();
-    for (const auto &server: servers)
-    {
-        std::cout << "SERVER---- " << *server << std::endl;
-        //std::cout << "serverFd: " << server->getServerFd() << std::endl;
-    }
+    // for (const auto &server: servers)
+    //     std::cout << "SERVER---- " << *server << std::endl;
 }
 
 //The only correct way to set one of the file status flags is:
@@ -86,8 +72,6 @@ int ServerManager::setNonBlocking(int fd)
 
 void ServerManager::startSockets()
 {
-    //make a loop here, start socket for each server in servers;
-    //assign pollfd for each, then push it to pollfds array
     auto &servers = this->getServers();
     for (auto &server: servers)
     {
@@ -97,7 +81,7 @@ void ServerManager::startSockets()
         server->setSocketOption();
         server->bindSocket();
         server->listenSocket();
-        addFdToPollFds(server->getServerFd(), POLLIN); //monitor incoming connections
+        addFdToPollFds(server->getServerFd(), POLLIN);
 
         mapServerFd[server->getServerFd()] = server;
     }
@@ -137,17 +121,10 @@ void ServerManager::acceptClient(int serverFd, Server& server)
     server.clientList.push_back(client);
     server.connectedClientFds.push_back(clientFd);
     mapClientFd[clientFd] = client;
-    //std::cout << "CLIENT FD " << client->getClientFd() << std::endl;
-    //server.printConnectedClientFds();
-	//mapClientFd[clientFd] = client;
-    //addFdToPollFds(clientFd, (POLLIN | POLLOUT));
     addFdToPollFds(clientFd, (POLLIN));
 }
 
 
-//Serverfd && POLLIN indicates incoming CONNECTION,
-//Clientfd && POLLIN indicates incoming data from CONNECTED CLIENT.
-//(the client has data ready to be read by the server)
 void ServerManager::startPoll()
 {
     //The poll() function expects its first argument to be
@@ -184,15 +161,13 @@ void ServerManager::startPoll()
             if (revents & POLLIN)
             {
                 // if a server received a request. let's accept a client
-                if (isFdInMap(fd, mapServerFd)) //fd is one of the server's fd
+                if (isFdInMap(fd, mapServerFd)) 
                 {
                     Server* server = mapServerFd[fd];
-                    acceptClient(fd, *server); //that client is accepted by
-                    std::cout << "client is accepted" << std::endl;
+                    acceptClient(fd, *server);
                 }
-                else //continue reading operations on connected clients
+                else
                 {
-                    std::cout << "REQUESTTTTTT" << std::endl;
                     handleIncoming(fd);
                 }
             }
@@ -201,8 +176,6 @@ void ServerManager::startPoll()
             //client is ready for WHICH operation FLAG needs to be added!
             else if (revents & POLLOUT)
             {
-                std::cout << "THE POLLOUT IS " << fd << std::endl;
-                std::cout << "RESPONSEEEEE" << std::endl;
 				if (isPipeFd(fd) == false && mapClientFd[fd]->getReadyToFlag() == WRITE)
                 {
                     sendResponse(fd);
@@ -217,12 +190,8 @@ void ServerManager::startPoll()
                 }
                 
             }
-            // Handle events for accepted connections (read/write data)
-            // You'll need to iterate over other servers and their connections here
-            // ...
 			else if (revents & POLLHUP)
 			{
-				std::cout << "\n\nPOLLHUP \n";
 				Client *currClient;
 				if (isPipeFd(fd) == false)
 				{
@@ -238,7 +207,6 @@ void ServerManager::startPoll()
 					if (!(revents & POLLIN))
 					{
 						currClient->finishCgi();
-                        std::cout << BLUE << "-----------FD TO BE DELETED---------------" << fd << DEFAULT << std::endl;
 						rmFdFromPollfd(fd);
                         currClient->setClientFdEvent(pollfds, POLLOUT);
 					}
@@ -246,8 +214,6 @@ void ServerManager::startPoll()
 			}
         }
     }
-	std::cout << BLUE << "-----------CLEAR ALL---------------" << DEFAULT << std::endl;
-
 }
 
 void ServerManager::checkTimeouts() {
@@ -272,7 +238,6 @@ void ServerManager::checkTimeouts() {
 
 Server* ServerManager::getServer(int serverFd) const
 {
-	std::cout << GREEN << "serverFd" << DEFAULT << std::endl;
     auto it = mapServerFd.find(serverFd);
     if (it != mapServerFd.end())
     {
@@ -281,19 +246,14 @@ Server* ServerManager::getServer(int serverFd) const
     throw std::runtime_error("Server not found");
 }
 
-//AT THIS POINT WE DECIDE CGI? IN READREQUEST()?
 int ServerManager::handleIncoming(int fd)
 {
 	#ifdef FUNC
 		std::cout << YELLOW << "[FUNCTION] handleIncoming" << DEFAULT << std::endl;
 	#endif
-    //readRequest(fd);
-	// Server *currServer = this->getServer(fd);
 
 	Client *currClient;
 
-    /* if fd is pipe, -> pass it to cgi read or execution*/
-	// check if the fd belongs to a Client fd eventhoug it's pipe.
 	if (isPipeFd(fd) ==  true)
 	{
 		int ClientFd = getClientFdOfPipe(fd);
@@ -311,18 +271,17 @@ int ServerManager::handleIncoming(int fd)
 		if (currClient->getResponse() == nullptr)
 			currClient->setResponse(new HttpResponse());
 
-		// requests from cgi will be handled internally.
 		if (isPipeFd(fd) == true && currClient->getCgi()->getFinishReading() == false)
 			currClient->getCgi()->readFromCgi();
 		else
 		{
 			if (this->readRequest(currClient) == true) //continue reading operations on connected clients
-			{    //Request.readRequest(fd); fd will be client's
+			{    
 
 				currClient->getRequest()->setReqServer(servers);
 				currClient->getRequest()->checkLocations(); // cgi is detected
 				currClient->getRequest()->checkRequestValid();
-				// Initial excution after receiving the first cgi request.
+
 				if (currClient->getRequest()->getIsCgi() == true)
 					currClient->handleCgiRequest(this); // execute cgi
             }
