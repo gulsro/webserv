@@ -392,10 +392,10 @@ void	ServerManager::sendResponse(int fd)
         currClient->setReadyToFlag(WRITE);
         currClient->setClientFdEvent(pollfds, POLLOUT);
     }
-    std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
-    // std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
-
-    // std::cout << BLUE << "send FD : " << fd << DEFAULT << std::endl;
+	#ifdef FUNC
+		std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
+		std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
+	#endif
 	ssize_t bytesSent = send(fd, currClient->getResponse()->getContent().c_str(),
                         currClient->getResponse()->getContent().size(), 0);
 	if (bytesSent == -1 || static_cast<size_t>(bytesSent) != currClient->getResponse()->getContent().size())

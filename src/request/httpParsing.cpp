@@ -12,14 +12,20 @@ bool	HttpRequest::isReadingRequestFinished(std::string rawRequest)
 {
 	size_t	headerEnd = rawRequest.find("\r\n\r\n");
 
-	if (headerEnd == std::string::npos)
-		return false;
 	if (this->contentLength) // post method
 	{
 		if (rawRequest.size() < (headerEnd + 4) + this->contentLength)
+		{
 			return false;
+		}
 		else
+		{
 			return true;
+		}
+	}
+	if (headerEnd == std::string::npos)
+	{
+		return false;
 	}
 	else if (this->isChunked == true)
 	{
@@ -97,7 +103,11 @@ bool	ServerManager::readRequest(Client *Client)
 	// Check for complete request
 	std::string rawRequestStr = Client->getRequest()->getRawRequest();
 	if (Client->getRequest()->isReadingRequestFinished(rawRequestStr) == false)
+	{
+		if (byteRead < BUFFER_SIZE)
+			return true;
 		return false;
+	}
 	else
 	{
 		//GUL ADDED THIS LINE

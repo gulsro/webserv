@@ -109,7 +109,6 @@ void	HttpResponse::checkResourceType()
 	{
 		if (S_ISDIR(buf.st_mode))
 		{
-			std::cout << "It's directory" << std::endl;
 			this->setResourceType(RESOURCE_DIR);
 		}
 		else if (S_ISREG(buf.st_mode))
@@ -220,6 +219,7 @@ void    HttpResponse::postFile()
 		std::cout << YELLOW << "[FUNCTION] postFile" << DEFAULT << std::endl;
 	#endif
     std::string filename;
+
     for (size_t i = 0; i < Request->parts.size(); i++)
     {
         filename = this->resource + "/" + Request->parts[i].partFilename;
@@ -228,8 +228,10 @@ void    HttpResponse::postFile()
         {
             file << Request->parts[i].data;
             file.close();
-           createResponse(STATUS_CREATED);
+            createResponse(STATUS_CREATED);
         }
+        else
+            throw std::runtime_error("file open failed");
     }
 }
 
@@ -240,12 +242,12 @@ void	HttpResponse::methodPost()
 	#endif
 	if (this->completed == true)
 		return ;
-	std::string	location = this->resource;
+    std::string	location = this->resource;
     bool		dirExists = std::filesystem::exists(location);
 
-	if (dirExists == false)
+    if (dirExists == false)
         createResponse(STATUS_NOT_FOUND);
-	postFile();
+    postFile();
 }
 
 void	HttpResponse::deleteFile()
