@@ -420,9 +420,9 @@ void	ServerManager::sendResponse(int fd)
     //rmFdFromPollfd(fd); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // delete currClient->getRequest();
     // delete currClient->getResponse();
-	currClient->setResponse(nullptr);
+	// currClient->setResponse(nullptr);
     // delete mapClientFd[fd];
-    mapClientFd[fd] = nullptr;
+    // mapClientFd[fd] = nullptr;
     close(fd);
     std::cout << GREEN << "-----------CLEANING UP----ENDDD-----------" << std::endl;
 
