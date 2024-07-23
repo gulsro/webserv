@@ -16,12 +16,13 @@ Client::Client(int fd, int readyTo)
 Client::~Client()
 {
     std::cout << "Client destructor is called" << std::endl;
+	delete cgi;
     // if (this->cgi != nullptr)
     //     delete this->cgi;
     // if (this->Request != nullptr)
     //     delete this->Request;
     // if (this->Response != nullptr)
-    //     delete this->Response;
+    delete this->Response;
     
 }
 

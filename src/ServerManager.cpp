@@ -227,7 +227,7 @@ void ServerManager::startPoll()
 				if (isPipeFd(fd) == false)
 				{
 					currClient = mapClientFd[fd];
-					delete mapClientFd[fd];
+					// delete mapClientFd[fd];
 					mapClientFd[fd] = nullptr;
 					close(fd);
 				}
@@ -260,7 +260,7 @@ void ServerManager::checkTimeouts() {
         if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastActivity).count() > TIMEOUT) {
             std::cout << "Client timed out: " << fd << std::endl;
             rmFdFromPollfd(fd);
-            delete mapClientFd[fd];
+            // delete mapClientFd[fd];
             mapClientFd.erase(fd);
             it = clientLastActivity.erase(it);
             close(fd);
@@ -403,7 +403,7 @@ void	ServerManager::sendResponse(int fd)
         rmFdFromPollfd(fd);
         delete currClient->getRequest();
         delete currClient->getResponse();
-        delete mapClientFd[fd];
+        // delete mapClientFd[fd];
         mapClientFd[fd] = nullptr;
         throw std::runtime_error("Error: send()");
 	}
@@ -421,7 +421,7 @@ void	ServerManager::sendResponse(int fd)
     delete currClient->getRequest();
     delete currClient->getResponse();
 	currClient->setResponse(nullptr);
-    delete mapClientFd[fd];
+    // delete mapClientFd[fd];
     mapClientFd[fd] = nullptr;
     close(fd);
     std::cout << GREEN << "-----------CLEANING UP----ENDDD-----------" << std::endl;

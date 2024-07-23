@@ -18,11 +18,11 @@ Server::~Server()
             delete *i;
         *i = nullptr;
      }
-    // for (std::vector<Client *>::iterator i = clientList.begin(); i != clientList.end(); i++){
-    //     if (*i != nullptr)
-    //         delete *i;
-    //     *i = nullptr;
-    //  }
+    for (std::vector<Client *>::iterator i = clientList.begin(); i != clientList.end(); i++){
+        if (*i != nullptr)
+            delete *i;
+        *i = nullptr;
+     }
 }
 
 
