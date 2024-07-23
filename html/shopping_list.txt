@@ -16,3 +16,6 @@ z
 spa rod
 spa blauw
 spa groen
+a
+c
+f
