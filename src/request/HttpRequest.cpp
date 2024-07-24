@@ -49,8 +49,6 @@ void	HttpRequest::checkContentType()
 	#endif
 	if (this->contentType.find("multipart/form-data") != std::string::npos)
 		handleMultiPartForm();
-	// else if (this->contentType == "application/x-www-form-urlencoded")
-	// 	handleEncoding();
 }
 
 void	HttpRequest::checkRequestValid()
