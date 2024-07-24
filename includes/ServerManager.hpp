@@ -3,7 +3,7 @@
 
 #include "Webserv.hpp"
 
-#define TIMEOUT 5000
+#define TIMEOUT 70000
 
 // serverManager manages multiple Server instances, each representing a virtual host.
 class Server;
@@ -48,7 +48,6 @@ class ServerManager
 
         bool  isFdInMap(int fd, std::map<int, Server*>& mapServerFd);
     		void	sendResponse(int clientFd);
-
 
         bool	readRequest(Client *currClient);
         bool	isPipeFd(int fd);

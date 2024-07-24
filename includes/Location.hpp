@@ -10,15 +10,15 @@ typedef void (Location::*setFunc2) (std::string&, int);
 class Location
 {
 private:
-    Server* server;
-    std::string path;
-    std::string root;
-    unsigned long long maxBodySize;
-    bool autoindex;
-    std::string index;
-    std::string redirect;
+    Server*             server;
+    std::string         path;
+    std::string         root;
+    unsigned long long  maxBodySize;
+    bool                autoindex;
+    std::string         index;
+    std::string         redirect;
     std::map<std::string, int> methods;
-    std::string cgiPass;
+    std::string         cgiPass;
 
     setFunc2 func[8] {&Location::setPath, &Location::setRoot, &Location::setMaxBodySize, &Location::setAutoindex,\
     &Location::setIndex, &Location::setRedirect, &Location::setMethods, &Location::setCgiPass};
@@ -30,6 +30,7 @@ public:
     Location(const Location& a);
     Location& operator=(const Location a);
 
+    //Getters
     std::string getPath() const { return this->path; }
     std::string getRoot() const { return this->root; }
     unsigned long long getMaxBodySize() const { return this->maxBodySize; }
@@ -39,6 +40,7 @@ public:
     std::map<std::string, int> getMethods() const { return this->methods; }
     std::string getCgiPass() const { return this->cgiPass; }
 
+    //Setters
     void setPath(std::string& cont, int key);
     void setRoot(std::string& cont, int key);
     void setMaxBodySize(std::string& cont, int key);
@@ -53,6 +55,5 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& out, const Location& location);
-
 
 #endif

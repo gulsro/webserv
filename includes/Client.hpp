@@ -17,7 +17,6 @@ enum e_readyTo
 class Client
 {
 private:
-    //Server& server;
     int clientFd;
 	int readyTo;
 	HttpRequest		*Request;
@@ -36,7 +35,7 @@ public:
 	HttpRequest		*getRequest() const { return Request; }
 	HttpResponse	*getResponse() const { return Response; }
 	Cgi				*getCgi() const { return cgi; }
-	int getReadyToFlag() const;
+	int 			getReadyToFlag() const;
 
 	void	setRequest(HttpRequest	*request) { Request = request; }
 	void	setResponse(HttpResponse	*response) { Response = response; }	
@@ -50,6 +49,3 @@ public:
 std::ostream& operator<<(std::ostream& out, const Client& client);
 
 #endif
-
-
-//    Client* client = new Client(server, clientFd);
