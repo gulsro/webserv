@@ -143,7 +143,10 @@ void    HttpResponse::setResource()
 			createResponse(STATUS_FOUND);
 			return ;
 		}
-		this->resource = "." + this->Request->getURI();
+        if (this->Request->getURI().find(this->getRequest()->getReqServer().getRoot() + "/") != std::string::npos)
+            this->resource = "." + this->Request->getURI();
+        else
+		    this->resource = "." + this->getRequest()->getReqServer().getRoot() + this->Request->getURI();
 	}
 	else // No selected Location
 	{

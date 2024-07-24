@@ -111,7 +111,9 @@ void	HttpResponse::checkResourceType()
 			this->setResourceType(RESOURCE_DIR);
 		}
 		else if (S_ISREG(buf.st_mode))
+        {
 			this->setResourceType(RESOURCE_FILE);
+        }
 	}
 	else
 	{
@@ -132,8 +134,6 @@ void	HttpResponse::checkURI()
 	{
 		if (method == "DELETE")
 			createResponse(STATUS_CONFLICT);
-		else
-			createResponse(STATUS_FOUND);
 	}
 }
 
@@ -190,6 +190,7 @@ void	HttpResponse::methodGet()
 		checkURI();
 		if (completed == false)
 		{
+                    std::cout << "DIR" << std::endl;
 			if  (this->Request->ReqLocation && this->Request->ReqLocation->getAutoindex() == true)
 			{
 				printDirectoryListing(this->resource);
