@@ -73,10 +73,7 @@ bool	ServerManager::readRequest(Client *Client)
 	if (byteRead == 0)
 	{
 		rmFdFromPollfd(fd);
-		//delete mapClientFd[fd];
-		//mapClientFd[fd] = nullptr;
 		close(fd);
-		//std::cout << "Disconnection with " << fd << std::endl;
 		throw std::runtime_error("recv()");
 	}
 	else if (byteRead == -1)
@@ -110,9 +107,6 @@ bool	ServerManager::readRequest(Client *Client)
 	}
 	else
 	{
-		//GUL ADDED THIS LINE
-		//Client->setClientFdEvent(std::vector<struct pollfd>& pollfds, short events);
-		// i ll update event of client in pollloop
 		Client->setReadyToFlag(WRITE);
 		return Client->getRequest()->parseHttpRequest(rawRequestStr);
 	}
@@ -193,9 +187,9 @@ void	HttpRequest::checkAllowedMethods(std::string requestedMethod)
 	#endif
 	std::map<std::string, int> methods;
 	
-	// if (this->ReqLocation == nullptr)
-	//     method = this->ReqServer->getMethods()
-	// else
+	if (this->ReqLocation == nullptr)
+	    methods = this->ReqServer->getMethods();
+	else
 		methods = this->ReqLocation->getMethods();
 
 	if ((methods["POST"] == 0 && methods["DELETE"] == 0)

@@ -3,3 +3,5 @@ banana
 carrot
 peanut buttercake
 banana
+sugar
+mayo

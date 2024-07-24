@@ -104,7 +104,7 @@ void	HttpResponse::checkResourceType()
 	if (this->completed == true)
 		return	;
 	path = this->resource;
-	std::cout << "RESOURCE:::" << path << std::endl;
+	std::cout << "RESOURCE : " << path << std::endl;
 	if (stat(path.c_str(), &buf) == 0)
 	{
 		if (S_ISDIR(buf.st_mode))
@@ -191,20 +191,13 @@ void	HttpResponse::methodGet()
 		checkURI();
 		if (completed == false)
 		{
-			if (this->Request->ReqLocation )
-			{
-				std::cout << YELLOW << "LOCAION :: " << this->Request->ReqLocation->getPath() << std::endl;
-				if (this->Request->ReqLocation->getAutoindex() == true)
-					std::cout << "auto index ON" << DEFAULT << std::endl;
-				else if (this->Request->ReqLocation->getAutoindex() == false)
-					std::cout << "auto index OFF" << DEFAULT << std::endl;
-			}
 			if  (this->Request->ReqLocation && this->Request->ReqLocation->getAutoindex() == true)
 			{
 				printDirectoryListing(this->resource);
 			}
 			else
 			{
+                // redirect to the index file
 				this->resource = "." + this->Request->ReqServer->getRoot() + "/" + this->Request->ReqServer->getIndex();
 				this->resourceType = RESOURCE_FILE;
 				createResponse(STATUS_FOUND);

@@ -34,7 +34,7 @@ class HttpResponse
 		std::string			contentType;
 		std::string			MIMEtype;
 
-		bool				completed; // check if request 
+		bool				completed; // check if a reponse is already created.
 
 	public:
 		HttpResponse();
@@ -45,7 +45,6 @@ class HttpResponse
 		//Getter
 		const	std::string	&getVersion() const { return version; }
 		const	int			&getStatusCode()	const { return statusCode; }
-		// const	std::string	&getStatusMessage() const { statusMessage = returnStatusMessage(statusCode); return  statusMessage; }
 		const	std::string	&getBody() const { return body; }
 		HttpRequest			*getRequest() const { return Request; }
 		const	std::string	getResource() const { return resource + index; }
@@ -68,11 +67,8 @@ class HttpResponse
 		void		checkMethod();
 		void		checkURI();
 		void		checkResourceType();
-        bool        checkAllowedMethod();
-		bool		checkIndexFileExists(const std::string path, const std::string filename);
 		bool		checkResourcePermission(const std::string path);
 
-		void		printDefaultPage();
 		void		printDirectoryListing(const std::string &path);
 
 		void		methodGet();
@@ -81,6 +77,4 @@ class HttpResponse
 		void		deleteFile();
 		void		deleteDir();
         void        postFile();
-
-		void		runCgi(ServerManager &manager);
 };

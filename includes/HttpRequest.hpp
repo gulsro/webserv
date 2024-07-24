@@ -50,7 +50,6 @@ class	HttpRequest
 		bool	isChunked;
 
 		//Yuka added
-		// Cgi			*cgi;
 		bool		isCgi;
 
 	public:
@@ -75,12 +74,9 @@ class	HttpRequest
 		const	std::vector<std::pair<std::string, std::string>> &getQueryPairs() const { return queryPairs; }
 		const	bool		&getIsChunked() const { return isChunked; }
 		const	bool		&getIsCgi() const { return isCgi; }
+        const	std::string	getHeaderValue(const std::string &name) const;
 		Server		&getReqServer() const { return *ReqServer; }
 		Location	&getReqLocation() const { return *ReqLocation; }
-
-		
-		// Cgi*		getCgi() const  { return cgi; }
-		const	std::string	getHeaderValue(const std::string &name) const;
 
 		//Setters
 		void	setRawRequest(std::string buffer) { this->rawRequest = buffer; }
@@ -95,8 +91,6 @@ class	HttpRequest
 		void	setQueryPairs();
 		void	setIsChunked(bool value) { this->isChunked = value; }
 		void	setIsCgi(bool value) { this->isCgi = value; }
-		// void	setCgi(Cgi* c) { this->cgi = c; }
-
 		
 		bool	isReadingRequestFinished(std::string rawRequest);
 		bool	parseHttpRequest(const std::string &rawRequest);
@@ -115,7 +109,6 @@ class	HttpRequest
 		void	handleChunkedBody(const size_t bodyStart, const std::string rawRequest);
 		void	makeKeyValuePair(int i, const std::string str);
         void    handlePartInfo(const int i, const std::string partInfo);
-
 
 		std::vector<std::string> splitByBoundary();
 };

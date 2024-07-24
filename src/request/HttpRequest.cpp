@@ -168,6 +168,7 @@ int hexdigiToInt(char hex)
     else
         return -1;
 }
+
 std::string decodeUri(const std::string& encoded)
 {	
 	std::string decoded;

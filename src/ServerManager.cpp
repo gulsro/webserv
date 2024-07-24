@@ -287,7 +287,6 @@ int ServerManager::handleIncoming(int fd)
 	#ifdef FUNC
 		std::cout << YELLOW << "[FUNCTION] handleIncoming" << DEFAULT << std::endl;
 	#endif
-    //readRequest(fd);
 	// Server *currServer = this->getServer(fd);
 
 	Client *currClient;
@@ -476,18 +475,15 @@ std::ostream& operator<<(std::ostream& out, const ServerManager& serverManager)
 
 bool	ServerManager::isPipeFd(int fd)
 {
-     #ifdef CGI
+    #ifdef CGI
 		std::cout << PINK << "[ Cgi ] isPipeFd" << DEFAULT << std::endl; 
 	#endif
-    //std::cout << YELLOW << "Give Fd: " << fd << DEFAULT << std::endl;
-	// Iterates throught all clients and find if the clients has a pipe with same fd.
+	// Iterates through all clients and find if the clients has a pipe with same fd.
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
 	{
         if (clientPtr != nullptr && clientPtr->getCgi() != nullptr)
         {
-            //std::cout << YELLOW << "Read PIPE : " <<  clientPtr->getCgi()->getPipeRead() << std::endl;
-            //std::cout << YELLOW <<  "Write PIPE : " <<clientPtr->getCgi()->getPipeWrite() << DEFAULT << std::endl;
-            if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeWrite() == fd)
+			if (clientPtr->getCgi()->getPipeRead() == fd || clientPtr->getCgi()->getPipeWrite() == fd)
                 return true;
         }
 	}
@@ -496,7 +492,7 @@ bool	ServerManager::isPipeFd(int fd)
 
 int		ServerManager::getClientFdOfPipe(int pipeFd)
 {
-        #ifdef CGI
+    #ifdef CGI
 		std::cout << PINK << "[ Cgi ] getClientFdOfPipe" << DEFAULT << std::endl; 
 	#endif
 	for (const auto& [clientFd, clientPtr] : mapClientFd)
@@ -505,7 +501,6 @@ int		ServerManager::getClientFdOfPipe(int pipeFd)
         {
 		    if (clientPtr->getCgi()->getPipeRead() == pipeFd || clientPtr->getCgi()->getPipeWrite() == pipeFd)
 			    return clientFd;
-        
         }
 	}
     return -1;

@@ -88,10 +88,8 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     tmp.push_back("SCRIPT_NAME=/index.py"); //cgi pass
     tmp.push_back("DOCUMENT_ROOT=" + loc.getRoot()); //location getRoot()
     tmp.push_back("QUERY_STRING=" + req.getQueryString()); //getQuery
-    // if (req.getMethod() == "POST"){
-        tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
-        tmp.push_back("CONTENT_LENGTH=" + std::to_string(req.getContentLength()));
-    // }
+    tmp.push_back("CONTENT_TYPE=" + req.getContentType()); // ex. text/html
+    tmp.push_back("CONTENT_LENGTH=" + std::to_string(req.getContentLength()));
     this->env = new char*[tmp.size() + 1];
     int i = 0;
     for (std::vector<std::string>::iterator t = tmp.begin(); t != tmp.end(); ++t){
@@ -176,7 +174,6 @@ void    Cgi::readFromCgi(){
     else
     {
         cgiOutput.insert(cgiOutput.end(), buf.begin(), buf.begin() + bytes);
-        std::cout << "- PIPEREAD POLLIN < readFromCgi >\n";
         if (this->appendBytes == 0 && manager->isFdInPollfds(pipeRead) == false)
             manager->addFdToPollFds(pipeRead, POLLIN);
         this->appendBytes += bytes;
@@ -237,8 +234,7 @@ void    Cgi::execCGI()
             //if there's nothing to send to CGI, we will trigger reading the output from pipe
             std::cout << BLUE << "-----------AFTER INIT PARENT---------------" << std::endl;
             close(pipeWrite);
-            pipeWrite = -1; //add condition for 
-            std::cout << "- PIPEREAD POLLIN < execCgi >\n";
+            pipeWrite = -1; //add condition for
             manager->addFdToPollFds(pipeRead, POLLIN);
         }
     }
@@ -246,9 +242,9 @@ void    Cgi::execCGI()
 
 void    Cgi::putRequestIntoCgiInput(const std::string rawRequest)
 {
-    // #ifdef CGI
-	// 	std::cout << PINK << "[ Cgi ] putRequestIntoCgiInput" << DEFAULT << std::endl; 
-	// #endif
+    #ifdef CGI
+    	std::cout << PINK << "[ Cgi ] putRequestIntoCgiInput" << DEFAULT << std::endl; 
+    #endif
     this->cgiInput.clear();
     for (size_t i = 0; i < rawRequest.size(); ++i)
         this->cgiInput.push_back(rawRequest[i]);
