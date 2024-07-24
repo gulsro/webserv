@@ -229,7 +229,7 @@ void Server::splitLocation(std::string cont){
         found = cont.find("location", begin, 8);
     }
     if (!this->nbLocation)
-        throw std::runtime_error("No server was found in config file");
+        throw std::runtime_error("No Location was found in config file");
 }
 
 void Server::initLocation(){

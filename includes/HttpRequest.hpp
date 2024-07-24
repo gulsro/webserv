@@ -33,6 +33,7 @@ class	HttpRequest
 		int			contentLength;
 		std::string	contentType;
 
+        std::string requestedHost;
 		int			requestedPort;
         Server      *ReqServer;
         Location	*ReqLocation;
@@ -69,6 +70,7 @@ class	HttpRequest
 		const	std::string	&getBody() const { return body; }
 		const	std::string	&getContentType() const { return contentType; }
 		const	int			&getContentLength() const { return contentLength; }
+        const   std::string &getRequestedHost() const { return requestedHost; }
 		const	int	       	&getRequestedPort() const { return requestedPort; }
 		const	std::string	&getQueryString() const { return queryString; }
 		const	std::vector<std::pair<std::string, std::string>> &getQueryPairs() const { return queryPairs; }
@@ -81,7 +83,7 @@ class	HttpRequest
 		//Setters
 		void	setRawRequest(std::string buffer) { this->rawRequest = buffer; }
 		void	setContentLength(int len) { this->contentLength = len; }
-		void	setRequestedPort();
+		void	setRequestedHostAndPort();
         void    setReqServer(const std::vector<Server*> serverList);
 		void	setReqLocation(Location *location) { ReqLocation = location; }
 		void	selectReqLocation(const std::vector<Location*> locationList);

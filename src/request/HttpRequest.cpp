@@ -74,14 +74,18 @@ void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 	#endif
 	for (size_t i = 0; i < serverList.size(); ++i)
 	{
+        std::string hostname = serverList[i]->getHost();
 		int	port = serverList[i]->getPort();
-		if (this->requestedPort == port)
-		{
-			this->ReqServer = serverList[i];
-			return ;
-		}
+        if (this->requestedHost == hostname)
+        {
+            if (this->requestedPort == port)
+            {
+                this->ReqServer = serverList[i];
+                return ;
+            }
+        }
 	}
-	this->ReqServer = serverList[0]; // Default server
+	this->ReqServer = serverList[0]; // Default server            
 }
 
 std::string returnFileExtension(const std::string path)
@@ -266,15 +270,25 @@ bool	HttpRequest::parseHeader(const std::string &line)
 	return true;
 }
 
-void	HttpRequest::setRequestedPort()
+void	HttpRequest::setRequestedHostAndPort()
 {
+    this->requestedHost = "";
+    this->requestedPort = 0;
 	if (this->headers.count("Host"))
 	{
 		std::string	value = headers.at("Host").value;
-		this->requestedPort = std::stoi(value.substr(value.size() - 4, value.size()));
+        size_t colonPos = value.find(':');
+        if (colonPos != std::string::npos)
+        {
+            this->requestedHost = value.substr(0, colonPos);
+		    this->requestedPort = std::stoi(value.substr(colonPos + 1));
+        }
+        else
+        {
+            if (!value.empty())
+                this->requestedHost = value;
+        }
 	}
-	else
-		this->requestedPort = 0;
 }
 
 void	HttpRequest::setQueryString(std::string str)

@@ -164,7 +164,7 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 		std::map <int, std::string> emptyMap;
 		throw ErrorCodeException(STATUS_LENGTH_REQUIRED, emptyMap);
 	}
-	setRequestedPort();
+	setRequestedHostAndPort();
 	setContentType();
 	// parse body
 	if (this->contentLength > 0 || isChunked == true)
