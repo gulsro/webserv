@@ -153,9 +153,7 @@ void    HttpResponse::setResource()
 	{
         std::string uri = this->Request->getURI();
         size_t pos = uri.find(Server->getRoot());
-		if (uri == "/")
-			this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
-		else if (pos != std::string::npos)
+		if (pos != std::string::npos)
         {
             // if uri is only root path 
             if (uri[pos + Server->getRoot().length()] == '/' || uri[pos + Server->getRoot().length()] == '\0')

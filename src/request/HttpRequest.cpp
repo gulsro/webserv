@@ -102,6 +102,12 @@ void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 	std::cout << YELLOW << "[FUNCTION] setReqLocation" << DEFAULT << std::endl;
 	#endif
 
+    // "/" or only root uri
+    if (this->uri == "/" || this->uri == this->ReqServer->getRoot() || this->uri == this->ReqServer->getRoot() + "/")
+    {
+        this->ReqLocation = nullptr; //server itself
+        return ;
+    }
 	for (size_t i = 0; i < locationList.size(); ++i)
 	{
 		// if uri contains cgi program extension file name. For us, Python.
@@ -117,17 +123,15 @@ void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 				return ;
 			}
 		}
-        // "/" or only root uri
-        if (this->uri == "/" || this->uri == this->ReqServer->getRoot() || this->uri == this->ReqServer->getRoot() + "/")
-        {
-            this->ReqLocation = nullptr; //server itself
-            return ;
-        }
-		std::string	path =  this->ReqServer->getRoot() + locationList[i]->getPath() + "/";
-		if (path.find(this->uri) != std::string::npos)
+        std::string path = locationList[i]->getPath();
+	    pos = this->uri.find(path);
+		if (pos != std::string::npos)
 		{
-			setReqLocation(locationList[i]);
-			return ;
+            if (this->uri[pos + path.length()] == '/' || this->uri.substr(pos, uri.length()) == path)
+            {
+                setReqLocation(locationList[i]);
+                return ;
+            }
 		}
 	}
 	this->ReqLocation = nullptr;
