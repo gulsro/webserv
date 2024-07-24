@@ -11,7 +11,8 @@ std::string	createErrorResponse(int code, std::map<int, std::string> errorPages)
 	std::string			pageName = "";
 
 	ostream << "HTTP/1.1 " << code << " " << returnStatusMessage(code) << "\r\n";
-
+	if (errorPages.empty())
+		pageName = "501.html";
 	for (auto& [errorCode, page] : errorPages)
 	{
 		if (errorCode == code)
