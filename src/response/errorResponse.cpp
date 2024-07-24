@@ -12,15 +12,23 @@ std::string	createErrorResponse(int code, std::map<int, std::string> errorPages)
 
 	ostream << "HTTP/1.1 " << code << " " << returnStatusMessage(code) << "\r\n";
 	if (errorPages.empty())
-		pageName = "501.html";
-	for (auto& [errorCode, page] : errorPages)
 	{
-		if (errorCode == code)
-			pageName = errorPages.at(errorCode);
+		if (code >= 400 && code <= 500)
+			filename = "./error_pages/" + std::to_string(code) + ".html";
+		else
+			filename = "./error_pages/501.html";
 	}
-	if (pageName.empty())
-		pageName = errorPages.at(501); // default page;
-	filename = "./error_pages/" + pageName;
+	else
+	{
+		for (auto& [errorCode, page] : errorPages)
+		{
+			if (errorCode == code)
+				pageName = errorPages.at(errorCode);
+		}
+		if (pageName.empty())
+			pageName = errorPages.at(501); // default page;
+		filename = "./error_pages/" + pageName;
+	}
 	std::ifstream file(filename);
 	if (file.is_open())
 	{

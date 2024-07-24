@@ -4,7 +4,7 @@
 #include <cstring>
 
 HttpRequest::HttpRequest()
-	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), boundaryBegin(""), boundaryEnd(""), isChunked(false), isCgi(false)
+	: rawRequest(""), method(""), uri(""), contentLength(0), contentType(""), requestedPort(0), ReqServer(nullptr), ReqLocation(nullptr), boundaryBegin(""), boundaryEnd(""), isChunked(false), isCgi(false)
 {
 	#ifdef STRUCTOR
 		std::cout << GREY << "HttpRequest : Default constructor called" << DEFAULT << std::endl; 
@@ -216,7 +216,16 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 		this->uri = decodeUri(this->uri);
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
-		throw ErrorCodeException(STATUS_NOT_ALLOWED, this->ReqServer->getErrorPage());
+		if (this->ReqServer != nullptr)
+		{
+			std::cout << "NO NULL" <<std::endl;
+			throw ErrorCodeException(STATUS_NOT_ALLOWED, this->ReqServer->getErrorPage());
+		}
+		else
+		{
+			std::map <int, std::string> emptyMap;
+			throw ErrorCodeException(STATUS_NOT_ALLOWED, emptyMap);
+		}
 	}
 	return true;
 }
