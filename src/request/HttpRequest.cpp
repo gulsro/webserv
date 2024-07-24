@@ -118,7 +118,7 @@ void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 				return ;
 			}
 		}
-        if (this->uri == this->ReqServer->getRoot() || this->uri == this->ReqServer->getRoot() + "/")
+        if (this->uri == "/" || this->uri == this->ReqServer->getRoot() || this->uri == this->ReqServer->getRoot() + "/")
         {
             this->ReqLocation = nullptr; //server itself
             return ;

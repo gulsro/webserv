@@ -156,10 +156,13 @@ void    HttpResponse::setResource()
 			this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
 		else if (pos != std::string::npos)
         {
-            if (uri[pos + Server->getRoot().length()] == '/' || uri[pos + Server->getRoot().length() + 1] == '\0' )
+            if (uri[pos + Server->getRoot().length()] == '/' || uri[pos + Server->getRoot().length()] == '\0')
+            {
+                std::cout << "here" << std::endl;
                 this->resource = "." + uri;
+            }
             else
-                this->resource = "." + Server->getRoot() + uri;    
+                this->resource = "." + Server->getRoot() + uri;
         }
         else
 			this->resource = "." + Server->getRoot() + uri;

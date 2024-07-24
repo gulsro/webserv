@@ -190,11 +190,10 @@ void	HttpResponse::methodGet()
 		checkURI();
 		if (completed == false)
 		{
-                    std::cout << "DIR" << std::endl;
 			if  (this->Request->ReqLocation && this->Request->ReqLocation->getAutoindex() == true)
-			{
 				printDirectoryListing(this->resource);
-			}
+            else if (this->Request->ReqLocation == nullptr && this->Request->ReqServer->getAutoindex() == true)
+                printDirectoryListing(this->resource);
 			else
 			{
                 // redirect to the index file
