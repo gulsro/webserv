@@ -79,7 +79,8 @@ bool	ServerManager::readRequest(Client *Client)
 	else if (byteRead == -1)
 	{
 		close(fd);
-		throw ErrorCodeException(STATUS_BAD_REQUEST, Client->getRequest()->getReqServer().getErrorPage());
+		std::map <int, std::string> emptyMap;
+		throw ErrorCodeException(STATUS_BAD_REQUEST, emptyMap);
 	}
 	else
 	{
@@ -159,7 +160,10 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 			return false;
 	}
 	if (this->method == "POST" && this->contentLength == 0)
-		throw ErrorCodeException(STATUS_LENGTH_REQUIRED, this->ReqServer->getErrorPage());
+	{
+		std::map <int, std::string> emptyMap;
+		throw ErrorCodeException(STATUS_LENGTH_REQUIRED, emptyMap);
+	}
 	setRequestedPort();
 	setContentType();
 	// parse body

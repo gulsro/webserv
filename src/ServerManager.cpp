@@ -264,8 +264,8 @@ int ServerManager::handleIncoming(int fd)
 		else
 		{
 			if (this->readRequest(currClient) == true) //continue reading operations on connected clients
-			{
 				currClient->getRequest()->setReqServer(servers);
+			{
 				currClient->getRequest()->checkLocations(); // cgi is detected
 				currClient->getRequest()->checkRequestValid();
 				// Initial excution after receiving the first cgi request.

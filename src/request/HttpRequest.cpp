@@ -143,13 +143,14 @@ void	HttpRequest::setBoundary()
 
 void	HttpRequest::checkUriValidation()
 {
+	std::map <int, std::string> emptyMap;
 	if (this->uri.length() > 2048)
-		throw ErrorCodeException(STATUS_URI_TOO_LONG, this->ReqServer->getErrorPage());
+		throw ErrorCodeException(STATUS_URI_TOO_LONG, emptyMap);
 	for (size_t i = 0; i < this->uri.length(); ++i)
 	{
 		char c = this->uri[i];
 		if (std::isdigit(c) == false && std::isalpha(c) == false && isInvalidCharForURI(c) == true)
-			throw ErrorCodeException(STATUS_BAD_REQUEST, this->ReqServer->getErrorPage());
+			throw ErrorCodeException(STATUS_BAD_REQUEST, emptyMap);
 	}
 }
 
@@ -217,10 +218,7 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
 		if (this->ReqServer != nullptr)
-		{
-			std::cout << "NO NULL" <<std::endl;
 			throw ErrorCodeException(STATUS_NOT_ALLOWED, this->ReqServer->getErrorPage());
-		}
 		else
 		{
 			std::map <int, std::string> emptyMap;
