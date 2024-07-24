@@ -7,5 +7,4 @@ Http
 *.vscode/*
 .vscode/settings.json
 Makefile
-configs/test.conf
 webserv

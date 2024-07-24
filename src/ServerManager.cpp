@@ -276,7 +276,6 @@ int ServerManager::handleIncoming(int fd)
 	}
 	catch (const std::exception& e)
 	{
-        std::cout << "CATCH" <<std::endl;
         if (currClient)
         {
             if (currClient->getCgi() != nullptr)
