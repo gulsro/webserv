@@ -139,8 +139,9 @@ void    HttpResponse::setResource()
 		// Check redirection
 		if	(!(Location->getRedirect().empty()))
 		{
-			this->resource = Location->getRedirect();
+			this->resource =  "." + Location->getRedirect();
 			createResponse(STATUS_FOUND);
+			return ;
 		}
 		this->resource = "." + this->Request->getURI();
 	}
