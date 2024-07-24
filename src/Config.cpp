@@ -9,12 +9,6 @@ Config::~Config(){
     #ifdef STRUCTOR
 		std::cout << GREY << "Config : Destructor called" << DEFAULT << std::endl; 
 	#endif
-    // for (std::vector<Server *>::iterator i = serverList.begin();
-    //  i != serverList.end(); i++){
-    //     if (*i != nullptr)
-    //         delete *i;
-    //     *i = nullptr;
-    //  }
 }
 
 void    Config::setConfigFile(std::string file){
@@ -35,7 +29,6 @@ void Config::readConfig(std::ifstream& file){
     }
     this->content = buf.str();
     file.close();
-    // std::cout << MAG << content << RES << std::endl;
 }
 
 bool Config::isBlank(std::ifstream& file){
@@ -102,9 +95,6 @@ void Config::splitServer(){
     }
     if (!this->nbServer)
         throw std::runtime_error("No server was found in config file");
-    // std::cout << "# of server is: " << nbServer << std:: endl;
-    // for (std::string s : serverCont)
-    //     std::cout << BLU << s << RES << std::endl << std::endl;
 }
 
 void Config::parseServer(){
@@ -130,7 +120,6 @@ void Config::parseLocation(){
 
 void Config::parseConfig(){
     std::ifstream file;
-    // std::cout << "config file is: " << configFile << std::endl;
     checkConfig(file);
     readConfig(file);
     parseServer();

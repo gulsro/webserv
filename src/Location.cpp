@@ -4,7 +4,6 @@ Location::Location() {}
 
 Location::Location(Server* s) : server(s), path(""), root(""), maxBodySize(0), autoindex(false), index(""), redirect(""), cgiPass("")
 {
-    // std::cout << "Location is constructed" << std::endl;
     methods["GET"] = 0;
     methods["POST"] = 0;
     methods["DELETE"] = 0;
@@ -15,7 +14,6 @@ Location::~Location(){
     #ifdef STRUCTOR
 		std::cout << GREY << "Location : Destructor called" << DEFAULT << std::endl; 
 	#endif
-    // std::cout << "Location is destructed" << std::endl;
 }
 
 Location::Location(const Location& a){
@@ -121,7 +119,6 @@ void Location::setLocationVar(std::stringstream& iss){
     std::string line;
     std::string parameter[8] = {"{", "root", "max_body_size", "autoindex", "index", "return", "methods", "cgi_pass"};
      while (std::getline(iss, line, '\n')){
-                std::cout << line << std::endl;
         for (int i = 0; i < 8; i++){
             key = line.find(parameter[i]);
             if(key != std::string::npos){
@@ -131,7 +128,6 @@ void Location::setLocationVar(std::stringstream& iss){
             }
         }
     }
-    std::cout << RED << *this << RES << std::endl;
 }
 
 void Location::checkLocationVar(){
