@@ -29,48 +29,9 @@ Location& Location::operator=(const Location a){
     this->root = a.root;
     this->autoindex = a.autoindex;
     this->redirect = a.redirect;
-    this->errorPage = a.errorPage;
     this->methods = a.methods;
     this->cgiPass = a.cgiPass;
     return (*this);
-}
-
-//--------------Getters-------------------
-
-std::string Location::getPath() const{
-    return this->path;
-}
-
-std::string Location::getRoot() const{
-    return this->root;
-}
-
-unsigned long long Location::getMaxBodySize() const{
-    return this->maxBodySize;
-}
-
-bool Location::getAutoindex() const{
-    return this->autoindex;
-}
-
-std::string Location::getIndex() const{
-    return this->index;
-}
-
-std::string Location::getRedirect() const{
-    return this->redirect;
-}
-
-std::map<int, std::string> Location::getErrorPage() const{
-    return this->errorPage;
-}
-
-std::map<std::string, int> Location::getMethods() const{
-    return this->methods;
-}
-
-std::string Location::getCgiPass() const{
-    return this->cgiPass;
 }
 
 //--------------Setters-------------------
@@ -144,18 +105,6 @@ void Location::setMethods(std::string& cont, int key){
         methods["DELETE"] = 1;
 }
 
-
-void Location::setErrorPage(std::string& cont, int key){
-    while(std::isspace(cont[key]))
-        key++;
-    int code = std::stoi(cont.substr(key, 3));
-    key += 3;
-    while(std::isspace(cont[key]))
-        key++;
-    if (code >= 0)
-        errorPage.insert({code, cont.substr(key, cont.find('\n') - key)});
-}
-
 void Location::setCgiPass(std::string& cont, int key){
     if (!getCgiPass().empty())
         return ;
@@ -170,10 +119,10 @@ void Location::setLocationVar(std::stringstream& iss){
 
     std::size_t key;
     std::string line;
-    std::string parameter[9] = {"{", "root", "max_body_size", "autoindex", "index", "return", "methods", "error_page", "cgi_pass"};
+    std::string parameter[8] = {"{", "root", "max_body_size", "autoindex", "index", "return", "methods", "cgi_pass"};
      while (std::getline(iss, line, '\n')){
                 std::cout << line << std::endl;
-        for (int i = 0; i < 9; i++){
+        for (int i = 0; i < 8; i++){
             key = line.find(parameter[i]);
             if(key != std::string::npos){
                 if (i == 0)

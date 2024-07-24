@@ -1,6 +1,6 @@
 #include "Webserv.hpp"
 
-Server::Server() : port(0), root(""), index(""), maxBodySize(0), nbLocation(0), autoindex(false)
+Server::Server() : port(0), serverFd(-1), root(""), index(""), maxBodySize(0), nbLocation(0), autoindex(false)
 {
     methods["GET"] = 0;
     methods["POST"] = 0;
@@ -200,17 +200,29 @@ void Server::setMethods(std::string& cont, int key){
         this->methods["DELETE"] = 1;
 }
 
+
+void Server::setErrorPage(std::string& cont, int key){
+    while(std::isspace(cont[key]))
+        key++;
+    int code = std::stoi(cont.substr(key, 3));
+    key += 3;
+    while(std::isspace(cont[key]))
+        key++;
+    if (code >= 0)
+        errorPage.insert({code, cont.substr(key, cont.find('\n') - key)});
+}
+
 //--------------Functions-------------------
 
 void Server::setServerVar(std::stringstream& iss)
 {
     std::size_t key;
     std::string line;
-    std::string parameter[6] = {"listen", "root", "index", "max_body_size", "autoindex", "methods"};
+    std::string parameter[7] = {"listen", "root", "index", "max_body_size", "autoindex", "methods", "error_page"};
      while (std::getline(iss, line, '\n')){
         if (line.find("location") != std::string::npos)
             break;
-        for (int i = 0; i < 6; i++){
+        for (int i = 0; i < 7; i++){
             key = line.find(parameter[i]);
             if(key != std::string::npos)
                 (this->*func[i])(line, key + parameter[i].size());
@@ -281,6 +293,14 @@ std::ostream& operator<<(std::ostream& out, const Server& server)
         out << "POST ";
     if (server.getMethods()["DELETE"] == 1)
         out << "DELETE";
+    std::map<int, std::string> mp = server.getErrorPage();
+    std::map<int, std::string>::iterator it = mp.begin();
+    // Iterate through the map and print the elements
+    while (it != mp.end()) {
+        std::cout << "Error Num: " << it->first
+             << ", Page: " << it->second << std::endl;
+        ++it;
+    }
     out << std::endl << std::endl;
     return out;
 }

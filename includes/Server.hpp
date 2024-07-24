@@ -33,11 +33,12 @@ private:
     int nbLocation;
     bool    autoindex;
     std::map<std::string, int> methods;
+    std::map<int, std::string> errorPage;
     
     std::vector<Location*> locationList;
     std::vector<std::string> locationCont;
     struct sockaddr_in serverAddr;
-    setFunc func[6] {&Server::setPort, &Server::setRoot, &Server::setIndex, &Server::setMaxBodySize, &Server::setAutoindex, &Server::setMethods};
+    setFunc func[7] {&Server::setPort, &Server::setRoot, &Server::setIndex, &Server::setMaxBodySize, &Server::setAutoindex, &Server::setMethods, &Server::setErrorPage};
 
 public:
     Server();
@@ -49,15 +50,16 @@ public:
     Server& operator=(const Server s);
 
 //**********GETTERS*********************
-    int getPort() const { return port; }
-    std::string getHost() const { return host; }
-    std::string getRoot() const { return root; }
-    std::string getIndex() const { return index; }
-    int getServerFd() const { return serverFd; }
-    unsigned long long getMaxBodySize() const  { return maxBodySize; }
+    int                 getPort() const { return port; }
+    std::string         getHost() const { return host; }
+    std::string         getRoot() const { return root; }
+    std::string         getIndex() const { return index; }
+    int                 getServerFd() const { return serverFd; }
+    unsigned long long  getMaxBodySize() const  { return maxBodySize; }
     std::vector<Location*> getLocationList() const  { return locationList; }
-    bool        getAutoindex() const { return autoindex; }
+    bool                getAutoindex() const { return autoindex; }
     std::map<std::string, int> getMethods() const  { return methods; }
+    std::map<int, std::string> getErrorPage() const { return errorPage; }
     struct sockaddr_in* getSocketAddr() const;
 
     
@@ -70,6 +72,7 @@ public:
     void setMaxBodySize(std::string& cont, int key);
     void setAutoindex(std::string&cont, int key);
     void setMethods(std::string& cont, int key);
+    void setErrorPage(std::string& cont, int key);
 
 
 //********PARSING************************
