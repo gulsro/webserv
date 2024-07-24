@@ -35,8 +35,7 @@ class ServerManager
 
 
         void  addServer(Server* server);        
-        void  startServerManager(ServerManager &); // init vServers in a loop
-        void  startSockets();
+        void  startServers();
         int   setNonBlocking(int fd);
         void  addFdToPollFds(int fd, int events);
         void  rmFdFromPollfd(int fd);

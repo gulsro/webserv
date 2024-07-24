@@ -35,7 +35,7 @@ int main(int ac, char **av)
 			config.setConfigFile(av[1]);
 		config.parseConfig();
 		ServerManager serverManager(config);
-		serverManager.startServerManager(serverManager); 
+		serverManager.startServers(); 
 		serverManager.startPoll();
 		
 		

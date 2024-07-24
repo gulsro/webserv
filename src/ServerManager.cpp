@@ -46,12 +46,6 @@ void ServerManager::addServer(Server* server)
     this->servers.push_back(server);
 }
 
-void ServerManager::startServerManager(ServerManager &serverManager)
-{
-    auto &servers = serverManager.getServers();
-    startSockets();
-}
-
 //The only correct way to set one of the file status flags is:
 // first to fetch the current flags with F_GETFL,
 //logi- cally OR in the new flag, and then set the flags w F_SETFL.
@@ -67,7 +61,7 @@ int ServerManager::setNonBlocking(int fd)
 }
 
 
-void ServerManager::startSockets()
+void ServerManager::startServers()
 {
     //make a loop here, start socket for each server in servers;
     //assign pollfd for each, then push it to pollfds array
