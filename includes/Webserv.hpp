@@ -9,6 +9,7 @@
 #include <sys/socket.h>
 #include <netdb.h> // getaddrinfo()
 #include <sys/types.h> //accept()
+#include <cstdlib> // remove(), std::system()
 #include <map>
 #include <poll.h> // poll() and struct
 #include <fcntl.h>
@@ -24,7 +25,10 @@
 #include <functional>
 #include <sys/wait.h>
 #include <chrono>
-#include <ctime> 
+#include <ctime>
+#include <unordered_map>
+#include <exception>
+#include <optional>
 
 #include "Config.hpp"
 #include "Server.hpp"
@@ -45,7 +49,5 @@
 #define MAG "\033[35m"
 #define CYA "\033[36m"
 #define WHI "\033[37m"
-
-void readRequest(int clientFd);
 
 #endif

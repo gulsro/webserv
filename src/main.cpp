@@ -31,15 +31,11 @@ int main(int ac, char **av)
 	setup_signal_handler();
 	try{
 		Config config;
-		
-		// Later, assign a dynamically allocated object to it
-		// The std::make_unique function creates a new instance of ServerPool on the heap
-		// and returns a std::unique_ptr<ServerPool> that owns this instance
 		if (ac == 2)
 			config.setConfigFile(av[1]);
 		config.parseConfig();
 		ServerManager serverManager(config);
-		serverManager.startServerManager(serverManager); 
+		serverManager.startServers(); 
 		serverManager.startPoll();
 		
 		

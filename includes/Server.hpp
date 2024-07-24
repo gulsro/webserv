@@ -51,7 +51,7 @@ public:
     Server(const Server& s);
     Server& operator=(const Server s);
 
-//**********GETTERS*********************
+    //Getters
     int                 getPort() const { return port; }
     std::string         getHost() const { return host; }
     std::string         getRoot() const { return root; }
@@ -63,10 +63,8 @@ public:
     std::map<std::string, int> getMethods() const  { return methods; }
     std::map<int, std::string> getErrorPage() const { return errorPage; }
     struct sockaddr_in* getSocketAddr() const;
-
     
-//**********SETTERS*********************
-
+    //Setters
     void setPort(std::string& cont, int key);
     void setHost(std::string& cont);
     void setRoot(std::string& cont, int key);
@@ -77,13 +75,13 @@ public:
     void setErrorPage(std::string& cont, int key);
 
 
-//********PARSING************************
+    //Parsing
     void splitLocation(std::string cont);
     std::size_t skipLocationPath(std::string cont, std::size_t found);
     void setServerVar(std::stringstream& iss);
     void initLocation();
 
-//*******SOCKET***************************
+    //Socket
     void createSocket();
     void setSocketAddr();
     void setSocketOption();
@@ -91,17 +89,8 @@ public:
     void listenSocket();
     int acceptConnection();
 
-//not sure if this is necessary anymore
- //   bool matchesHostAndPort(const std::string &host, int port) const;
-    
-    // param of the func might be changed as Client obj later.
-//    void removeClientFd(int clientFd); //THIS FUNC REPLACED WITH A TEMPLATE FUNC
-
-//*********PRINT**************************
     void printConnectedClientFds() const;
-
 };
-
 
 std::ostream& operator<<(std::ostream& out, const Server& server);
 

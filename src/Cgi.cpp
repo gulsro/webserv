@@ -44,25 +44,12 @@ Cgi::~Cgi(){
     this->manager->rmFdFromPollfd(pipeWrite);
 }
 
-// Cgi::Cgi(Cgi& a){
-//     operator=(a);
-// }
 
-// Cgi& Cgi::operator=(const Cgi a){
-//     if (this == &a)
-//         return (*this);
-//     this->cgiPass = a.getCgiPass();
-//     this->cgiFile = a.getCgiFile();
-//     this->env = a.getEnv();
-//     return (*this);
-// }
-
-// check if this is valid for both GET and POST
-//GUL CHANGED THIS FUNCTION
-void Cgi::setCgiFile(std::string s) {
-    // finding the position of the '?' character in the url
+void Cgi::setCgiFile(std::string s)
+{
     std::size_t query_pos = s.find('?');
-        if (query_pos != std::string::npos) {
+    if (query_pos != std::string::npos)
+    {
         s = s.substr(0, query_pos);
     }
     cgiFile = new char[s.size() + 1];
@@ -95,12 +82,12 @@ void Cgi::setCgiEnv(HttpRequest& req, Location& loc, Server& ser){
     for (std::vector<std::string>::iterator t = tmp.begin(); t != tmp.end(); ++t){
         this->env[i] = new char[(*t).size() + 1];
         strcpy(this->env[i], (*t).c_str());
-        //std::cout << env[i] << std::endl;
         ++i;
     }
     this->env[tmp.size()] = NULL;
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 void    Cgi::childDup(int ToCgi[2], int FromCgi[2]){
     close(ToCgi[1]);
     if (dup2(ToCgi[0], STDIN_FILENO) < 0)
@@ -167,9 +154,6 @@ void    Cgi::readFromCgi(){
         std::cout << "\n\nbytes == 0 " << std::endl;
         finishReading = true;
         this->appendBytes = 0;
-        // close(pipeRead);
-        // manager->rmFdFromPollfd(pipeRead);
-        // manager->rmPipesFromPollfd()
     }
     else
     {
@@ -227,14 +211,11 @@ void    Cgi::execCGI()
         initParentPipe(r_pip, w_pip);
         if (cgiInput.size() > 0) // if there is any data to send to CGI
         {
-            std::cout << RED << "\n\n CGI INPUT exists \n\n" <<  DEFAULT << std::endl; 
             manager->addFdToPollFds(pipeWrite, POLLOUT); // keep
         }
         else { 
-            //if there's nothing to send to CGI, we will trigger reading the output from pipe
-            std::cout << BLUE << "-----------AFTER INIT PARENT---------------" << std::endl;
             close(pipeWrite);
-            pipeWrite = -1; //add condition for
+            pipeWrite = -1;
             manager->addFdToPollFds(pipeRead, POLLIN);
         }
     }
@@ -282,83 +263,3 @@ void    Cgi::setCgiInput(std::string postBody)
     }
     this->cgiInput = charVector;
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-//return http response msg or '\0' in case of internal error
-// std::vector<char>    Cgi::execCgi(){
-//    //PipeFromCGI
-//     int w_pip[2]; // 3. Children write the output to the w_pipe -> 4. parent read and parse it to Response Body
-//      //PipeToCGI
-//     int r_pip[2]; // 1.  parent write body received from STDIN -> 2. Children read from pipe
-//     pid_t pid;
-
-//     std::cout << MAG << "CGI executed"<< RES << std::endl;
-//     if (pipe(w_pip) < 0 || pipe(r_pip) < 0)
-// 		throw std::runtime_error("pipe failed"); //error
-// 	pid = fork();
-// 	if (pid < 0)
-// 		throw std::runtime_error("fork failed"); //error
-// 	if (pid == 0){
-//         // close read end and write to pipe 
-//         //output of cgi script will be written in pipe
-//         std::cout << MAG << "child process: "<< cgiFile << RES << std::endl;
-//         // signal(SIGINT, SIG_DFL);
-//         // signal(SIGTERM, SIG_DFL);
-//         if (access(cgiFile,F_OK) != 0)
-// 			throw ErrorCodeException(STATUS_NOT_FOUND);
-// 		if (access(cgiFile,X_OK) != 0)
-// 			throw ErrorCodeException(STATUS_FORBIDDEN);
-//         pass = new char[cgiPass.size() + 1];
-//         std::strcpy(pass, cgiPass.c_str());
-//         char *argv[3] = {pass, cgiFile, NULL};
-//         close(w_pip[0]); 
-//         if (dup2(w_pip[1], STDOUT_FILENO) < 0)
-//             throw std::runtime_error("Write write pipe failed"); //error
-//         close(r_pip[1]);
-//         if (dup2(r_pip[0], STDIN_FILENO) < 0)
-//             throw std::runtime_error("Read read pipe failed"); //error
-//         if (execve(cgiFile, argv, env) < 0){
-//             throw std::runtime_error("child");
-//             exit(1);
-//         }
-//     }
-//     int status;
-//     char buf[BUFFER_SIZE]; // is buffer_size defined in config?
-//     std::vector<char> body {};
-//     ssize_t bytes = 1;
-// //close write end and read output from pipe
-    
-//     //If we type an input
-//     close(r_pip[0]);
-//     if (strlen(this->postBody) > 0){
-//         manager->addFdToPollFds(r_pip[1], POLLOUT);
-//     }
-//     else{
-//         close(r_pip[1]);
-//         manager->addFdToPollFds(w_pip[0], POLLIN);
-//     }
-
-//     if (write(r_pip[1], this->postBody, getContentLen()) < 0) //GETCONTENTLEN() WILL BE CHECKED
-// 		throw std::runtime_error ("Write to r_pip failed" );
-    
-    
-//     close(r_pip[1]);
-//     close(w_pip[1]);
-//     if (waitpid(pid, &status, 0) < 0)
-//         throw std::runtime_error("wait failed"); 
-//     if (WIFEXITED(status) == false &&(WEXITSTATUS(status)!= 0)) 
-//         throw std::runtime_error ("wait exit status failed");
-//     if (dup2(w_pip[0], STDIN_FILENO) < 0)
-//         throw std::runtime_error ("Write read pipe failed"); // error
-//     while (bytes > 0){
-//         std::memset(buf, '\0', BUFFER_SIZE - 1);
-//         bytes = read(0, buf, BUFFER_SIZE);
-//         // if (bytes < 0)
-//             // no read;
-//         body.insert(body.end(), buf, buf + bytes);
-//     }
-//     printf("\n");
-//     close(w_pip[0]);
-//     return (body);
-// }

@@ -2,26 +2,17 @@
 
 
 Client::Client(int fd, int readyTo)
-//    :clientFd(fd)
 {
-    //this->server = server;
     this->clientFd = fd;
     this->readyTo = readyTo;
 	this->Request = NULL;
 	this->Response = NULL;
 	this->cgi = NULL;
-    std::cout << "Client constructor is called" << std::endl;
 }
 
 Client::~Client()
 {
-    std::cout << "Client destructor is called" << std::endl;
 	delete cgi;
-    // if (this->cgi != nullptr)
-    //     delete this->cgi;
-    // if (this->Request != nullptr)
-    //     delete this->Request;
-    // if (this->Response != nullptr)
     delete this->Response;
 	delete this->Request; 
 }
@@ -60,12 +51,9 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 	#ifdef CGI
 		std::cout << PINK << "[ Client ] handleCgiRequest" << DEFAULT << std::endl; 
 	#endif
-	// HttpResponse *response = this->Response;
 	Cgi *cgi = new Cgi((*this->Request), this->Request->getReqLocation(), this->Request->getReqServer(), *serverManager);
 	this->cgi = cgi; // Assigning client cgi
  
-	std::cout << YEL << this->cgi->getCgiFile() << RES << std::endl;
-
 	std::string	cgiFilename = this->cgi->getCgiFile();
 	std::ifstream file(cgiFilename);
 
@@ -79,15 +67,12 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 		throw ErrorCodeException(STATUS_FORBIDDEN, this->Request->getReqServer().getErrorPage());
 	if (file.is_open())
 	{
-		// Pass the full request to the cgiInput to execute cgi.
+		// pass full request to the cgiInput to execute cgi.
 		if (this->getRequest()->getMethod() == "POST")
 		{
-			// setPostBody
-			// this->getCgi()->setPostBody(*this->getRequest());
 			this->getCgi()->setCgiInput(this->getRequest()->getBody());
 		}
 		this->cgi->execCGI();
-		// this->  Request->setIsCgi(false);
 		file.close();	
 	}
 }
@@ -99,17 +84,12 @@ void	Client::finishCgi()
 	#endif
 	std::vector<char> cgiResponse = this->cgi->getCgiOutput();
 	this->Response->setContent(std::string(cgiResponse.begin(), cgiResponse.end()));
-	// std::string cont(cgiResponse.begin(), cgiResponse.end());
-	// this->Response->setContent(cont);
-	// this->Response->setContent(this->cgi->getCgiOutput().data());
 	this->Response->setCompleted(true);
-	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!revove pipe from pollfs
 	close (this->cgi->getPipeRead());
     if (this->getCgi()->isRunningCgi() == true)
     {
         kill(this->getCgi()->getChildPid(), SIGKILL);
     }
-	//this->cgi->rmPipesFromPollfd();
 	delete this->cgi;
 	this->cgi = nullptr;
 }

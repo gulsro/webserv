@@ -104,7 +104,6 @@ void	HttpResponse::checkResourceType()
 	if (this->completed == true)
 		return	;
 	path = this->resource;
-	std::cout << "RESOURCE : " << path << std::endl;
 	if (stat(path.c_str(), &buf) == 0)
 	{
 		if (S_ISDIR(buf.st_mode))

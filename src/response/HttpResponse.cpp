@@ -41,9 +41,9 @@ HttpResponse &HttpResponse::operator=(const HttpResponse &other)
 
 HttpResponse::~HttpResponse()
 {
-	// #ifdef STRUCTOR
+	#ifdef FUNC
 		std::cout << GREY << "HttpResponse : Destructor called" << DEFAULT << std::endl; 
-	// #endif
+	#endif
 }
 
 void	HttpResponse::createResponse(enum e_statusCode code)

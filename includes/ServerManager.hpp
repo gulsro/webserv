@@ -3,15 +3,7 @@
 
 #include "Webserv.hpp"
 
-#define TIMEOUT 5000
-// struct pollfd {
-//   int     fd;       /* descriptor to check */
-//   short   events;   /* events of interest on fd */
-//   short   revents;  /* events that occurred on fd */
-// };
-
-// POLLIN -- Data other than high-priority data can be read
-// POLLOUT -- Normal data can be written
+#define TIMEOUT 70000
 
 // serverManager manages multiple Server instances, each representing a virtual host.
 class Server;
@@ -21,50 +13,41 @@ class Client;
 class ServerManager
 {
     private:
-        std::vector<Server*> servers;
-        //std::map<int, std::unique_ptr<Server>> mapServerFd;
+        std::vector<Server*>   servers;
         std::map<int, Server*> mapServerFd;
         std::map<int, Client*> mapClientFd;
         std::map<int, std::chrono::system_clock::time_point> clientLastActivity;
 
-        // std::map<int, pair> mapPipe; // clienfd pipeRread, pipeWrite
-        // std::map<pair, Client*> 
-
-
         // an array of fd's
         // first elem of the pollpds is serverfd, the rest will be client's
         std::vector<struct pollfd> pollfds;
-		bool	isWritingDone;
+		    bool	isWritingDone;
     
     public:
        // ServerManager();
         ServerManager(const Config& config);
         ~ServerManager();
 
-        //const std::vector<std::unique_ptr<Server>>& getServers() const;
-        void checkTimeouts();
+        void                        checkTimeouts();
         const std::vector<Server*>& getServers() const;
-	      Server*	getServer(int serverFd) const;
-        //const std::vector<struct pollfd>& getPollfds() const;
+	      Server*                   	getServer(int serverFd) const;
         std::vector<struct pollfd>& getPollfds();
 
 
-        void addServer(Server* server);        
-        void startServerManager(ServerManager &); // init vServers in a loop
-        void startSockets();
-        int setNonBlocking(int fd);
-        void addFdToPollFds(int fd, int events);
-        void rmFdFromPollfd(int fd);
-        void startPoll();
-        int handleIncoming(int fd);
+        void  addServer(Server* server);        
+        void  startServers();
+        int   setNonBlocking(int fd);
+        void  addFdToPollFds(int fd, int events);
+        void  rmFdFromPollfd(int fd);
+        void  startPoll();
+        int   handleIncoming(int fd);
 
-        void acceptClient(int serverFd, Server& server);
-        void printServers() const;
-        void printPollFds() const;
+        void  acceptClient(int serverFd, Server& server);
+        void  printServers() const;
+        void  printPollFds() const;
 
-        bool isFdInMap(int fd, std::map<int, Server*>& mapServerFd);
+        bool  isFdInMap(int fd, std::map<int, Server*>& mapServerFd);
     		void	sendResponse(int clientFd);
-
 
         bool	readRequest(Client *currClient);
         bool	isPipeFd(int fd);

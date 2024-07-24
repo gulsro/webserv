@@ -15,7 +15,6 @@ private:
     std::vector<Server*> serverList; // list for Server class
     std::vector<std::string> serverCont; //splited contents inside each server {}
 
-    //Gul added this:
     friend class ServerManager;
 
 public:

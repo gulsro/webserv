@@ -5,7 +5,6 @@ Server::Server() : port(0), serverFd(-1), root(""), index(""), maxBodySize(0), n
     methods["GET"] = 0;
     methods["POST"] = 0;
     methods["DELETE"] = 0;
-    // std::cout << "Server constructor is called" << std::endl;
 }
 
 Server::~Server()
@@ -48,28 +47,6 @@ struct sockaddr_in* Server::getSocketAddr() const
 {
     return const_cast<sockaddr_in*>(&serverAddr);
 }
-
-//std::vector<std::string> getServerNames() const;
-
-// std::vector<int> Server::getConnectedClientFds() const
-// {
-//     return connectedClientFds;
-// }
-
-// std::ostream& operator<<(std::ostream& out, const Server& server)
-// {
-//     out << "port: " << server.getPort();
-//     out << std::endl;
-//     out << "serverFd: " << server.getServerFd();
-//     out << std::endl;
-//     out << "host: " << server.getHost();
-//     out << std::endl;
-//     //out << server.serverNames;
-//     out << "root: " << server.getRoot();
-//     out << std::endl;
-
-//     return out;
-// }
 
 void Server::createSocket()
 {
@@ -131,7 +108,6 @@ void Server::printConnectedClientFds() const
 
 
 //--------------Setters-------------------
-//return needs to be an error
 
 void Server::setPort(std::string& cont, int key){
     if (getPort())
@@ -228,7 +204,6 @@ void Server::setServerVar(std::stringstream& iss)
                 (this->*func[i])(line, key + parameter[i].size());
             }
         }
-    // std::cout << YEL << *this << RES << std::endl;
 }
 
 
@@ -266,13 +241,6 @@ void Server::initLocation(){
         this->locationList.push_back(l);
     }
 }
-
-// void Server::removeClientFd(int clientFd)
-// {
-//     this->connectedClientFds.erase(clientFd);
-// }
-
-//std::vector<std::string> getServerNames() const;
 
 std::ostream& operator<<(std::ostream& out, const Server& server)
 {
