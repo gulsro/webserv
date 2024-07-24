@@ -234,12 +234,16 @@ void	HttpResponse::methodPost()
 	#endif
 	if (this->completed == true)
 		return ;
-    std::string	location = this->resource;
-    bool		dirExists = std::filesystem::exists(location);
+	for (auto &[index, part] : this->Request->parts)
+	{
+		std::string	location = this->resource + "/" + this->Request->parts[index].partFilename;
+		std::cout << "location : " << location << std::endl;
+		bool		dirExists = std::filesystem::exists(location);
 
-    if (dirExists == false)
-        createResponse(STATUS_NOT_FOUND);
-    postFile();
+		if (dirExists == true)
+			throw ErrorCodeException(STATUS_CONFLICT, this->Request->ReqServer->getErrorPage());
+		postFile();
+	}
 }
 
 void	HttpResponse::deleteFile()

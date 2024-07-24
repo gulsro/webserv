@@ -118,8 +118,8 @@ void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 				return ;
 			}
 		}
-		std::string	path =  this->ReqServer->getRoot() + locationList[i]->getPath();
-		if (this->uri.find(path) != std::string::npos)
+		std::string	path =  this->ReqServer->getRoot() + locationList[i]->getPath() + "/";
+		if (path.find(this->uri) != std::string::npos)
 		{
 			setReqLocation(locationList[i]);
 			return ;
