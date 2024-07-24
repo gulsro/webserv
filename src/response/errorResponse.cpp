@@ -1,19 +1,24 @@
 #include "utils.hpp"
 #include "HttpResponse.hpp"
 
-std::string	createErrorResponse(int code)
+std::string	createErrorResponse(int code, std::map<int, std::string> errorPages)
 {
     #ifdef FUNC
 	    std::cout << YELLOW << "[FUNCTION] createErrorResponse" << DEFAULT << std::endl;
 	#endif
 	std::ostringstream	ostream;
-	std::string			filename;
+	std::string			filename = "";
+	std::string			pageName = "";
 
 	ostream << "HTTP/1.1 " << code << " " << returnStatusMessage(code) << "\r\n";
-	if (code >= 400 && code <= 500)
-		filename = "./error_pages/" + std::to_string(code) + ".html";
-	else
-		filename = "./error_pages/501.html";
+	for (auto& [errorCode, page] : errorPages)
+	{
+		if (errorCode == code)
+			pageName = errorPages.at(errorCode);
+	}
+	if (pageName.empty())
+		pageName = errorPages.at(501); // default page;
+	filename = "./error_pages/" + pageName;
 	std::ifstream file(filename);
 	if (file.is_open())
 	{

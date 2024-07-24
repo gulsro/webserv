@@ -73,6 +73,10 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 	this->Request->checkAllowedMethods(this->Request->getMethod());
 
 	// this->cgi->writeToCgi();
+	if (access(cgiFilename.c_str(), F_OK) != 0)
+		throw ErrorCodeException(STATUS_NOT_FOUND, this->Request->getReqServer().getErrorPage());
+	else if (access(cgiFilename.c_str(), X_OK) != 0)
+		throw ErrorCodeException(STATUS_FORBIDDEN, this->Request->getReqServer().getErrorPage());
 	if (file.is_open())
 	{
 		// Pass the full request to the cgiInput to execute cgi.
@@ -85,13 +89,6 @@ void  Client::handleCgiRequest(ServerManager *serverManager)
 		this->cgi->execCGI();
 		// this->  Request->setIsCgi(false);
 		file.close();	
-	}
-	else
-	{
-		if (access(cgiFilename.c_str(), F_OK) != 0)
-			throw ErrorCodeException(STATUS_NOT_FOUND);
-		else
-			throw ErrorCodeException(STATUS_FORBIDDEN);
 	}
 }
 

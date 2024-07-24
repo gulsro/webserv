@@ -79,7 +79,7 @@ bool	ServerManager::readRequest(Client *Client)
 	else if (byteRead == -1)
 	{
 		close(fd);
-		throw ErrorCodeException(STATUS_BAD_REQUEST);
+		throw ErrorCodeException(STATUS_BAD_REQUEST, Client->getRequest()->getReqServer().getErrorPage());
 	}
 	else
 	{
@@ -159,7 +159,7 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 			return false;
 	}
 	if (this->method == "POST" && this->contentLength == 0)
-		throw ErrorCodeException(STATUS_LENGTH_REQUIRED);
+		throw ErrorCodeException(STATUS_LENGTH_REQUIRED, this->ReqServer->getErrorPage());
 	setRequestedPort();
 	setContentType();
 	// parse body
@@ -196,7 +196,7 @@ void	HttpRequest::checkAllowedMethods(std::string requestedMethod)
 		|| (methods["POST"] == 0 && requestedMethod == "POST")
 		|| (methods["DELETE"] == 0 && requestedMethod == "DELETE"))
 	{
-		throw ErrorCodeException(STATUS_NOT_ALLOWED);
+		throw ErrorCodeException(STATUS_NOT_ALLOWED, this->ReqServer->getErrorPage());
 	}
 }
 

@@ -116,7 +116,7 @@ void	HttpResponse::checkResourceType()
 	}
 	else
 	{
-		this->content = createErrorResponse(STATUS_NOT_FOUND);
+		this->content = createErrorResponse(STATUS_NOT_FOUND, this->Request->ReqServer->getErrorPage());
 		this->completed = true;
 	}
 }
@@ -168,7 +168,7 @@ void	HttpResponse::printDirectoryListing(const std::string &path)
 	}
 	else
 	{
-		createErrorResponse(STATUS_NOT_FOUND);
+		createErrorResponse(STATUS_NOT_FOUND, this->Request->ReqServer->getErrorPage());
 		this->completed = true;
 	}
 }
@@ -302,9 +302,9 @@ void	HttpResponse::checkMethod()
 	setResource();
 	checkResourceType();
 	if (this->resourceType == RESOURCE_FILE && fileExists(this->resource) == false && this->Request->getIsCgi() == false)
-		throw ErrorCodeException(STATUS_NOT_FOUND);
+		throw ErrorCodeException(STATUS_NOT_FOUND, this->Request->ReqServer->getErrorPage());
 	if (checkResourcePermission(this->resource) == false && this->Request->getIsCgi() == false)
-		throw ErrorCodeException(STATUS_FORBIDDEN);
+		throw ErrorCodeException(STATUS_FORBIDDEN, this->Request->ReqServer->getErrorPage());
 	if (method == "GET" || (method == "POST" && Request->contentLength == 0 ))
 		methodGet();
 	else if (method == "POST")

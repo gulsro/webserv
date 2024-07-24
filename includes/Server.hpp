@@ -8,6 +8,7 @@ class ServerManager;
 class Server;
 class Location;
 class Client;
+class ErrorCodeException;
 
 typedef void (Server::*setFunc) (std::string&, int);
 
@@ -41,6 +42,7 @@ private:
     setFunc func[7] {&Server::setPort, &Server::setRoot, &Server::setIndex, &Server::setMaxBodySize, &Server::setAutoindex, &Server::setMethods, &Server::setErrorPage};
 
 public:
+    friend class ErrorCodeException;
     Server();
     ~Server();
     std::vector<int> connectedClientFds;

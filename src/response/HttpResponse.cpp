@@ -87,7 +87,7 @@ void	HttpResponse::createResponse(enum e_statusCode code, const std::string cont
 		this->content = ostream.str(); // a string a copy of ostream
 	}
 	if (this->statusCode >= 400)
-		createErrorResponse(code);
+		createErrorResponse(code, this->Request->ReqServer->getErrorPage());
 	this->completed = true;
 }
 

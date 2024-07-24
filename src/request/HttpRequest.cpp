@@ -57,14 +57,14 @@ void	HttpRequest::checkRequestValid()
 	std::cout << YELLOW << "[FUNCTION] checkRequestValid" << DEFAULT << std::endl;
 	#endif
 	if (this->method == "POST" && this->headers.at("Content-Type").value.empty())
-		throw ErrorCodeException(STATUS_NOT_IMPLEMENTED);
+		throw ErrorCodeException(STATUS_NOT_IMPLEMENTED, this->ReqServer->getErrorPage());
 	unsigned long long maxBodySize;
 	if (this->ReqLocation != nullptr)
 		maxBodySize = this->ReqLocation->getMaxBodySize();
 	else
 		maxBodySize = this->ReqServer->getMaxBodySize();
 	if (this->body.size() > maxBodySize)
-		throw ErrorCodeException(STATUS_TOO_LARGE);
+		throw ErrorCodeException(STATUS_TOO_LARGE, this->ReqServer->getErrorPage());
 }
 
 void    HttpRequest::setReqServer(std::vector<Server*> serverList)
@@ -146,12 +146,12 @@ void	HttpRequest::setBoundary()
 void	HttpRequest::checkUriValidation()
 {
 	if (this->uri.length() > 2048)
-		throw ErrorCodeException(STATUS_URI_TOO_LONG);
+		throw ErrorCodeException(STATUS_URI_TOO_LONG, this->ReqServer->getErrorPage());
 	for (size_t i = 0; i < this->uri.length(); ++i)
 	{
 		char c = this->uri[i];
 		if (std::isdigit(c) == false && std::isalpha(c) == false && isInvalidCharForURI(c) == true)
-			throw ErrorCodeException(STATUS_BAD_REQUEST);
+			throw ErrorCodeException(STATUS_BAD_REQUEST, this->ReqServer->getErrorPage());
 	}
 }
 
@@ -218,7 +218,7 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 		this->uri = decodeUri(this->uri);
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
-		throw ErrorCodeException(STATUS_NOT_ALLOWED);
+		throw ErrorCodeException(STATUS_NOT_ALLOWED, this->ReqServer->getErrorPage());
 	}
 	return true;
 }

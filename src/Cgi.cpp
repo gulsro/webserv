@@ -213,10 +213,10 @@ void    Cgi::execCGI()
     }
     else if (pid == 0){ //child process
         childDup(r_pip, w_pip);
-        if (access(cgiFile,F_OK) != 0)
-			throw ErrorCodeException(STATUS_NOT_FOUND);
-		if (access(cgiFile,X_OK) != 0)
-			throw ErrorCodeException(STATUS_FORBIDDEN);
+        // if (access(cgiFile,F_OK) != 0)
+		// 	throw std::runtime_error("STATUS_NOT_FOUND");
+		// if (access(cgiFile,X_OK) != 0)
+		// 	throw std::runtime_error("STATUS_FORBIDDEN");
         if (execve(cgiFile, argv, env) < 0){
             throw std::runtime_error("child");
             exit(1);

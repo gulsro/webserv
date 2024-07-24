@@ -71,7 +71,7 @@ struct HttpHeader
 std::vector<std::string> split(const std::string &str, char delimiter);
 std::string trim(const std::string &str, const char c);
 std::string	returnStatusMessage(int statusCode);
-std::string	createErrorResponse(int code);
+std::string	createErrorResponse(int code, std::map<int, std::string> errorPage);
 std::vector<std::string> splitForKeyValue(const std::string &str, char delimiter);
 bool	isInvalidCharForURI(const	char c);
 bool	fileExistsInDir(const std::string dir, const std::string filename);
@@ -82,9 +82,9 @@ class ErrorCodeException : public std::exception
     private:
         std::string errorResponse;
     public:
-        ErrorCodeException(enum e_statusCode code)
+        ErrorCodeException(enum e_statusCode code, std::map<int, std::string> errorPages)
         {
-            errorResponse = createErrorResponse(code);
+        	errorResponse = createErrorResponse(code, errorPages);
         }
         virtual const char *what() const throw() override
         {
