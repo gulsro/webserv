@@ -46,6 +46,4 @@
 #define CYA "\033[36m"
 #define WHI "\033[37m"
 
-void readRequest(int clientFd);
-
 #endif
