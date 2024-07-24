@@ -114,10 +114,10 @@ void	HttpRequest::selectReqLocation(std::vector<Location*> locationList)
 			{
 				setReqLocation(locationList[i]);
 				this->isCgi = true;
-				setReqLocation(locationList[i]);
 				return ;
 			}
 		}
+        // "/" or only root uri
         if (this->uri == "/" || this->uri == this->ReqServer->getRoot() || this->uri == this->ReqServer->getRoot() + "/")
         {
             this->ReqLocation = nullptr; //server itself

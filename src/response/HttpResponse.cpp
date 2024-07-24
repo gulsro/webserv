@@ -132,7 +132,7 @@ void    HttpResponse::setResource()
 	    std::cout << YELLOW << "[FUNCTION] setResource" << DEFAULT << std::endl;
 	#endif
 	Server	*Server = this->Request->ReqServer;
-
+    // A location is selected
 	if (this->Request->ReqLocation)
 	{
 		Location	*Location = this->Request->ReqLocation;
@@ -143,6 +143,7 @@ void    HttpResponse::setResource()
 			createResponse(STATUS_FOUND);
 			return ;
 		}
+        // if uri contains root
         if (this->Request->getURI().find(this->getRequest()->getReqServer().getRoot() + "/") != std::string::npos)
             this->resource = "." + this->Request->getURI();
         else
@@ -156,11 +157,9 @@ void    HttpResponse::setResource()
 			this->resource = "." + Server->getRoot() + '/' + Server->getIndex();
 		else if (pos != std::string::npos)
         {
+            // if uri is only root path 
             if (uri[pos + Server->getRoot().length()] == '/' || uri[pos + Server->getRoot().length()] == '\0')
-            {
-                std::cout << "here" << std::endl;
                 this->resource = "." + uri;
-            }
             else
                 this->resource = "." + Server->getRoot() + uri;
         }
