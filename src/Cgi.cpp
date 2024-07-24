@@ -202,8 +202,8 @@ void    Cgi::execCGI()
 		// if (access(cgiFile,X_OK) != 0)
 		// 	throw std::runtime_error("STATUS_FORBIDDEN");
         if (execve(cgiFile, argv, env) < 0){
-            throw std::runtime_error("child");
             exit(1);
+            // throw std::runtime_error("child");
         }
     }
     else {

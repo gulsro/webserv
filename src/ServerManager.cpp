@@ -215,6 +215,7 @@ void ServerManager::checkTimeouts() {
             rmFdFromPollfd(fd);
             mapClientFd.erase(fd);
             it = clientLastActivity.erase(it);
+            // std::cout << "TIMEOUT FD :" << fd << std::endl;
             close(fd);
         } 
         else 
@@ -234,7 +235,7 @@ Server* ServerManager::getServer(int serverFd) const
 //AT THIS POINT WE DECIDE CGI? IN READREQUEST()?
 int ServerManager::handleIncoming(int fd)
 {
-	#ifdef FUNC
+	#ifdef CGI
 		std::cout << YELLOW << "[FUNCTION] handleIncoming" << DEFAULT << std::endl;
 	#endif
 
@@ -275,6 +276,7 @@ int ServerManager::handleIncoming(int fd)
 	}
 	catch (const std::exception& e)
 	{
+        std::cout << "CATCH" <<std::endl;
         if (currClient)
         {
             if (currClient->getCgi() != nullptr)
@@ -325,6 +327,8 @@ void	ServerManager::sendResponse(int fd)
         	currClient->getResponse()->setRequest(currClient->getRequest());
         	currClient->getResponse()->checkMethod();
 		}
+        else if (currClient->getResponse()->getContent().empty())
+            throw ErrorCodeException(STATUS_INTERNAL_ERR, currClient->getRequest()->getReqServer().getErrorPage());
     }
     catch(const std::exception& e)
     {
@@ -333,7 +337,7 @@ void	ServerManager::sendResponse(int fd)
         currClient->setReadyToFlag(WRITE);
         currClient->setClientFdEvent(pollfds, POLLOUT);
     }
-	#ifdef FUNC
+	#ifdef CGI
 		std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
 		std::cout << currClient->getResponse()->getContent() << DEFAULT << std::endl;
 	#endif
