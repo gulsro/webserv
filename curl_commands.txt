@@ -8,5 +8,5 @@ curl -X POST -H "Content-Type: multipart/form-data" -F"file=@test.txt; filename=
 curl -X DELETE "http://localhost:8080/html/upload/test.txt"
 
 <Testing with different hostnames>
-curl --resolve example.test:8082:127.0.0.1 http://example.test:8082 -v
+curl --resolve example.test:8082:127.0.0.1 http://example.test:8082/example.test/index.html -v
 (Routing "exampe.test:8082" to 127.0.0.1 )
