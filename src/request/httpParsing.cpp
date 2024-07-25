@@ -195,8 +195,8 @@ void	HttpRequest::checkAllowedMethods(std::string requestedMethod)
 	    methods = this->ReqServer->getMethods();
 	else
 		methods = this->ReqLocation->getMethods();
-
-	if ((methods["POST"] == 0 && methods["DELETE"] == 0)
+	if ((methods["GET"] == 0 && methods["POST"] == 0 && methods["DELETE"] == 0)
+		|| (methods["GET"] == 0 && requestedMethod == "GET")
 		|| (methods["POST"] == 0 && requestedMethod == "POST")
 		|| (methods["DELETE"] == 0 && requestedMethod == "DELETE"))
 	{
@@ -210,7 +210,7 @@ void	HttpRequest::checkLocations()
 		std::cout << YELLOW << "[FUNCTION] checkLocation" << DEFAULT << std::endl;
 	#endif
 	selectReqLocation(this->ReqServer->getLocationList());
-	if (this->getMethod() != "GET" && this->ReqLocation != nullptr)
+	// if (this->getMethod() != "GET" && this->ReqLocation != nullptr)
 		checkAllowedMethods(this->getMethod());
 }
 

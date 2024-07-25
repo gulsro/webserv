@@ -95,11 +95,11 @@ void Location::setRedirect(std::string& cont, int key){
 void Location::setMethods(std::string& cont, int key){
     (void)key;
     key = 0;
-    if (cont.find("GET") != std::string::npos || this->server->getMethods()["GET"] == 1)
+    if (cont.find("GET") != std::string::npos)
         methods["GET"] = 1;
-    if (cont.find("POST") != std::string::npos || this->server->getMethods()["POST"] == 1)
+    if (cont.find("POST") != std::string::npos)
         methods["POST"] = 1;
-    if (cont.find("DELETE") != std::string::npos || this->server->getMethods()["DELETE"] == 1)
+    if (cont.find("DELETE") != std::string::npos)
         methods["DELETE"] = 1;
 }
 
@@ -118,7 +118,7 @@ void Location::setLocationVar(std::stringstream& iss){
     std::size_t key;
     std::string line;
     std::string parameter[8] = {"{", "root", "max_body_size", "autoindex", "index", "return", "methods", "cgi_pass"};
-     while (std::getline(iss, line, '\n')){
+    while (std::getline(iss, line, '\n')){
         for (int i = 0; i < 8; i++){
             key = line.find(parameter[i]);
             if(key != std::string::npos){

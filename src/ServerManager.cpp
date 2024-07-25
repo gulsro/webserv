@@ -285,6 +285,8 @@ int ServerManager::handleIncoming(int fd)
             currClient->setReadyToFlag(WRITE);
             currClient->setClientFdEvent(pollfds, POLLOUT);
         }
+        else
+            std::cout << e.what() << std::endl;
         return 0;
 	}
 	// else continue reading
@@ -331,10 +333,15 @@ void	ServerManager::sendResponse(int fd)
     }
     catch(const std::exception& e)
     {
-        currClient->getResponse()->setContent(e.what());
-		currClient->getResponse()->setCompleted(true);
-        currClient->setReadyToFlag(WRITE);
-        currClient->setClientFdEvent(pollfds, POLLOUT);
+        if (currClient)
+        {
+            currClient->getResponse()->setContent(e.what());
+            currClient->getResponse()->setCompleted(true);
+            currClient->setReadyToFlag(WRITE);
+            currClient->setClientFdEvent(pollfds, POLLOUT);
+        }
+        else
+            std::cout << e.what() << std::endl;
     }
 	#ifdef CGI
 		std::cout << GREEN << "-----------RESPONSE---------------" << std::endl;
@@ -347,9 +354,10 @@ void	ServerManager::sendResponse(int fd)
         rmFdFromPollfd(fd);
         delete currClient->getRequest();
         // delete currClient->getResponse();
-        // delete mapClientFd[fd];
+        delete mapClientFd[fd];
         mapClientFd[fd] = nullptr;
-        throw std::runtime_error("Error: send()");
+        std::cerr << "Error: send()" << std::endl;
+        return ;
 	}
     rmFdFromPollfd(fd);
     close(fd);
