@@ -4,7 +4,8 @@
 
 ---
 ## Usage
-1. **Builiding**
+
+1. **Building**
 ```
 $ make
 ```
@@ -12,13 +13,13 @@ $ make
 ```
 $ ./webserv configs/default.conf
 ```
-The server will start listening on the specified port (default: 8080 on localhost).
-3. **Accessing the Server** : Open a web browser and navigate to `http://localhost:8080` or the corresponding hostanme and port defined in out configuration file.
+3. **Accessing the Server** : Open a web browser and navigate to `http://localhost:8080` or the corresponding hostanme and port defined in out configuration file. 
 4. **Stopping the Server** : Press `Ctrl + C` in the terminal where `webserv` is running.
 
 ---
 ## Configuration File
 The configuration file format is inspired by **NGINX**. It allows defining server blocks that house location blocks. Each block can have its own set of attributes for customization. \
+ \
 **Example Configuration File**
 ```
 server {
