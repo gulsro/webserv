@@ -35,7 +35,7 @@ void	HttpResponse::setMIMEtype(const std::string &filename)
 		{".jpeg", "image/jpeg"},
 		{".gif", "image/gif"}
 	};
-	// if  Content-Type exists in the request Header
+	// if "Content-Type" exists in the request Header. Then use it as MIME type.
 	std::string contentType = Request->getHeaderValue("Content-Type");
 	if (!contentType.empty())
 	{
@@ -106,11 +106,11 @@ void	HttpResponse::checkResourceType()
 	path = this->resource;
 	if (stat(path.c_str(), &buf) == 0)
 	{
-		if (S_ISDIR(buf.st_mode))
+		if (S_ISDIR(buf.st_mode)) // It's a directory
 		{
 			this->setResourceType(RESOURCE_DIR);
 		}
-		else if (S_ISREG(buf.st_mode))
+		else if (S_ISREG(buf.st_mode)) // It's a reqular file
         {
 			this->setResourceType(RESOURCE_FILE);
         }
@@ -137,6 +137,9 @@ void	HttpResponse::checkURI()
 	}
 }
 
+/**
+ * Printing a directory listing if an autoindex is turned on.
+ */
 void	HttpResponse::printDirectoryListing(const std::string &path)
 {
 	if (std::filesystem::exists(path) == true)
@@ -302,8 +305,8 @@ void	HttpResponse::checkMethod()
 	#endif
 	std::string	method = Request->getMethod();
 
-	setResource();
-	checkResourceType();
+	setResource(); // Generating a reource(URL)
+	checkResourceType(); // Checking if the resource is a directory or file
 	if (this->resourceType == RESOURCE_FILE && fileExists(this->resource) == false && this->Request->getIsCgi() == false)
 		throw ErrorCodeException(STATUS_NOT_FOUND, this->Request->ReqServer->getErrorPage());
 	if (checkResourcePermission(this->resource) == false && this->Request->getIsCgi() == false)

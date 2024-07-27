@@ -14,14 +14,14 @@ class Cgi;
 class HttpResponse
 {
 	protected:
-		HttpRequest		*Request;
-		std::string		version;
-		int				statusCode;
-		std::string		body;
+		HttpRequest		    *Request;
+		std::string		    version;
+		int				    statusCode;
+		std::string		    body;
 
 		std::string			index;
 		std::string			resource;
-		enum e_resourceType	resourceType;
+		enum e_resourceType	resourceType; // A directory or a file
 		std::string			content;
 		std::string			contentType;
 		std::string			MIMEtype;

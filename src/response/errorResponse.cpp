@@ -1,6 +1,9 @@
 #include "utils.hpp"
 #include "HttpResponse.hpp"
 
+/**
+ * Creating an error response. Depending on status code, open a html file and generating a HTTP response.
+ */
 std::string	createErrorResponse(int code, std::map<int, std::string> errorPages)
 {
     #ifdef FUNC

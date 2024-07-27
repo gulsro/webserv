@@ -12,6 +12,10 @@ class	Location;
 class	Server;
 class	Cgi;
 
+/**
+ * A struct for "multipart/data-form" content type.
+ * For python cgi script, it's not needed.
+ */ 
 typedef	struct	s_part
 {
 	std::string	partContentType;
@@ -28,20 +32,20 @@ class	HttpRequest
 		std::string	method;
 		std::string	uri;
 		std::string version;
-		std::unordered_map<std::string, HttpHeader> headers;
+		std::unordered_map<std::string, HttpHeader> headers; // in key and value format
 		std::string	body;
 		int			contentLength;
 		std::string	contentType;
 
         std::string requestedHost;
 		int			requestedPort;
-        Server      *ReqServer;
-        Location	*ReqLocation;
+        Server      *ReqServer; // selected server block based on host of a request
+        Location	*ReqLocation; // selected location block based on URI of a request
 		
 		//multi-part form-data
 		std::string	boundaryBegin;
 		std::string	boundaryEnd;
-		std::map<int, t_part>	parts;	
+		std::map<int, t_part>	parts;
 		
 		//cgi environment
 		std::string	queryString;
@@ -50,7 +54,6 @@ class	HttpRequest
 		//chunked request
 		bool	isChunked;
 
-		//Yuka added
 		bool		isCgi;
 
 	public:
@@ -61,7 +64,7 @@ class	HttpRequest
 
 		friend class HttpResponse;
 
-		//Getters
+		// Getters
 		const	std::string	&getRawRequest() const { return rawRequest; }
 		const	std::string &getMethod() const { return method; }
 		const	std::string &getURI() const { return uri; }
@@ -80,7 +83,7 @@ class	HttpRequest
 		Server		&getReqServer() const { return *ReqServer; }
 		Location	&getReqLocation() const { return *ReqLocation; }
 
-		//Setters
+		// Setters
 		void	setRawRequest(std::string buffer) { this->rawRequest = buffer; }
 		void	setContentLength(int len) { this->contentLength = len; }
 		void	setRequestedHostAndPort();
@@ -94,19 +97,21 @@ class	HttpRequest
 		void	setIsChunked(bool value) { this->isChunked = value; }
 		void	setIsCgi(bool value) { this->isCgi = value; }
 		
+        // Parsing HTTP request fucntions
 		bool	isReadingRequestFinished(std::string rawRequest);
 		bool	parseHttpRequest(const std::string &rawRequest);
 		bool	parseRequestLine(const std::string &line);
 		bool	parseHeader(const std::string &line);
 
-		//Checkers
+		// Checkers
 		void	checkRequestSize();
 		void	checkContentType();
 		void	checkRequestValid();
 		void	checkLocations();
 		void	checkUriValidation();
 		void	checkAllowedMethods(std::string requestedMethod);
-	
+
+        // Special content types
 		void	handleMultiPartForm();
 		void	handleChunkedBody(const size_t bodyStart, const std::string rawRequest);
 		void	makeKeyValuePair(int i, const std::string str);
@@ -114,5 +119,5 @@ class	HttpRequest
 
 		std::vector<std::string> splitByBoundary();
 };
-
+// debugging
 void	printParsedRequest(HttpRequest *Request);

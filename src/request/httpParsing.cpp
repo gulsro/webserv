@@ -15,18 +15,12 @@ bool	HttpRequest::isReadingRequestFinished(std::string rawRequest)
 	if (this->contentLength) // post method
 	{
 		if (rawRequest.size() < (headerEnd + 4) + this->contentLength)
-		{
 			return false;
-		}
 		else
-		{
 			return true;
-		}
 	}
 	if (headerEnd == std::string::npos)
-	{
 		return false;
-	}
 	else if (this->isChunked == true)
 	{
 		size_t	chunkedBodyEnd = rawRequest.find("\r\n0\r\n\r\n");
@@ -54,9 +48,7 @@ void	HttpRequest::checkRequestSize()
 }
 
 /**
- * Non-blocking sockets: When working with non-blocking sockets,
- * MSG_PEEK can be used to check if any data is available before attempting a recv call.
- * This helps avoid blocking operations if no data is present.
+ * Reading a request as much as BUFFER_SIZE until receive the whole request.
 */
 bool	ServerManager::readRequest(Client *Client)
 {
@@ -112,6 +104,9 @@ bool	ServerManager::readRequest(Client *Client)
 		return Client->getRequest()->parseHttpRequest(rawRequestStr);
 	}
 }
+/**
+ * Before the request body begins, read the rawRequest line by line and push the lines into vector<std::string>
+ */
 
 std::vector<std::string>	splitHeaderByLine(const std::string &rawRequest)
 {
@@ -203,6 +198,9 @@ void	HttpRequest::checkAllowedMethods(std::string requestedMethod)
 	}
 }
 
+/**
+ * Selecting a location block depending on URI and checkng allowed methods of the location.
+ */
 void	HttpRequest::checkLocations()
 {
 	#ifdef FUNC

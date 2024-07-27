@@ -67,6 +67,10 @@ void	HttpRequest::checkRequestValid()
 		throw ErrorCodeException(STATUS_TOO_LARGE, this->ReqServer->getErrorPage());
 }
 
+/**
+ * Selecting a server block based on hostname and port.
+ * If there is no match, the first server block will be selected as default.
+ */
 void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 {
 	#ifdef FUNC
@@ -88,6 +92,9 @@ void    HttpRequest::setReqServer(std::vector<Server*> serverList)
 	this->ReqServer = serverList[0]; // Default server            
 }
 
+/**
+ * Extracting file extension.
+ */
 std::string returnFileExtension(const std::string path)
 {
 	std::string fileExtension;
@@ -226,8 +233,10 @@ bool	HttpRequest::parseRequestLine(const std::string &line)
 	// check query string in URI
 	if (this->uri.find('?') != std::string::npos)
 		this->setQueryPairs();
+    // if URI is encoded, then decoding it.
 	if (this->uri.find('%') != std::string::npos)
 		this->uri = decodeUri(this->uri);
+    // This server only allows GET/POST/METHOD methods, everything except these methods are not allowed.
 	if ((this->method != "GET") && (this->method != "POST") && (this->method != "DELETE"))
 	{
 		if (this->ReqServer != nullptr)
@@ -266,7 +275,6 @@ bool	HttpRequest::parseHeader(const std::string &line)
 	h.value = value;
 	headers[key] = h;
 
-	// headers[key] = HttpHeader{key, value};
 	return true;
 }
 

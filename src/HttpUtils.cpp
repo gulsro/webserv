@@ -14,6 +14,10 @@ std::string trim(const std::string &str, const char c)
 	return result.substr(first, (last - first + 1));
 }
 
+/**
+ * Splitting for key and value types.
+ * Instead of splitting based on delimiter, this function splits a line by first occurenece of the delimiter in the line.
+ */
 std::vector<std::string> splitForKeyValue(const std::string &str, char delimiter)
 {
 	std::vector<std::string>	tokens;

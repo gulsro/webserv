@@ -81,7 +81,7 @@ void	HttpResponse::createResponse(enum e_statusCode code, const std::string cont
 		}
 		else
 			ostream << "Content-Length: 0\r\n";
-		ostream << "\r\n";
+		ostream << "\r\n"; // the end of headers
 		if (!content.empty())
 			ostream << content;
 		this->content = ostream.str(); // a string a copy of ostream
@@ -91,6 +91,9 @@ void	HttpResponse::createResponse(enum e_statusCode code, const std::string cont
 	this->completed = true;
 }
 
+/**
+ * When file is needed to be opened and put the file content in the body.
+ */
 void	HttpResponse::createResponse_File(std::string filename)
 {
     #ifdef FUNC
@@ -126,6 +129,10 @@ void	HttpResponse::createResponse_File(std::string filename)
 	this->completed = true;
 }
 
+/**
+ * Generating a resource(URL). 
+ * First checking if the resource belongs to a server block or location block.
+ */
 void    HttpResponse::setResource()
 {
 	#ifdef FUNC
@@ -149,10 +156,11 @@ void    HttpResponse::setResource()
         else
 		    this->resource = "." + this->getRequest()->getReqServer().getRoot() + this->Request->getURI();
 	}
-	else // No selected Location
+	else // No selected Location (Following the server block attributes)
 	{
         std::string uri = this->Request->getURI();
         size_t pos = uri.find(Server->getRoot());
+        // if a root path is contained in the URI.
 		if (pos != std::string::npos)
         {
             // if uri is only root path 
