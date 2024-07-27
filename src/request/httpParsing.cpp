@@ -146,7 +146,6 @@ bool	HttpRequest::parseHttpRequest(const std::string &rawRequest)
 	#endif
 	std::istringstream	stream(rawRequest);
 	std::vector<std::string>	lines = splitHeaderByLine(rawRequest);
-	// delete client fd?
 	if (lines.empty())
 		throw std::runtime_error("Invalid HTTP request format.");
 	if (!parseRequestLine(lines[0]))
@@ -210,8 +209,7 @@ void	HttpRequest::checkLocations()
 		std::cout << YELLOW << "[FUNCTION] checkLocation" << DEFAULT << std::endl;
 	#endif
 	selectReqLocation(this->ReqServer->getLocationList());
-	// if (this->getMethod() != "GET" && this->ReqLocation != nullptr)
-		checkAllowedMethods(this->getMethod());
+	checkAllowedMethods(this->getMethod());
 }
 
 void	HttpRequest::handleChunkedBody(const size_t bodyStart, const std::string rawRequest)

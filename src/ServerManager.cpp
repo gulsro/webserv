@@ -215,7 +215,6 @@ void ServerManager::checkTimeouts() {
             rmFdFromPollfd(fd);
             mapClientFd.erase(fd);
             it = clientLastActivity.erase(it);
-            // std::cout << "TIMEOUT FD :" << fd << std::endl;
             close(fd);
         } 
         else 
@@ -353,7 +352,6 @@ void	ServerManager::sendResponse(int fd)
 	{
         rmFdFromPollfd(fd);
         delete currClient->getRequest();
-        // delete currClient->getResponse();
         delete mapClientFd[fd];
         mapClientFd[fd] = nullptr;
         std::cerr << "Error: send()" << std::endl;

@@ -49,19 +49,6 @@ enum	e_method
 	DELETE
 };
 
-// Body transmission types
-enum	e_transferType
-{
-	GENERAL, // Content-Length
-	CHUNKED // Transfer-Encoding: chunked
-};
-
-enum	e_connectionType
-{
-	CLOSE,
-	KEEP_ALIVE
-};
-
 struct HttpHeader
 {
 	std::string key;
