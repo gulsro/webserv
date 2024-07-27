@@ -1,21 +1,25 @@
-## Webserv
-*Webserv project is writing own non-blocking HTTP server in C++. It supports essential HTTP methods (**GET**, **POST**, **DELETE**) and is able to excute CGI.*
+# Webserv
+
+*Webserv is writing own non-blocking HTTP server in C++ from scratch. It supports essential HTTP methods (**GET**, **POST**, **DELETE**) and offersthe capaility to excute **CGI scripts.***
+
+---
 ## Usage
+1. **Builiding**
 ```
 $ make
 ```
+2. **Starting the Server**
 ```
 $ ./webserv configs/default.conf
 ```
-Now the server is listening. So you can open a browser and type **localhost:8080** or anyother a hostname and a port in the selected configuration file.
-*To close Webserv*
-```
-Ctrl + C
-```
+The server will start listening on the specified port (default: 8080 on localhost).
+3. **Accessing the Server** : Open a web browser and navigate to `http://localhost:8080` or the corresponding hostanme and port defined in out configuration file.
+4. **Stopping the Server** : Press `Ctrl + C` in the terminal where `webserv` is running.
+
 ---
 ## Configuration File
-Our configuration file is inspired by **NGINX**. Server blocks are set and location blocks are set inside of a server block in the configuration files. Each server blocks and locations blocks can have their own attributes. \
-Below is an example of our configuration file.
+The configuration file format is inspired by **NGINX**. It allows defining server blocks that house location blocks. Each block can have its own set of attributes for customization. \
+**Example Configuration File**
 ```
 server {
 	listen			localhost:8080 #host:listening port
@@ -53,7 +57,7 @@ server {
 ```
 ---
 ## Requirements
-- Webserv must be **non-blcoking** and ues **only 1 `poll()` for all the I/O operations** between the client and the server (incl. listen).
+- Webserv must be **non-blcoking** and ues **only 1 `poll()` for all the I/O operations** between the client and the server (including listen).
 - `poll()` must check read and write at the same time.
 - Reading and writing operation without going through `poll()` is forbidden.
 - Checking the value of `errno` is forbidden after a read or a write operation.
